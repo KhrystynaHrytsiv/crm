@@ -1,7 +1,7 @@
-import {IOrder} from "../interfaces/IOrder";
 import {IQuery} from "../interfaces/IQuery";
-import {IResPagination} from "../interfaces/IResPagination";
 import {orderRepository} from "../repositories/orderRepository";
+import {IOrder} from "../interfaces/IOrder";
+import {IResPagination} from "../interfaces/IResPagination";
 
 class OrderService {
     async getAll(query:IQuery):Promise<IResPagination<IOrder>>{

@@ -1,5 +1,6 @@
 import {CourseEnum, CourseFormat} from "../enums/CourseEnum";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
+import {CourseTypeEnum} from "../enums/courseTypeEnum";
 
 export interface IOrder {
     id:string;
@@ -10,6 +11,7 @@ export interface IOrder {
     age:number;
     course:CourseEnum,
     format:CourseFormat,
+    type:CourseTypeEnum,
     status:CourseStatusEnum,
     sum:number,
     alreadyPaid:number,

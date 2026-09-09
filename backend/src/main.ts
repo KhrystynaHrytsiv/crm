@@ -2,7 +2,9 @@ import express from "express";
 import {apiRouter} from "./routs/apiRouter";
 import mongoose from "mongoose";
 import {config} from "./configs/config";
+import dns from "node:dns";
 
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
