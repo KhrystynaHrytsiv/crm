@@ -4,7 +4,7 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,10 +12,12 @@
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.9.5",
-    "joi": "^18.2.8"
+    "joi": "^18.2.8",
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "typescript": "^7.0.2",
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "@types/dotenv": "^8.2.3"
   }
 }
