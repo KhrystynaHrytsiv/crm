@@ -1,0 +1,29 @@
+.header {
+    width: 100%;
+    background-color: rgb(118, 184, 82);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.content{
+    display: flex;
+    gap: 20px;
+    font-size: 28px;
+    align-items: center;
+}
+.icon{
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(67, 160, 71);
+}
+.icon:hover{
+    background-color:rgb(56, 142, 60);
+    transition: 0.2s linear;
+}

@@ -3,18 +3,19 @@ import {CourseStatusEnum} from "../enums/courseStatusEnum";
 import {CourseTypeEnum} from "../enums/courseTypeEnum";
 
 export interface IOrder {
-    id:string;
+    _id:string;
     name:string;
     surname:string;
     email:string;
     phone:string;
     age:number;
     course:CourseEnum,
-    format:CourseFormat,
-    type:CourseTypeEnum,
+    course_format:CourseFormat,
+    course_type:CourseTypeEnum,
     status:CourseStatusEnum,
     sum:number,
     alreadyPaid:number,
     group: string,
+    created_at:string,
     manager: string,
 }

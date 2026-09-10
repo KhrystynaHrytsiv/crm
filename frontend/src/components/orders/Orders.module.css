@@ -1,0 +1,34 @@
+body{
+    margin: 0;
+}
+.table{
+    width: 100%;
+    font-size: 21px;
+    border-collapse: collapse;
+    border: none;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+.table thead{
+    background-color: rgb(118, 184, 82);
+    color: white;
+    height: 30px;
+    text-align: left;
+}
+.table tbody tr{
+    height: 35px;
+    background-color: rgb(246, 246, 246);
+}
+.table tbody tr:nth-child(odd){
+    background-color: rgb(233, 233, 233);
+}
+/*.table th:nth-child(4),*/
+/*.table td:nth-child(4) {*/
+/*    width: 180px;*/
+
+/*}*/
+
+.table tbody tr:hover{
+    background-color: rgb(56, 142, 60);
+    color: white;
+}

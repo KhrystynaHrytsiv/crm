@@ -1,0 +1,50 @@
+.container{
+    width: 100%;
+    display: flex;
+    padding: 10px;
+}
+.filters{
+    width: 85%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+}
+.filters input, .filters select {
+    height: 65px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(233, 233, 233);
+    padding-left: 20px;
+    font-size: 18px;
+}
+.info{
+    display: flex;
+    height: 120px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 20px;
+    font-size: 23px;
+}
+.info label{
+    display: flex;
+    align-items: center;
+}
+.info input{
+    width: 25px;
+    height: 25px;
+}
+.icon{
+    height: 45px;
+    width: 45px;
+    background-color: rgb(67, 160, 71);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon:hover{
+    background-color:rgb(56, 142, 60);
+    transition: 0.2s linear;
+}

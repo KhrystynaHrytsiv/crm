@@ -15,7 +15,7 @@ class OrderRepository {
             filterObject.surname = { $regex: query.surname, $options: "i" } ;
         }
         if (query.email){
-            filterObject.surname = { $regex: query.email, $options: "i" } ;
+            filterObject.email = { $regex: query.email, $options: "i" } ;
         }
         if (query.phone){
             filterObject.phone = query.phone;
