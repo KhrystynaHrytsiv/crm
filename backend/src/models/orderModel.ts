@@ -15,9 +15,10 @@ const orderSchema = new Schema({
     status:{type: String, enum:CourseStatusEnum,required:true},
     sum:{type:Number, required:true},
     alreadyPaid:{type:Number, required:true},
+    created_at:{type:Date, required:true},
     group:{type:String, required:true},
     manager:{type:String, required:true}
 
 },
-    {timestamps:true, versionKey:false});
+    {timestamps:false, versionKey:false});
 export const Order = model<IOrder>('order', orderSchema);

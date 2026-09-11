@@ -7,5 +7,10 @@ export interface IQuery {
     email?:string;
     phone?:string;
     age?:number;
-
+    course?:string,
+    course_format?:string,
+    course_type?:string,
+    status?:string,
+    start_date?: string;
+    end_date?: string;
 }

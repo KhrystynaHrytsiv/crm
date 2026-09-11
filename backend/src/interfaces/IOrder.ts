@@ -16,6 +16,6 @@ export interface IOrder {
     sum:number,
     alreadyPaid:number,
     group: string,
-    created_at:string,
+    created_at:Date,
     manager: string,
 }

@@ -2,27 +2,44 @@ import {IOrder} from "../interfaces/IOrder";
 import {Order} from "../models/orderModel";
 import {IQuery} from "../interfaces/IQuery";
 import {QueryFilter} from "mongoose";
+import {CourseStatusEnum} from "../enums/courseStatusEnum";
 
 class OrderRepository {
     getAll(query:IQuery):Promise<[IOrder[], number]>{
         query.pageSize = 25;
         const skip = query.pageSize * (query.page - 1);
         const filterObject: QueryFilter<IOrder> = { };
-        if (query.name) {
-            filterObject.name = { $regex: query.name, $options: "i" } ;
+        if (query.status === "null" || query.status === CourseStatusEnum.new) {
+            filterObject.$or = [
+                { status: CourseStatusEnum.new },
+                { status: null },
+            ];
+        } else if (query.status) {
+            filterObject.status = query.status as CourseStatusEnum;
         }
-        if (query.surname){
-            filterObject.surname = { $regex: query.surname, $options: "i" } ;
+        Object.entries(query).forEach(([key, value]) => {
+            if (!value) return;
+            if (key === "page" || key === "pageSize" || key === "order" || key === "start_date" || key === "end_date" || key === "status") {
+                return;
+            }
+            if (key === "age") {
+                filterObject[key] = Number(value);
+                return;
+            }
+            filterObject[key] = {$regex: value, $options: "i"};
+        });
+        if (query.start_date || query.end_date){
+            filterObject.created_at = {};
+            if (query.start_date) {
+                filterObject.created_at.$gte = new Date(`${query.start_date}T00:00:00.000Z`);
+            }
+            if (query.end_date) {
+                const endDate = new Date(`${query.end_date}T00:00:00.000Z`);
+                endDate.setUTCDate(endDate.getUTCDate() + 1);
+                filterObject.created_at.$lt = endDate;
+            }
         }
-        if (query.email){
-            filterObject.email = { $regex: query.email, $options: "i" } ;
-        }
-        if (query.phone){
-            filterObject.phone = query.phone;
-        }
-        if(query.age){
-            filterObject.age = Number(query.age);
-        }
+
         return Promise.all([
             Order.find(filterObject)
                 .limit(query.pageSize)
@@ -30,6 +47,9 @@ class OrderRepository {
                 .sort(query.order),
             Order.find(filterObject).countDocuments(),
         ]);
+    }
+    async getGroups():Promise<string[]>{
+        return Order.distinct("group")
     }
 
 }

@@ -15,5 +15,8 @@ class OrderService {
             data,
         };
     }
+    async getGroups():Promise<string[]>{
+        return await orderRepository.getGroups();
+    }
 }
 export const orderService = new OrderService();

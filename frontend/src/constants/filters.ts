@@ -1,7 +1,9 @@
 import {CourseEnum, CourseFormat} from "../../../backend/src/enums/CourseEnum";
 import {CourseTypeEnum} from "../../../backend/src/enums/courseTypeEnum";
 import {CourseStatusEnum} from "../../../backend/src/enums/courseStatusEnum";
+import {generalService} from "../services/generalService";
 
+// const groups: string[] = await generalService.get('/groups');
 export const filters = [
     {
         key: "course",
@@ -9,12 +11,12 @@ export const filters = [
         options: Object.values(CourseEnum),
     },
     {
-        key: "format",
+        key: "course_format",
         label: "all formats",
         options: Object.values(CourseFormat),
     },
     {
-        key: "type",
+        key: "course_type",
         label: "all types",
         options: Object.values(CourseTypeEnum),
     },
@@ -23,11 +25,11 @@ export const filters = [
         label: "all statuses",
         options: Object.values(CourseStatusEnum),
     },
-    {
-        key: "group",
-        label: "all groups",
-        options: Object.values(CourseStatusEnum),
-    }
+    // {
+    //     key: "group",
+    //     label: "all groups",
+    //     options: groups,
+    // }
 ];
 export const inputs = [
     {

@@ -13,5 +13,13 @@ class OrderController {
             next(e);
         }
     }
+    async getGroups(req: Request, res:Response, next:NextFunction){
+        try{
+            const groups = await orderService.getGroups();
+            res.status(StatusCode.OK).json(groups);
+        }catch (e) {
+            next(e);
+        }
+    }
 }
 export const orderController = new OrderController();

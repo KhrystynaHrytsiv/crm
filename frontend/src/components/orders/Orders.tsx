@@ -47,12 +47,8 @@ const Orders = ({orders}:{orders:IOrder[]}) => {
                     <td>{renderValue(order.group)}</td>
                     <td>
                         {order.created_at
-                            ? new Date(order.created_at).toLocaleDateString("en-US", {
-                                month: "long",
-                                day: "2-digit",
-                                year: "numeric",
-                            })
-                            : "null"}
+                            ? new Date(order.created_at).toLocaleDateString("en-US",
+                                {month: "long", day: "2-digit", year: "numeric"}) : "null"}
                     </td>
                     <td>{renderValue(order.manager)}</td>
                 </tr>
