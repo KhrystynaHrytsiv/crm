@@ -5,7 +5,7 @@ import {QueryFilter} from "mongoose";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
 
 class OrderRepository {
-    getAll(query:IQuery):Promise<[IOrder[], number]>{
+    async getAll(query:IQuery):Promise<[IOrder[], number]>{
         query.pageSize = 25;
         const skip = query.pageSize * (query.page - 1);
         const filterObject: QueryFilter<IOrder> = { };
@@ -28,18 +28,15 @@ class OrderRepository {
             }
             filterObject[key] = {$regex: value, $options: "i"};
         });
-        if (query.start_date || query.end_date){
+        if (query.start_date || query.end_date) {
             filterObject.created_at = {};
             if (query.start_date) {
                 filterObject.created_at.$gte = new Date(`${query.start_date}T00:00:00.000Z`);
             }
             if (query.end_date) {
-                const endDate = new Date(`${query.end_date}T00:00:00.000Z`);
-                endDate.setUTCDate(endDate.getUTCDate() + 1);
-                filterObject.created_at.$lt = endDate;
+                filterObject.created_at.$lte = new Date(`${query.end_date}T23:59:59.999Z`);
             }
         }
-
         return Promise.all([
             Order.find(filterObject)
                 .limit(query.pageSize)
@@ -47,6 +44,7 @@ class OrderRepository {
                 .sort(query.order),
             Order.find(filterObject).countDocuments(),
         ]);
+
     }
     async getGroups():Promise<string[]>{
         return Order.distinct("group")

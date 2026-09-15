@@ -7,7 +7,7 @@ class OrderController {
     async getAll(req: Request, res:Response, next:NextFunction){
         try{
            const query = req.query as any as IQuery;
-           const orders = await orderService.getAll(query);
+            const orders = await orderService.getAll(query);
            res.status(StatusCode.OK).json(orders);
         }catch (e) {
             next(e);

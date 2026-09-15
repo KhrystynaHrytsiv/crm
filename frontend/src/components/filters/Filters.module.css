@@ -3,17 +3,17 @@
     display: flex;
     padding: 10px;
     box-sizing: border-box;
-
+    justify-content: space-between;
 }
 .filters{
     width: 85%;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6,minmax(0, 1fr));
     grid-template-rows: repeat(2, 1fr);
     gap: 10px;
 }
 .filters input, .filters select {
-    height: 60px;
+    height: 40px;
     border-radius: 8px;
     border: none;
     background-color: rgb(233, 233, 233);
@@ -33,12 +33,12 @@
     align-items: center;
 }
 .info input{
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 }
 .icon{
-    height: 40px;
-    width: 40px;
+    height: 35px;
+    width: 35px;
     background-color: rgb(67, 160, 71);
     border-radius: 8px;
     display: flex;

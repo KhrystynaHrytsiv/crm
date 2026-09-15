@@ -6,12 +6,12 @@ const Header = () => {
         <header className={css.header}>
             <h1>Logo</h1>
             <div className={css.content}>
-                <p>admin</p>
+                <p></p>
                 <div className={css.icon}>
-                    <RiUserSettingsLine size={"50px"} enableBackground={"green"}/>
+                    <RiUserSettingsLine size={"35px"} enableBackground={"green"}/>
                 </div>
                 <div className={css.icon}>
-                    <TbLogout size={"50px"} />
+                    <TbLogout size={"35px"} />
                 </div>
 
             </div>

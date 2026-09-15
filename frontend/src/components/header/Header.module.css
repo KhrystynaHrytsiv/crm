@@ -7,6 +7,7 @@
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    height: 80px;
 }
 .content{
     display: flex;
@@ -15,8 +16,8 @@
     align-items: center;
 }
 .icon{
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     border-radius: 8px;
     display: flex;
     align-items: center;
