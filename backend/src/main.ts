@@ -5,6 +5,7 @@ import {config} from "./configs/config";
 import dns from "node:dns";
 import cors from "cors";
 import {apiError} from "./error/apiError";
+import {seed} from "./seed/adminSeed";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
@@ -40,6 +41,7 @@ const connection = async () =>{
 const start = async () =>{
     try{
         await connection();
+        await seed();
         app.listen(config.PORT, async () =>{
             console.log(`server listen ${config.PORT} port`);
         })

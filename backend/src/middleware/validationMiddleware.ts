@@ -9,7 +9,6 @@ class ValidationMiddleware {
         return (req: Request, res: Response, next: NextFunction) => {
             try {
                 const id = req.params[key];
-
                 if (!isObjectIdOrHexString(id)) {
                     throw new apiError(`${key}: ${id} invalid Id`, StatusCode.BAD_REQUEST);
                 }

@@ -3,15 +3,17 @@ import {RoleEnum} from "../enums/roleEnum";
 import {IUser} from "../interfaces/IUser";
 
 const userSchema = new Schema({
-    userId: {type:String, required:true},
+    name:{type:String},
+    surname:{type:String},
     email: {type:String, unique:true},
-    password: {type: String, required: true},
+    password: {type: String},
     role: {type:String, enum: RoleEnum,},
-    is_Active:{type:Boolean, default: false}
+    is_Active:{type:Boolean, default: false},
+    last_login: {type: Date}
 },
     {timestamps: false, versionKey:false, toJSON:{
-        transform: (doc, ret) => {
-            delete (ret as any).passsword;
+        transform: (doc:any, ret:any) => {
+            delete (ret as any).password;
             return ret
         }
         }});

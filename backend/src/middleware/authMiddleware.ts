@@ -4,6 +4,8 @@ import {TokenEnum} from '../enums/tokenEnum';
 import {userService} from '../services/userService';
 import {tokenService} from '../services/tokenService';
 import {StatusCode} from "../enums/StatusCode";
+import {TokenPayload} from "../interfaces/IToken";
+import {RoleEnum} from "../enums/roleEnum";
 
 class AuthMiddleware {
     checkToken (tokenType:TokenEnum){
@@ -24,8 +26,8 @@ class AuthMiddleware {
                 const tokenPayload = await tokenService.checkToken(token, tokenType);
                 res.locals.tokenPayload = tokenPayload;
                 if(tokenType === TokenEnum.access){
-                    const user = await userService.getById(tokenPayload.id);
-                    if (!user.is_active) {
+                    const user = await userService.getById(tokenPayload.userId);
+                    if (!user.is_Active) {
                         throw new apiError("Account is inactive", StatusCode.FORBIDDEN,);
                     }
                 }
@@ -40,6 +42,17 @@ class AuthMiddleware {
             }catch (e) {
                 next(e);
             }
+        }
+    }
+    public hasPermission(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { role } = res.locals.tokenPayload as TokenPayload;
+            if (role !== RoleEnum.admin ) {
+                throw new apiError("No has permission", StatusCode.FORBIDDEN);
+            }
+            next();
+        } catch (e) {
+            next(e);
         }
     }
 }

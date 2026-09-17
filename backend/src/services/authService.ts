@@ -18,10 +18,10 @@ class AuthService {
         if (!isValidPassword){
             throw new apiError("Invalid email or password", StatusCode.UNAUTHORIZED)
         }
-        if(!user.is_active){
+        if(!user.is_Active){
             throw new apiError("Account is inactive", StatusCode.FORBIDDEN)
         }
-        const tokens = tokenService.generateTokens({id: user.id, role: user.role});
+        const tokens = tokenService.generateTokens({userId: user.id, role: user.role});
         await tokenRepository.create({...tokens, userId: user.id})
         return {user, tokens}
     };

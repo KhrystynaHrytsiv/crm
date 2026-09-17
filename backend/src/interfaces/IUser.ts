@@ -5,7 +5,10 @@ export interface IUser {
     email:string,
     password:string,
     role: RoleEnum,
-    is_active: boolean
+    is_Active: boolean,
+    name:string,
+    surname:string,
+    last_login:Date
 }
 
-export type TokenPayload = Pick<IUser, "id" | "role">;
+export type ManagerDTO = Pick<IUser, "name" | "surname" | "email">;
