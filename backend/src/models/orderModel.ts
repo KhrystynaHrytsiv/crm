@@ -17,6 +17,8 @@ const orderSchema = new Schema({
     alreadyPaid:{type:Number, required:true},
     created_at:{type:Date, required:true},
     group:{type:String, required:true},
+    msg:{type:String,},
+    utm:{type:String, default: null},
     manager:{type:String, required:true}
 
 },

@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {IQuery} from "../interfaces/IQuery";
 import {orderService} from "../services/orderService";
 import {StatusCode} from "../enums/StatusCode";
+import {OrderDTO} from "../interfaces/IOrder";
 
 class OrderController {
     async getAll(req: Request, res:Response, next:NextFunction){
@@ -17,6 +18,25 @@ class OrderController {
         try{
             const groups = await orderService.getGroups();
             res.status(StatusCode.OK).json(groups);
+        }catch (e) {
+            next(e);
+        }
+    }
+    async getById (req: Request, res:Response, next:NextFunction){
+        try {
+            const id = req.params.id as string;
+            const order = await orderService.getById(id);
+            res.status(StatusCode.OK).json(order);
+        }catch (e) {
+            next(e);
+        }
+    }
+    async update (req: Request, res:Response, next:NextFunction){
+        try{
+            const id = req.params.id as string;
+            const body = req.body as OrderDTO;
+            const order = await orderService.update(id, body);
+            res.status(StatusCode.OK).json(order);
         }catch (e) {
             next(e);
         }

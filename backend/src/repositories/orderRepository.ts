@@ -1,4 +1,4 @@
-import {IOrder} from "../interfaces/IOrder";
+import {IOrder, OrderDTO} from "../interfaces/IOrder";
 import {Order} from "../models/orderModel";
 import {IQuery} from "../interfaces/IQuery";
 import {QueryFilter} from "mongoose";
@@ -48,6 +48,12 @@ class OrderRepository {
     }
     async getGroups():Promise<string[]>{
         return Order.distinct("group")
+    }
+    getById(id:string):Promise<IOrder | null>{
+        return Order.findById(id);
+    }
+    update(id:string, dto:OrderDTO):Promise<IOrder | null>{
+        return Order.findByIdAndUpdate(id, dto, {returnDocument: "after"});
     }
 
 }

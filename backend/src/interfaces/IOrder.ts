@@ -15,7 +15,10 @@ export interface IOrder {
     status:CourseStatusEnum,
     sum:number,
     alreadyPaid:number,
-    group: string,
     created_at:Date,
+    utm:string,
+    msg:string,
+    group: string,
     manager: string,
 }
+export type OrderDTO = Pick<IOrder, "name" | "surname" | "email" | "phone" | "age" | "status" | "sum" | "alreadyPaid" | "course" | "course_format" | "course_type" | "group">

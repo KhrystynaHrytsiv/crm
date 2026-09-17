@@ -38,8 +38,8 @@ const Filters = () => {
                         <option value="">{filter.label}</option>
                         {filter.options.map((option: string) => (
                             <option key={option} value={option}>{option}</option>))}
-                    </select>
-                ))}
+                    </select>)
+                )}
                 <input type={isDateFocused ? "date" : "text"} placeholder="Start date"
                     value={searchParams.get("start_date") || ""} onFocus={() => setIsDateFocused(true)}
                     onChange={(e) => handleFilterChange("start_date", e.target.value)}/>
