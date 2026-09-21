@@ -10,5 +10,6 @@ router.post('', authMiddleware.checkToken(TokenEnum.access),
     authMiddleware.hasPermission,
     validationMiddleware.validateBody(ManagerValidator.create),
     userController.createManager);
+router.patch('/:id/:action', authMiddleware.checkToken(TokenEnum.access),authMiddleware.hasPermission, userController.changeStatus)
 
 export const managerRouter = router;

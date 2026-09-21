@@ -11,5 +11,8 @@ class UserRepository {
     getByEmail(email:string):Promise<IUser | null>{
         return User.findOne({email});
     }
+    update(id:string, dto:Partial<IUser>):Promise<IUser | null>{
+        return User.findByIdAndUpdate(id, dto, {returnDocument: "after"})
+    }
 }
 export const userRepository = new UserRepository();

@@ -1,8 +1,9 @@
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 import {IAuth} from "../interfaces/IAuth";
 import {authService} from "../services/authService";
 import {StatusCode} from "../enums/StatusCode";
 import {RefreshToken} from "../interfaces/IToken";
+
 class AuthController {
     async login (req:Request, res:Response, next:NextFunction){
         try {
@@ -22,5 +23,6 @@ class AuthController {
             next(e);
         }
     }
+
 }
 export const authController = new AuthController();
