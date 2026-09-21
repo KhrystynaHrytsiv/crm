@@ -28,18 +28,5 @@ class AuthService {
     async logout(refreshToken: string) {
         await tokenService.delete({ refreshToken });
     }
-    // async activate (managerId:string){
-    //     const manager = await userService.getById(managerId);
-    //     if (manager.role !== RoleEnum.manager){
-    //         throw new apiError("User is not a manager", StatusCode.BAD_REQUEST)
-    //     }
-    //     if (manager.is_Active){
-    //         throw new apiError("Manager is already active", StatusCode.BAD_REQUEST)
-    //     }
-    //     const token = tokenService.generateActionToken({userId: managerId, role: RoleEnum.manager}, ActionTokenType.activate);
-    //     await tokenRepository.create({
-    //         userId:managerId,
-    //     })
-    // }
 };
 export const authService = new AuthService();

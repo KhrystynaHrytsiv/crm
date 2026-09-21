@@ -13,6 +13,7 @@ interface IConfig{
     JWT_RECOVERY_SECRET: string,
     JWT_ACTIVATE_LIFETIME: any,
     JWT_RECOVERY_LIFETIME: any,
+    FRONTEND_URL:string,
 }
 
 export const config:IConfig = {
@@ -26,6 +27,7 @@ export const config:IConfig = {
     JWT_RECOVERY_SECRET: process.env.JWT_RECOVERY_SECRET!,
     JWT_ACTIVATE_LIFETIME: process.env.JWT_ACTIVATE_LIFETIME!,
     JWT_RECOVERY_LIFETIME: process.env.JWT_RECOVERY_LIFETIME!,
+    FRONTEND_URL: process.env.FRONTEND_URL!
 }
 
 

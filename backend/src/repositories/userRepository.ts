@@ -5,6 +5,9 @@ class UserRepository {
     create(dto:Partial<IUser>):Promise<IUser>{
         return User.create(dto);
     };
+    getAll():Promise<IUser[]>{
+        return User.find();
+    }
     getById(id:string):Promise<IUser | null>{
         return User.findById(id);
     }

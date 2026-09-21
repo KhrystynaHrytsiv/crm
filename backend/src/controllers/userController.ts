@@ -3,6 +3,7 @@ import {ManagerDTO} from "../interfaces/IUser";
 import {userService} from "../services/userService";
 import {StatusCode} from "../enums/StatusCode";
 import {ActionType} from "../interfaces/ActionType";
+import {ActionTokenType} from "../enums/tokenEnum";
 
 class UserController{
     async createManager (req: Request, res:Response, next: NextFunction){
@@ -14,10 +15,38 @@ class UserController{
             next(e);
         }
     }
+    async getAll (req: Request, res:Response, next: NextFunction){
+        try {
+            const users = await userService.getAll();
+            res.status(StatusCode.OK).json(users);
+        }catch (e) {
+            next(e);
+        }
+    }
     async changeStatus(req:Request, res:Response, next:NextFunction) {
         try{
             const {id, action} = req.params as {id:string; action:ActionType};
             const user = await userService.changeStatus(id, action);
+            res.status(StatusCode.OK).json(user)
+        }catch (e) {
+            next(e);
+        }
+    }
+    async actionRequest(req:Request, res:Response, next:NextFunction){
+        try{
+            const {id, action} = req.params as {id:string; action:ActionTokenType};
+            console.log(id, action);
+            const url = await userService.actionRequest(id, action);
+            res.status(StatusCode.OK).json(url);
+        }catch (e) {
+            next(e);
+        }
+    }
+    async completeAction(req:Request, res:Response, next:NextFunction){
+        try{
+            const {token, action} = req.params as {token:string; action:ActionTokenType};
+            const {password} = req.body;
+            const user = await userService.completeAction(token, password, action);
             res.status(StatusCode.OK).json(user)
         }catch (e) {
             next(e);

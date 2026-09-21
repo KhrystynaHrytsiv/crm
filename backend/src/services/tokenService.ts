@@ -27,6 +27,7 @@ class TokenService {
                     break
                 case ActionTokenType.recovery:
                     secret = config.JWT_RECOVERY_SECRET
+                    break
                 default:
                     throw new apiError("Invalid token type", StatusCode.BAD_REQUEST)
             }

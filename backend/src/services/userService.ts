@@ -4,6 +4,10 @@ import {apiError} from "../error/apiError";
 import {StatusCode} from "../enums/StatusCode";
 import {RoleEnum} from "../enums/roleEnum";
 import {ActionType} from "../interfaces/ActionType";
+import {ActionTokenType} from "../enums/tokenEnum";
+import {tokenService} from "./tokenService";
+import {config} from "../configs/config";
+import {passwordService} from "./passwordService";
 
 class UserService {
     async getById(id:string):Promise<IUser>{
@@ -12,6 +16,9 @@ class UserService {
             throw new apiError("User not found", StatusCode.NOT_FOUND)
         }
         return user;
+    }
+    getAll():Promise<IUser[]>{
+        return userRepository.getAll();
     }
     async createManager(dto:ManagerDTO):Promise<IUser>{
         return userRepository.create({...dto, role: RoleEnum.manager});
@@ -37,6 +44,34 @@ class UserService {
             }
             return await this.update(userId, {is_Active: true})
         }
+    }
+    async actionRequest (id:string, action:ActionTokenType) {
+        if (action !== ActionTokenType.activate && action !== ActionTokenType.recovery){
+            throw new apiError("Invalid type of action", StatusCode.BAD_REQUEST)
+        }
+        const user = await this.getById(id);
+        if(action === ActionTokenType.activate && user.is_Active){
+            throw new apiError("Manager is already active", StatusCode.BAD_REQUEST)
+        }
+        if (action === ActionTokenType.recovery && !user.is_Active){
+            throw new apiError("Manager is not active", StatusCode.BAD_REQUEST)
+        }
+        const token = tokenService.generateActionToken({userId: id, role: RoleEnum.manager}, action);
+        return `${config.FRONTEND_URL}/${action}/${token}`;
+
+    }
+    async completeAction(token:string, password:string, action:ActionTokenType):Promise<IUser>{
+        const {userId} = tokenService.verifyTokens(token, action);
+        const user = await this.getById(userId);
+        if (action === ActionTokenType.activate && user.is_Active) {
+            throw new apiError("Manager is already active", StatusCode.BAD_REQUEST);
+        }
+        if (action === ActionTokenType.recovery && !user.is_Active){
+            throw new apiError("Manager is not active", StatusCode.BAD_REQUEST)
+        }
+        const hashedPassword = await passwordService.hashPassword(password);
+        return this.update(userId, {password: hashedPassword,
+            ...(action === ActionTokenType.activate && {is_Active: true})});
     }
 }
 export const userService = new UserService();
