@@ -52,6 +52,9 @@ class OrderRepository {
     getById(id:string):Promise<IOrder | null>{
         return Order.findById(id);
     }
+    getByParams(params:Partial<IOrder>):Promise<IOrder[]>{
+        return Order.find(params);
+    }
     update(id:string, dto:OrderDTO):Promise<IOrder | null>{
         return Order.findByIdAndUpdate(id, dto, {returnDocument: "after"});
     }

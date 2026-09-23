@@ -1,0 +1,16 @@
+body{
+    background-color: green;
+    margin: 0;
+}
+form{
+    width: 500px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 15px;
+}
+input{
+
+}

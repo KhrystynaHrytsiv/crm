@@ -1,16 +1,8 @@
-// export const generalService ={
-//     get: async<T, >(endpoint:string):Promise<T> =>{
-//         return await fetch(`http://localhost:4000/${endpoint}`).then(res => res.json())
-//     }
-// }
+import {api} from "./apiService";
+
 export const generalService = {
     get: async <T>(endpoint: string): Promise<T> => {
-        const response = await fetch(`http://localhost:4000${endpoint}`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        }
-
-        return response.json();
-    },
+        const response = await api.get<T>(endpoint);
+        return response.data;
+    }
 };

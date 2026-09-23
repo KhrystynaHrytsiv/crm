@@ -1,5 +1,4 @@
 import type {Metadata} from "next";
-import Header from "../components/header/Header";
 
 
 export const metadata: Metadata = {
@@ -9,10 +8,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en">
+    <html lang="en">
       <body className="min-h-full flex flex-col">
-      <Header/>
+      {/*<Header/>*/}
       {children}
 
       </body>
