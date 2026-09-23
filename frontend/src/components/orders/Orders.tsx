@@ -1,5 +1,5 @@
 "use client"
-import { useSearchParams, useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {IOrder} from "../../../../backend/src/interfaces/IOrder";
 import css from "./Orders.module.css";
 import {columns} from "../../constants/orders";

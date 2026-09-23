@@ -3,10 +3,10 @@ import {useForm} from "react-hook-form";
 import {IAuth} from "../../../../backend/src/interfaces/IAuth";
 import {authService} from "../../services/authService";
 import {useRouter} from "next/navigation";
-
+import "./Login.css";
 
 const Login =  () => {
-    const {handleSubmit, register} = useForm<IAuth>();
+    const {handleSubmit, register, formState:{errors, isValid}} = useForm<IAuth>({mode: "onSubmit",});
     const router = useRouter();
     const login = async (formData:IAuth) =>{
         await authService.login(formData);
@@ -14,9 +14,17 @@ const Login =  () => {
     }
     return (
         <form onSubmit={handleSubmit(login)}>
-            <input type={"text"} {...register('email')}/>
-            <input type={"password"} {...register('password')}/>
-            <button>Login</button>
+            <div className="field">
+                <label htmlFor={'email'}>Email</label>
+                <input type={"text"} {...register('email')} placeholder={"Email"}/>
+                {errors.email && <div>{errors.email.message}</div>}
+            </div>
+            <div className="field">
+                <label htmlFor={'password'}>Password</label>
+                <input type={"password"} {...register('password')} placeholder={"Password"}/>
+                {errors.password && <div>{errors.password.message}</div>}
+            </div>
+            <button disabled={!isValid}>Login</button>
         </form>
     );
 };

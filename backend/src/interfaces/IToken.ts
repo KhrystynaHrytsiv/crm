@@ -4,6 +4,7 @@ interface IToken {
     id:string,
     accessToken:string,
     refreshToken:string,
+    expiresAt:Date,
 }
 type TokensPair = Pick<IToken, "accessToken" | "refreshToken">;
 

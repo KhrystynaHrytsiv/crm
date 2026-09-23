@@ -1,8 +1,9 @@
 import Login from "../../../components/auth/Login";
+import "../../../components/auth/Login.css";
 
 const LoginPage = () => {
     return (
-        <div>
+        <div className="container">
             <Login/>
         </div>
     );
