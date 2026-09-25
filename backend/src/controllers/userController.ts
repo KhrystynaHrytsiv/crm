@@ -15,14 +15,15 @@ class UserController{
             next(e);
         }
     }
-    async getAll (req: Request, res:Response, next: NextFunction){
+    async getManagers (req: Request, res:Response, next: NextFunction){
         try {
-            const users = await userService.getAll();
-            res.status(StatusCode.OK).json(users);
+            const managers = await userService.getManagers();
+            res.status(StatusCode.OK).json(managers);
         }catch (e) {
             next(e);
         }
     }
+
     async changeStatus(req:Request, res:Response, next:NextFunction) {
         try{
             const {id, action} = req.params as {id:string; action:ActionType};

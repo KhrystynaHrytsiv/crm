@@ -6,16 +6,25 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {filters, inputs} from "../../constants/filters";
 import {generalService} from "../../services/generalService";
 import {useEffect, useState} from "react";
+import {IUser} from "../../../../backend/src/interfaces/IUser";
 
-const Filters = () => {
+const Filters = ({surname}:{surname:string}) => {
     const [groups, setGroups] = useState<string[]>([]);
     const [isDateFocused, setIsDateFocused] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
-    useEffect(() => {
-        generalService.get<string[]>('/orders/groups').then((data) => setGroups(data));
+    const [me, setMe] = useState<IUser>();
+    useEffect( () => {
+        const loadData = async ()=>{
+            const [groups,] = await Promise.all([
+                generalService.get<string[]>('/orders/groups'),
+            ])
+            setGroups(groups);
+        }
+        loadData();
     }, []);
     const allFilters = filters(groups);
+
 
     const handleFilterChange = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -49,8 +58,8 @@ const Filters = () => {
             </div>
             <div className={css.info}>
                 <label>
-                    <input type="checkbox" checked={searchParams.get("manager") === "admin"}
-                           onChange={(e) => handleFilterChange("manager", e.target.checked ? "admin" : "")}/>
+                    <input type="checkbox" checked={searchParams.get("manager") === surname}
+                           onChange={(e) =>{handleFilterChange("manager", e.target.checked ? surname : "")}}/>
                     My
                 </label>
                 <div className={css.icon} onClick={()=>router.push('/orders')}>

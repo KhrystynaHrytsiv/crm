@@ -2,6 +2,7 @@ import {RoleEnum} from "../enums/roleEnum";
 
 interface IToken {
     id:string,
+    userId: string;
     accessToken:string,
     refreshToken:string,
     expiresAt:Date,

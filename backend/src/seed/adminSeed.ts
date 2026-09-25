@@ -11,6 +11,8 @@ export const seed = async () => {
     await userRepository.create({
         email: "admin@gmail.com",
         password: hashPassword,
+        name: 'admin',
+        surname: "admin",
         role: RoleEnum.admin,
         is_Active: true,
     });

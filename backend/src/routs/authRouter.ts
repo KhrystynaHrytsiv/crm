@@ -6,3 +6,4 @@ import {TokenEnum} from "../enums/tokenEnum";
 export const authRouter = Router();
 authRouter.post('/login', authController.login);
 authRouter.post('/logout', authMiddleware.checkToken(TokenEnum.refresh), authController.logout);
+authRouter.get('/me', authMiddleware.checkToken(TokenEnum.access), authController.me);

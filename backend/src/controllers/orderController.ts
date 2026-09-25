@@ -3,7 +3,6 @@ import {IQuery} from "../interfaces/IQuery";
 import {orderService} from "../services/orderService";
 import {StatusCode} from "../enums/StatusCode";
 import {OrderDTO} from "../interfaces/IOrder";
-import {TokenPayload} from "../interfaces/IToken";
 
 class OrderController {
     async getAll(req: Request, res:Response, next:NextFunction){
@@ -42,14 +41,6 @@ class OrderController {
             next(e);
         }
     }
-    async myOrders(req: Request, res:Response, next:NextFunction){
-        try{
-            const {userId} = res.locals.tokenPayload as TokenPayload;
-            const orders = await orderService.myOrders(userId);
-            res.status(StatusCode.OK).json(orders);
-        }catch (e) {
-            next(e);
-        }
-    }
+
 }
 export const orderController = new OrderController();

@@ -1,4 +1,14 @@
 /*@import "tailwindcss";*/
 body{
     margin: 0;
+    width: 100vw;
+}
+.greenButton{
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgb(67, 160, 71);
+    color: #f6f5f5;
+    height: 40px;
+    text-transform: uppercase;
 }

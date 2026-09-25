@@ -8,24 +8,29 @@ import { IResPagination } from "../../../../backend/src/interfaces/IResPaginatio
 import Orders from "../../components/orders/Orders";
 import Filters from "../../components/filters/Filters";
 import Header from "../../components/header/Header";
+import {IUser} from "../../../../backend/src/interfaces/IUser";
 
 const OrdersPage = () => {
     const searchParams = useSearchParams();
     const [orders, setOrders] = useState<IOrder[]>([]);
-
+    const [me, setMe] = useState<IUser>();
     useEffect(() => {
         const query = searchParams.toString();
-        const getOrders = async () => {
-            const response = await generalService.get<IResPagination<IOrder>>(`/orders?${query}`);
-            setOrders(response.data);
+        const getData = async () => {
+            const [orders, me] = await Promise.all([
+                generalService.get<IResPagination<IOrder>>(`/orders?${query}`),
+                generalService.get<IUser>("/auth/me")
+            ]);
+            setOrders(orders.data);
+            setMe(me);
         };
-        getOrders();
+        getData();
     }, [searchParams]);
 
     return (
         <div>
-            <Header />
-            <Filters />
+            {me && <Header me={me}/>}
+            {me && <Filters surname={me.surname}/>}
             <Orders orders={orders} />
         </div>
     );

@@ -1,6 +1,6 @@
 import {tokenRepository} from "../repositories/tokenRepository";
 import {IToken, TokenPayload, TokensPair} from "../interfaces/IToken";
-import jwt from "jsonwebtoken";
+import jwt, {JwtPayload} from "jsonwebtoken";
 import {StatusCode} from "../enums/StatusCode";
 import {apiError} from "../error/apiError";
 import {config} from "../configs/config";
@@ -69,6 +69,15 @@ class TokenService {
                 throw new apiError("invalid action token type", StatusCode.BAD_REQUEST);
         }
         return jwt.sign(payload, secret, { expiresIn });
+    }
+    public async createToken(tokenPair: TokensPair, userId: string) {
+        const decoded = jwt.decode(tokenPair.refreshToken) as JwtPayload;
+        if (!decoded.exp) {
+            throw new apiError("Invalid refresh token", StatusCode.UNAUTHORIZED,);
+        }
+        return await tokenRepository.create({...tokenPair, userId,
+            expiresAt: new Date(decoded.exp * 1000),
+        });
     }
 }
 export const tokenService = new TokenService();

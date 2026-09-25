@@ -4,7 +4,6 @@ import {IOrder, OrderDTO} from "../interfaces/IOrder";
 import {IResPagination} from "../interfaces/IResPagination";
 import {apiError} from "../error/apiError";
 import {StatusCode} from "../enums/StatusCode";
-import {userService} from "./userService";
 
 class OrderService {
     async getAll(query:IQuery):Promise<IResPagination<IOrder>>{
@@ -35,10 +34,6 @@ class OrderService {
             throw new apiError("Order not found", StatusCode.NOT_FOUND);
         }
         return order;
-    }
-    async myOrders(id:string):Promise<IOrder[]>{
-        const user = await userService.getById(id);
-       return await orderRepository.getByParams({manager: user.surname})
     }
 }
 export const orderService = new OrderService();

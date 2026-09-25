@@ -17,11 +17,11 @@ class UserService {
         }
         return user;
     }
-    getAll():Promise<IUser[]>{
-        return userRepository.getAll();
-    }
     async createManager(dto:ManagerDTO):Promise<IUser>{
         return userRepository.create({...dto, role: RoleEnum.manager});
+    }
+    async getManagers():Promise<IUser[]>{
+        return userRepository.getByParams({role: RoleEnum.manager})
     }
     async update (id:string, dto:Partial<IUser>):Promise<IUser>{
         await userService.getById(id);
@@ -73,5 +73,7 @@ class UserService {
         return this.update(userId, {password: hashedPassword,
             ...(action === ActionTokenType.activate && {is_Active: true})});
     }
+
+
 }
 export const userService = new UserService();

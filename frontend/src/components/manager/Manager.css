@@ -1,0 +1,18 @@
+.container{
+    width: 80%;
+    margin: 10px auto;
+    border: 2px solid green;
+    border-radius: 8px;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    display: flex;
+    gap: 50px;
+    height: 150px;
+}
+.info p{
+    margin: 0;
+}
+.buttonBlock{
+    display: flex;
+    gap: 20px;
+}

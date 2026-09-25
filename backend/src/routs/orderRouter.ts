@@ -7,8 +7,7 @@ import {TokenEnum} from "../enums/tokenEnum";
 
 const router = Router();
 router.get('', authMiddleware.checkToken(TokenEnum.access), orderController.getAll);
-router.get('/groups', orderController.getGroups)
-router.get('/myOrders', authMiddleware.checkToken(TokenEnum.access), orderController.myOrders)
+router.get('/groups', orderController.getGroups);
 router.get('/:id',validationMiddleware.isIdValidate("id"), orderController.getById);
 router.put('/:id', validationMiddleware.isIdValidate("id"), validationMiddleware.validateBody(OrderValidator.update), orderController.update)
 

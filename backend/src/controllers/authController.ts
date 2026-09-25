@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {IAuth} from "../interfaces/IAuth";
 import {authService} from "../services/authService";
 import {StatusCode} from "../enums/StatusCode";
-import {RefreshToken} from "../interfaces/IToken";
+import {RefreshToken, TokenPayload} from "../interfaces/IToken";
 
 class AuthController {
     async login (req:Request, res:Response, next:NextFunction){
@@ -19,6 +19,15 @@ class AuthController {
             const { refreshToken } = res.locals as RefreshToken;
           await authService.logout(refreshToken)
             res.status(StatusCode.NO_CONTENT).end();
+        }catch (e) {
+            next(e);
+        }
+    }
+    async me (req: Request, res:Response, next: NextFunction){
+        try {
+            const {userId} = res.locals.tokenPayload as TokenPayload;
+            const user = await authService.me(userId);
+            res.status(StatusCode.OK).json(user);
         }catch (e) {
             next(e);
         }
