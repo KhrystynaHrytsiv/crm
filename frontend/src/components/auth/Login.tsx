@@ -3,7 +3,6 @@ import {useForm} from "react-hook-form";
 import {IAuth} from "../../../../backend/src/interfaces/IAuth";
 import {authService} from "../../services/authService";
 import {useRouter} from "next/navigation";
-import "./Login.css";
 
 const Login =  () => {
     const {handleSubmit, register, formState:{errors, isValid}} = useForm<IAuth>({mode: "onSubmit",});

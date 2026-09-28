@@ -11,4 +11,52 @@ body{
     color: #f6f5f5;
     height: 40px;
     text-transform: uppercase;
+    font-size:15px;
+}
+/******************************forms*************/
+.container{
+    background-color: rgb(118, 184, 82);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+form{
+    width: 350px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+    background-color: #f6f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.25);
+}
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 75%;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+input{
+    height: 55px;
+    border-radius: 8px;
+    border: none;
+    background-color: #d2cccc;
+    padding-left: 15px;
+}
+input:focus {
+    outline: none;
+    border: none;
+}
+button{
+    height: 55px;
+    border-radius: 10px;
+    background-color: rgb(67, 160, 71);
+    color: #f6f5f5;
+    border: none;
 }
