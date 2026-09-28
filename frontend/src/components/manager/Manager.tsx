@@ -4,8 +4,12 @@ import "./Manager.css";
 import {managerService} from "../../services/managerService";
 import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
 import {ActionType} from "../../../../backend/src/interfaces/ActionType";
-
-const Manager = ({manager}:{manager:IUser}) => {
+import {Dispatch, FC, SetStateAction} from "react";
+interface IProp {
+    manager:IUser,
+    updateStatus:(id: string, isActive: boolean) => void;
+}
+const Manager:FC<IProp> = ({manager, updateStatus}) => {
    const handleAction = async (action:ActionTokenType) =>{
        try{
         const url = await managerService.actionRequest(manager._id, action);
@@ -17,7 +21,8 @@ const Manager = ({manager}:{manager:IUser}) => {
    }
    const changeStatus = async (action:ActionType) =>{
        try{
-           return await managerService.changeStatus(manager._id, action)
+           await managerService.changeStatus(manager._id, action);
+           updateStatus(manager._id, action === "unban");
        }catch (e) {
            console.log(e);
        }

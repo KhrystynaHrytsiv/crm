@@ -1,13 +1,21 @@
 import {IUser} from "../../../../backend/src/interfaces/IUser";
 import Manager from "../manager/Manager";
+import {FC, useState} from "react";
+import CreateManagerForm from "../CreateManagerForm";
 
+interface IProp {
+    managers:IUser[],
+    updateStatus:(id: string, isActive: boolean) => void;
+}
 
-const Admin = ({managers}:{managers:IUser[]}) => {
+const Admin:FC<IProp> = ({managers, updateStatus}) => {
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <div>
-            <button className='greenButton'>Create</button>
-            {managers.map(manager => <Manager key={manager._id} manager={manager}/>)}
+            <button className='greenButton' onClick={()=> setIsOpen(true)}>Create</button>
+            {isOpen && <CreateManagerForm onClose={()=>setIsOpen(false)}/>}
+            {managers.map(manager => <Manager key={manager._id} manager={manager} updateStatus={updateStatus}/>)}
         </div>
     );
 };

@@ -29,7 +29,7 @@ form{
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
     background-color: #f6f5f5;
     border-radius: 8px;
     box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.25);
@@ -53,10 +53,21 @@ input:focus {
     outline: none;
     border: none;
 }
-button{
+form button{
     height: 55px;
     border-radius: 10px;
     background-color: rgb(67, 160, 71);
     color: #f6f5f5;
     border: none;
+    width: 75%;
+}
+/************************************/
+.overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }

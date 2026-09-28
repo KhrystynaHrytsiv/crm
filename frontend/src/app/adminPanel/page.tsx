@@ -9,9 +9,13 @@ const AdminPanel =  () => {
     useEffect(() => {
     generalService.get<IUser[]>('/manager').then((res) =>setManagers(res));
     }, []);
+    const updateManagerStatus = (id: string, isActive: boolean) => {
+        setManagers(prev => prev.map(manager => manager._id === id ?
+                { ...manager, is_Active: isActive } : manager));
+    };
     return (
         <div>
-            <Admin managers={managers}/>
+            <Admin managers={managers} updateStatus={updateManagerStatus}/>
         </div>
     );
 };

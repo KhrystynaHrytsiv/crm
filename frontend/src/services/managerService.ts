@@ -2,6 +2,8 @@ import {ActionTokenType} from "../../../backend/src/enums/tokenEnum";
 import {generalService} from "./generalService";
 import {api} from "./apiService";
 import {ActionType} from "../../../backend/src/interfaces/ActionType";
+import {IUser} from "../../../backend/src/interfaces/IUser";
+import {IUserDto} from "../interfaces/IUserDto";
 
 export const managerService = {
     async actionRequest(id:string, action:ActionTokenType){
@@ -12,5 +14,8 @@ export const managerService = {
     },
     async changeStatus (id:string, action:ActionType){
         return await api.patch(`/manager/${id}/${action}`)
+    },
+    async createManager (dto:IUserDto):Promise<IUser>{
+        return await api.post('/manager', dto)
     }
 }
