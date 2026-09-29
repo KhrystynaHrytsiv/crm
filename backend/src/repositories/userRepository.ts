@@ -15,7 +15,7 @@ class UserRepository {
         return User.findByIdAndUpdate(id, dto, {returnDocument: "after"})
     }
     getByParams(params:Partial<IUser>):Promise<IUser[]>{
-        return User.find(params);
+        return User.find(params).sort({_id: -1});
     }
 }
 export const userRepository = new UserRepository();

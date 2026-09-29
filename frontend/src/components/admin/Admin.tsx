@@ -1,7 +1,7 @@
 import {IUser} from "../../../../backend/src/interfaces/IUser";
 import Manager from "../manager/Manager";
 import {FC, useState} from "react";
-import CreateManagerForm from "../CreateManagerForm";
+import CreateManagerForm from "../forms/CreateManagerForm";
 
 interface IProp {
     managers:IUser[],

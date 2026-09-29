@@ -1,0 +1,25 @@
+.form{
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 600px;
+}
+.form select{
+    height: 50px;
+    border-radius: 8px;
+    border: none;
+    background-color: #e3e3e3;
+    padding-left: 15px;
+}
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 0 10px;
+}
+.buttonBlock {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+}

@@ -1,6 +1,6 @@
 'use client';
 import {useParams} from "next/navigation";
-import PasswordForm from "../../../components/PasswordForm";
+import PasswordForm from "../../../components/forms/PasswordForm";
 import {ActionTokenType} from "../../../../../backend/src/enums/tokenEnum";
 
 const ActionPage = () => {

@@ -3,10 +3,15 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {IOrder} from "../../../../backend/src/interfaces/IOrder";
 import css from "./Orders.module.css";
 import {columns} from "../../constants/orders";
+import {useState} from "react";
+import OrderForm from "../forms/OrderForm";
+import {Filter} from "../../constants/filters";
 
-const Orders = ({orders}:{orders:IOrder[]}) => {
+const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
+    // const [isOpen, setIsOpen] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
     const handleSort = async(field: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -18,8 +23,19 @@ const Orders = ({orders}:{orders:IOrder[]}) => {
         }
         router.push(`?${params.toString()}`);
     };
-    const renderValue = (value: any) => value ? value: "null";
+    const renderValue = (value: unknown, key: keyof IOrder) => {
+        if (value === null || value === undefined || value === "") {
+            return "null";
+        }
+
+        if (key === "created_at") {
+            return new Date(value as Date).toLocaleDateString("en-US",
+                {month: "long", day: "2-digit", year: "numeric",});
+        }
+        return String(value);
+    };
     return (
+        <>
         <table className={css.table}>
             <thead>
             <tr>
@@ -32,29 +48,17 @@ const Orders = ({orders}:{orders:IOrder[]}) => {
             <tbody>
             {orders.map((order) => (
                 <tr key={order._id}>
-                    <td>{renderValue(order._id)}</td>
-                    <td>{renderValue(order.name)}</td>
-                    <td>{renderValue(order.surname)}</td>
-                    <td>{renderValue(order.email)}</td>
-                    <td>{renderValue(order.phone)}</td>
-                    <td>{renderValue(order.age)}</td>
-                    <td>{renderValue(order.course)}</td>
-                    <td>{renderValue(order.course_format)}</td>
-                    <td>{renderValue(order.course_type)}</td>
-                    <td>{renderValue(order.sum)}</td>
-                    <td>{renderValue(order.alreadyPaid)}</td>
-                    <td>{renderValue(order.status)}</td>
-                    <td>{renderValue(order.group)}</td>
-                    <td>
-                        {order.created_at
-                            ? new Date(order.created_at).toLocaleDateString("en-US",
-                                {month: "long", day: "2-digit", year: "numeric"}) : "null"}
-                    </td>
-                    <td>{renderValue(order.manager)}</td>
+                    {columns.map((column) => (
+                        <td key={column.key} onClick={()=>setSelectedOrderId(order._id)}>
+                            {renderValue(order[column.key], column.key)}
+                        </td>
+                    ))}
                 </tr>
             ))}
             </tbody>
         </table>
+    {selectedOrderId && <OrderForm filters={filters} onClose={()=>setSelectedOrderId(null)} orderId={selectedOrderId}/>}
+    </>
     );
 };
 

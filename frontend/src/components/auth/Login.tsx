@@ -23,7 +23,7 @@ const Login =  () => {
                 <input type={"password"} {...register('password')} placeholder={"Password"}/>
                 {errors.password && <div>{errors.password.message}</div>}
             </div>
-            <button disabled={!isValid}>Login</button>
+            <button disabled={!isValid} className='wide-button'>Login</button>
         </form>
     );
 };

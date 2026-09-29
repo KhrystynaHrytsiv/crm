@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
-import {ActionTokenType} from "../../../backend/src/enums/tokenEnum";
-import {managerService} from "../services/managerService";
+import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
+import {managerService} from "../../services/managerService";
 import {useRouter} from "next/navigation";
 
 interface IFormData{
@@ -32,7 +32,7 @@ const PasswordForm = ({token, action}: {token:string, action: ActionTokenType}) 
                 <label htmlFor={'confirmPassword'}>Confirm password</label>
                 <input type={'password'} {...register('confirmPassword')}/>
             </div>
-            <button className={'greenButton'}>
+            <button className="wide-button">
                 {action === ActionTokenType.activate ? "Activate" : "Recovery Password"}</button>
         </form>
     );

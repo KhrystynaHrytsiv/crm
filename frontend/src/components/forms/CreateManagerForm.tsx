@@ -1,7 +1,7 @@
 import {useForm} from "react-hook-form";
-import {fields} from "../constants/createManagerFields";
-import {IUserDto} from "../interfaces/IUserDto";
-import {managerService} from "../services/managerService";
+import {fields} from "../../constants/createManagerFields";
+import {IUserDto} from "../../interfaces/IUserDto";
+import {managerService} from "../../services/managerService";
 
 
 

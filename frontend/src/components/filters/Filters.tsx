@@ -3,28 +3,13 @@ import css from "./Filters.module.css"
 import {TbReload} from "react-icons/tb";
 import {LiaFileExcel} from "react-icons/lia";
 import {useRouter, useSearchParams} from "next/navigation";
-import {filters, inputs} from "../../constants/filters";
-import {generalService} from "../../services/generalService";
-import {useEffect, useState} from "react";
-import {IUser} from "../../../../backend/src/interfaces/IUser";
+import {Filter, inputs} from "../../constants/filters";
+import {useState} from "react";
 
-const Filters = ({surname}:{surname:string}) => {
-    const [groups, setGroups] = useState<string[]>([]);
+const Filters = ({surname, filters}:{surname:string, filters:Filter}) => {
     const [isDateFocused, setIsDateFocused] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [me, setMe] = useState<IUser>();
-    useEffect( () => {
-        const loadData = async ()=>{
-            const [groups,] = await Promise.all([
-                generalService.get<string[]>('/orders/groups'),
-            ])
-            setGroups(groups);
-        }
-        loadData();
-    }, []);
-    const allFilters = filters(groups);
-
 
     const handleFilterChange = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -39,12 +24,13 @@ const Filters = ({surname}:{surname:string}) => {
     return (
         <div className={css.container}>
             <div className={css.filters}>
-                {inputs.map((input) => (<input type={'text'} key={input.key} placeholder={input.label}
-                                               onChange={(e) => handleFilterChange(input.key, e.target.value)}/>))}
-                {allFilters.map((filter) => (
+                {inputs.map((input) =>
+                    (<input type={'text'} key={input.key} placeholder={input.label}
+                            onChange={(e) => handleFilterChange(input.key, e.target.value)}/>))}
+                {filters.map((filter) => (
                     <select key={filter.key} value={searchParams.get(filter.key) || ""}
                             onChange={(e) => handleFilterChange(filter.key, e.target.value)}>
-                        <option value="">{filter.label}</option>
+                        <option value="">{filter.placeholder}</option>
                         {filter.options.map((option: string) => (
                             <option key={option} value={option}>{option}</option>))}
                     </select>)
