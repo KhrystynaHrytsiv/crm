@@ -1,9 +1,15 @@
 import joi from "joi";
 
 export class ManagerValidator {
-    private static name = joi.string().min(2).max(25);
-    private static surname = joi.string().min(2).max(25);
-    private static email = joi.string().email();
+    private static name = joi.string().min(2).max(25).messages({
+        "string.min": "At least 2 letters",
+        "string.max": "Not more than 25 characters"
+    });
+    private static surname = joi.string().min(2).max(25).messages({
+        "string.min": "At least 2 letters",
+        "string.max": "Not more than 25 characters"
+        });
+    private static email = joi.string().email().messages({"string.email": "Enter a valid email address"});
 
     public static create = joi.object({
         name: this.name.required(),

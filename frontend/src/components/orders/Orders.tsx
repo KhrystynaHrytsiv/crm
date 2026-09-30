@@ -10,7 +10,6 @@ import {Filter} from "../../constants/filters";
 const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    // const [isOpen, setIsOpen] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
     const handleSort = async(field: string) => {

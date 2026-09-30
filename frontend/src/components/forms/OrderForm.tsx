@@ -48,6 +48,8 @@ import css from "./OrderForm.module.css";
 import {OrderDTO} from "../../../../backend/src/interfaces/IOrder";
 import {orderService} from "../../services/orderService";
 import {FC} from "react";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {OrderValidator} from "../../../../backend/src/validators/orderValidator";
 
 interface IProp {
     filters: Filter,
@@ -56,7 +58,7 @@ interface IProp {
 }
 
 const OrderForm:FC<IProp> = ({filters, onClose, orderId}) => {
-    const { register, handleSubmit } = useForm<OrderDTO>();
+    const { register, handleSubmit, formState:{isValid, errors} } = useForm<OrderDTO>({mode: "all", resolver:joiResolver(OrderValidator.update)});
     const submit = async (dto:OrderDTO) =>{
         try{
             await orderService.update(orderId, dto)
@@ -92,6 +94,7 @@ const OrderForm:FC<IProp> = ({filters, onClose, orderId}) => {
                             <div key={key} className={css.field}>
                                 <label htmlFor={key}>{input.label}</label>
                                 <input id={key} type={input.type} placeholder={input.key}{...register(key)}/>
+                                {errors[key] && (<div className="error">{errors[key].message}</div>)}
                             </div>
                         );
                     }
@@ -100,7 +103,7 @@ const OrderForm:FC<IProp> = ({filters, onClose, orderId}) => {
 
                 <div className={css.buttonBlock}>
                     <button type="button" className="greenButton" onClick={onClose}>Close</button>
-                    <button type="submit" className="greenButton">Submit</button>
+                    <button type="submit" className="greenButton" disabled={!isValid}>Submit</button>
                 </div>
             </form>
         </div>
