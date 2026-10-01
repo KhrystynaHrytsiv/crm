@@ -27,7 +27,7 @@ class OrderService {
         }
         return order;
     }
-    async update(id: string, dto: OrderDTO): Promise<IOrder> {
+    async update(id: string, dto: Partial<OrderDTO>): Promise<IOrder> {
         await this.getById(id);
         const order = await orderRepository.update(id, dto);
         if (!order) {

@@ -1,0 +1,38 @@
+.container{
+    width: 100vw;
+    background-color: rgb(233, 233, 233);
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 20px;
+}
+.details{
+    display: flex;
+    width: 50%;
+    justify-content: space-between;
+    gap: 10px;
+
+}
+.commentBlock{
+    background-color: #f6f5f5;
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    height: 80px;
+    border-radius: 8px;
+    align-items: center;
+}
+.commentBlock input{
+    width: 80%;
+    margin: 10px;
+}
+.commentBlock button{
+    width: 15%;
+    border-radius: 5px;
+    border: none;
+    background-color: darkgrey;
+    color:#f6f5f5;
+    align-items: center;
+    height: 55px;
+    margin: 10px;
+}

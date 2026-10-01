@@ -2,6 +2,7 @@ import {model, Schema} from "mongoose";
 import {IOrder} from "../interfaces/IOrder";
 import {CourseEnum, CourseFormat} from "../enums/CourseEnum";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
+import {User} from "./userModel";
 
 const orderSchema = new Schema({
     id: {type: String, },
@@ -19,7 +20,7 @@ const orderSchema = new Schema({
     group:{type:String, required:true},
     msg:{type:String,},
     utm:{type:String, default: null},
-    manager:{type:String, required:true}
+    manager: {type: Schema.Types.ObjectId, ref: User, default: null}
 
 },
     {timestamps:false, versionKey:false});

@@ -21,4 +21,4 @@ export interface IOrder {
     group: string,
     manager: string,
 }
-export type OrderDTO = Pick<IOrder, "name" | "surname" | "email" | "phone" | "age" | "status" | "sum" | "alreadyPaid" | "course" | "course_format" | "course_type" | "group">
+export type OrderDTO = Pick<IOrder, "name" | "surname" | "email" | "phone" | "age" | "status" | "sum" | "alreadyPaid" | "course" | "course_format" | "course_type" | "group" | "manager">

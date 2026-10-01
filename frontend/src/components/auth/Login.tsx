@@ -22,11 +22,11 @@ const Login =  () => {
     }
     return (
         <form onSubmit={handleSubmit(login)}>
-            <div className="field" style={{width: "220px"}}>
+            <div className="field">
                 <label htmlFor={'email'}>Email</label>
                 <input type={"text"} {...register('email')} placeholder={"Email"}/>
             </div>
-            <div className="field" style={{width: "220px"}}>
+            <div className="field">
                 <label htmlFor={'password'}>Password</label>
                 <input type={"password"} {...register('password')} placeholder={"Password"}/>
                 {serverError && <div className="error">{serverError}</div>}

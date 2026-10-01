@@ -3,6 +3,7 @@ import {Order} from "../models/orderModel";
 import {IQuery} from "../interfaces/IQuery";
 import {QueryFilter} from "mongoose";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
+import {userRepository} from "./userRepository";
 
 class OrderRepository {
     async getAll(query:IQuery):Promise<[IOrder[], number]>{
@@ -10,21 +11,21 @@ class OrderRepository {
         const skip = query.pageSize * (query.page - 1);
         const filterObject: QueryFilter<IOrder> = { };
         if (query.status === "null" || query.status === CourseStatusEnum.new) {
-            filterObject.$or = [
-                { status: CourseStatusEnum.new },
-                { status: null },
-            ];
+            filterObject.$or = [{ status: CourseStatusEnum.new }, { status: null }];
         } else if (query.status) {
             filterObject.status = query.status as CourseStatusEnum;
         }
+        if (query.manager) {
+            const managers = await userRepository.getByParams({surname: query.manager});
+            filterObject.manager = {$in: managers.map(manager => manager._id)};
+        }
         Object.entries(query).forEach(([key, value]) => {
             if (!value) return;
-            if (key === "page" || key === "pageSize" || key === "order" || key === "start_date" || key === "end_date" || key === "status") {
+            if (key === "page" || key === "pageSize" || key === "order" || key === "start_date" || key === "end_date" || key === "status" || key === "manager") {
                 return;
             }
             if (key === "age") {
-                filterObject[key] = Number(value);
-                return;
+                filterObject[key] = Number(value); return;
             }
             filterObject[key] = {$regex: value, $options: "i"};
         });
@@ -39,6 +40,7 @@ class OrderRepository {
         }
         return Promise.all([
             Order.find(filterObject)
+                .populate("manager", "surname")
                 .limit(query.pageSize)
                 .skip(skip)
                 .sort(query.order),
@@ -52,10 +54,7 @@ class OrderRepository {
     getById(id:string):Promise<IOrder | null>{
         return Order.findById(id);
     }
-    // getByParams(params:Partial<IOrder>):Promise<IOrder[]>{
-    //     return Order.find(params);
-    // }
-    update(id:string, dto:OrderDTO):Promise<IOrder | null>{
+    update(id:string, dto:Partial<OrderDTO>):Promise<IOrder | null>{
         return Order.findByIdAndUpdate(id, dto, {returnDocument: "after"});
     }
 

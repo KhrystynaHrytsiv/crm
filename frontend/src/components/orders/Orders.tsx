@@ -6,11 +6,12 @@ import {columns} from "../../constants/orders";
 import {useState} from "react";
 import OrderForm from "../forms/OrderForm";
 import {Filter} from "../../constants/filters";
+import Comment from "../comment/Comment";
 
 const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+    const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
 
     const handleSort = async(field: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -26,13 +27,16 @@ const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
         if (value === null || value === undefined || value === "") {
             return "null";
         }
-
+        if (key === "manager" && typeof value === "object" && value !== null) {
+            return (value as { surname: string }).surname;
+        }
         if (key === "created_at") {
             return new Date(value as Date).toLocaleDateString("en-US",
                 {month: "long", day: "2-digit", year: "numeric",});
         }
         return String(value);
     };
+
     return (
         <>
         <table className={css.table}>
@@ -48,7 +52,7 @@ const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
             {orders.map((order) => (
                 <tr key={order._id}>
                     {columns.map((column) => (
-                        <td key={column.key} onClick={()=>setSelectedOrderId(order._id)}>
+                        <td key={column.key} onClick={()=>setSelectedOrder(order)}>
                             {renderValue(order[column.key], column.key)}
                         </td>
                     ))}
@@ -56,7 +60,7 @@ const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
             ))}
             </tbody>
         </table>
-    {selectedOrderId && <OrderForm filters={filters} onClose={()=>setSelectedOrderId(null)} orderId={selectedOrderId}/>}
+    {selectedOrder && <Comment order={selectedOrder} filters={filters}/>}
     </>
     );
 };

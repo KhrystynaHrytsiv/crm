@@ -2,18 +2,18 @@ import joi from "joi";
 import {OrderSortEnum} from "../enums/OrderSortEnum";
 
 export class OrderValidator {
-    private static name= joi.string().max(20);
-    private static surname= joi.string().max(35);
-    private static email= joi.string().email();
-    private static phone= joi.string().pattern(/^(?:\+380|380|0)(?:\d{9})$/);
-    private static age= joi.number().min(16).max(90);
-    private static course= joi.string();
-    private static course_format= joi.string();
-    private static course_type= joi.string();
-    private static status= joi.string();
-    private static sum= joi.number();
-    private static alreadyPaid= joi.number();
-    private static group= joi.string();
+    private static name= joi.string().max(20).allow(null, "");
+    private static surname= joi.string().max(35).allow(null, "");
+    private static email= joi.string().email().allow(null, "");
+    private static phone= joi.string().pattern(/^(?:\+380|380|0)(\d{9})$/).allow(null, "");
+    private static age= joi.number().min(16).max(90).allow(null, "");
+    private static course= joi.string().allow(null, "");
+    private static course_format= joi.string().allow(null, "");
+    private static course_type= joi.string().allow(null, "");
+    private static status= joi.string().allow(null, "");
+    private static sum= joi.number().allow(null, "");
+    private static alreadyPaid= joi.number().allow(null, "");
+    private static group= joi.string().allow(null, "");
 
     public static update = joi.object({
         name: this.name,

@@ -3,7 +3,7 @@ import {api} from "./apiService";
 
 export const orderService = {
     async update (id:string, dto:OrderDTO) {
-        const {data} = await api.patch<IOrder>(`/orders/${id}`, dto);
+        const {data} = await api.put<IOrder>(`/orders/${id}`, dto);
         return data;
     }
 }

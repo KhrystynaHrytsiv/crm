@@ -45,28 +45,30 @@
 import {useForm} from "react-hook-form";
 import {extendedInputs, fieldOrder, Filter} from "../../constants/filters";
 import css from "./OrderForm.module.css";
-import {OrderDTO} from "../../../../backend/src/interfaces/IOrder";
+import {IOrder, OrderDTO} from "../../../../backend/src/interfaces/IOrder";
 import {orderService} from "../../services/orderService";
-import {FC} from "react";
+import {FC, useState} from "react";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {OrderValidator} from "../../../../backend/src/validators/orderValidator";
 
 interface IProp {
     filters: Filter,
     onClose: () => void,
-    orderId:string,
+    order:IOrder,
 }
 
-const OrderForm:FC<IProp> = ({filters, onClose, orderId}) => {
-    const { register, handleSubmit, formState:{isValid, errors} } = useForm<OrderDTO>({mode: "all", resolver:joiResolver(OrderValidator.update)});
+const OrderForm:FC<IProp> = ({filters, onClose, order}) => {
+    const [showGroupAction, setShowGroupAction] = useState(false);
+    const {_id, created_at, manager, msg, utm, alreadyPaid, ...formValues} = order;
+    const { register, handleSubmit, formState:{ errors} } = useForm<OrderDTO>({mode: "all", resolver:joiResolver(OrderValidator.update), defaultValues: formValues});
     const submit = async (dto:OrderDTO) =>{
         try{
-            await orderService.update(orderId, dto)
+            await orderService.update(_id, dto);
+            onClose();
         }catch (e) {
             console.log(e);
         }
     }
-
     return (
         <div className="overlay">
             <form className={css.form} onSubmit={handleSubmit(submit)}>
@@ -83,6 +85,14 @@ const OrderForm:FC<IProp> = ({filters, onClose, orderId}) => {
                                         <option key={option} value={option}>{option}</option>
                                     ))}
                                 </select>
+                                    {key === "group" &&
+                                        <button className='greenButton' style={{height: "25px", margin: 0, fontSize: "14px"}}
+                                                onClick={()=>setShowGroupAction(prev =>!prev)}>Add group</button>}
+
+                                <div className="buttonBlock">
+                                    <button>Add</button>
+                                    <button>Select</button>
+                                </div>
                             </div>
                         );
                     }
@@ -103,7 +113,7 @@ const OrderForm:FC<IProp> = ({filters, onClose, orderId}) => {
 
                 <div className={css.buttonBlock}>
                     <button type="button" className="greenButton" onClick={onClose}>Close</button>
-                    <button type="submit" className="greenButton" disabled={!isValid}>Submit</button>
+                    <button type="submit" className="greenButton">Submit</button>
                 </div>
             </form>
         </div>
