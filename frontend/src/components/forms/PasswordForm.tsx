@@ -22,7 +22,7 @@ const PasswordForm = ({token, action}: {token:string, action: ActionTokenType}) 
         }
     }
     return (
-        <form onSubmit={handleSubmit(submit)}>
+        <form onSubmit={handleSubmit(submit)} className="form">
             <div className="field">
                 <label htmlFor={'password'}>Password</label>
                 <input type={'password'} {...register('password')}/>

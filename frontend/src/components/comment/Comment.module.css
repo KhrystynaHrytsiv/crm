@@ -6,27 +6,35 @@
     box-sizing: border-box;
     padding: 20px;
 }
+.rightBlock{
+    display: flex;
+    width: 60%;
+    align-items: center;
+}
 .details{
     display: flex;
-    width: 50%;
+    flex-direction: column;
+    width: 100%;
     justify-content: space-between;
     gap: 10px;
-
 }
-.commentBlock{
-    background-color: #f6f5f5;
-    width: 95%;
+.details div{
     display: flex;
     justify-content: space-between;
-    height: 80px;
+}
+.commentForm{
+    background-color: #f6f5f5;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
     border-radius: 8px;
     align-items: center;
 }
-.commentBlock input{
+.commentForm input{
     width: 80%;
     margin: 10px;
 }
-.commentBlock button{
+.commentForm button{
     width: 15%;
     border-radius: 5px;
     border: none;

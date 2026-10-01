@@ -18,7 +18,7 @@ const CreateManagerForm = ({onClose}:{onClose:() => void}) => {
     }
     return (
         <div className="overlay">
-            <form onSubmit={handleSubmit(submit)}>
+            <form onSubmit={handleSubmit(submit)} className="form">
                 {fields.map(field =>
                 <div key={field.name} className='field'>
                     <label htmlFor={field.name}>{field.label}</label>

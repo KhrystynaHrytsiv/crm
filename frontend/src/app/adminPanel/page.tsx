@@ -3,6 +3,7 @@ import {generalService} from "../../services/generalService";
 import {IUser} from "../../../../backend/src/interfaces/IUser";
 import Admin from "../../components/admin/Admin";
 import {useEffect, useState} from "react";
+import Header from "../../components/header/Header";
 
 const AdminPanel =  () => {
     const [managers, setManagers] = useState<IUser[]>([]);
@@ -15,6 +16,7 @@ const AdminPanel =  () => {
     };
     return (
         <div>
+            {/*<Header me={}/>*/}
             <Admin managers={managers} updateStatus={updateManagerStatus}/>
         </div>
     );

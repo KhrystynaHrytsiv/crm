@@ -35,7 +35,9 @@
 .info input{
     width: 20px;
     height: 20px;
+    accent-color: rgb(67, 160, 71);
 }
+
 .icon{
     height: 35px;
     width: 35px;

@@ -6,7 +6,7 @@ class CommentRepository {
        return Comment.create(dto)
    }
    getAll (orderId:string):Promise<IComment[]>{
-       return Comment.find({orderId})
+       return Comment.find({orderId}).populate("manager", "surname");
    }
 }
 export const commentRepository = new CommentRepository();

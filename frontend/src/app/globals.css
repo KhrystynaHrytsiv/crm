@@ -24,7 +24,7 @@ body{
     min-height: 100vh;
     box-sizing: border-box;
 }
-form{
+.form{
     display: flex;
     align-items: center;
     justify-content: center;

@@ -21,7 +21,7 @@ const Login =  () => {
         }
     }
     return (
-        <form onSubmit={handleSubmit(login)}>
+        <form onSubmit={handleSubmit(login)} className="form">
             <div className="field">
                 <label htmlFor={'email'}>Email</label>
                 <input type={"text"} {...register('email')} placeholder={"Email"}/>

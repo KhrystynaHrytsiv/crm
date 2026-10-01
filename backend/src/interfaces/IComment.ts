@@ -1,4 +1,5 @@
 export interface IComment{
+    _id?:string,
     orderId:string,
     comment:string,
     manager:string,
