@@ -1,6 +1,5 @@
 .container{
     width: 100vw;
-    background-color: rgb(233, 233, 233);
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
@@ -10,6 +9,7 @@
     display: flex;
     width: 60%;
     align-items: center;
+    gap: 20px;
 }
 .details{
     display: flex;
@@ -17,22 +17,37 @@
     width: 100%;
     justify-content: space-between;
     gap: 10px;
+    box-sizing: border-box;
 }
-.details div{
+.commentBlock{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    gap: 2px;
+    padding: 5px 10px;
+}
+.comment{
     display: flex;
     justify-content: space-between;
+    border-bottom: 0.8px solid rgb(204, 204, 204);
+}
+.comment:nth-last-child(1){
+    border-bottom: none;
 }
 .commentForm{
-    background-color: #f6f5f5;
+    background-color: rgb(255, 255, 255);
     display: flex;
     width: 100%;
     justify-content: space-between;
-    border-radius: 8px;
+    border-radius: 10px;
     align-items: center;
+    gap: 10px;
 }
 .commentForm input{
     width: 80%;
     margin: 10px;
+    background-color: rgb(238, 238, 238)
 }
 .commentForm button{
     width: 15%;

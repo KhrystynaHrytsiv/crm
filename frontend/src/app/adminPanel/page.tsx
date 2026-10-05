@@ -7,8 +7,17 @@ import Header from "../../components/header/Header";
 
 const AdminPanel =  () => {
     const [managers, setManagers] = useState<IUser[]>([]);
+    const [me, setMe] = useState<IUser>()
     useEffect(() => {
-    generalService.get<IUser[]>('/manager').then((res) =>setManagers(res));
+        const getData = async () => {
+            const [managers, me] = await Promise.all([
+                generalService.get<IUser[]>('/manager'),
+                generalService.get<IUser>("/auth/me"),
+            ]);
+            setManagers(managers);
+            setMe(me);
+        };
+        getData();
     }, []);
     const updateManagerStatus = (id: string, isActive: boolean) => {
         setManagers(prev => prev.map(manager => manager._id === id ?
@@ -16,7 +25,7 @@ const AdminPanel =  () => {
     };
     return (
         <div>
-            {/*<Header me={}/>*/}
+            {me && <Header me={me}/>}
             <Admin managers={managers} updateStatus={updateManagerStatus}/>
         </div>
     );

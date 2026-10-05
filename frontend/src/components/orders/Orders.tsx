@@ -3,15 +3,14 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {IOrder} from "../../../../backend/src/interfaces/IOrder";
 import css from "./Orders.module.css";
 import {columns} from "../../constants/orders";
-import {useState} from "react";
-import OrderForm from "../forms/OrderForm";
+import {Fragment, useState} from "react";
 import {Filter} from "../../constants/filters";
 import Comment from "../comment/Comment";
 
 const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
+    const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
     const handleSort = async(field: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -38,7 +37,6 @@ const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
     };
 
     return (
-        <>
         <table className={css.table}>
             <thead>
             <tr>
@@ -49,19 +47,32 @@ const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
             </thead>
 
             <tbody>
-            {orders.map((order) => (
-                <tr key={order._id}>
-                    {columns.map((column) => (
-                        <td key={column.key} onClick={()=>setSelectedOrder(order)}>
-                            {renderValue(order[column.key], column.key)}
-                        </td>
-                    ))}
-                </tr>
-            ))}
+                {orders.map((order, index) => (
+                    <Fragment key={order._id}>
+                        <tr key={order._id}  className={index % 2 === 0 ? css.evenRow : css.oddRow}>
+                            {columns.map((column) => (
+                                <td key={column.key} onClick={() => {
+                                    setSelectedOrders(prev =>
+                                        prev.includes(order._id)
+                                            ? prev.filter(id => id !== order._id)
+                                            : [...prev, order._id]
+                                    );
+                                }}>
+                                    {renderValue(order[column.key], column.key)}
+                                </td>
+                            ))}
+                        </tr>
+                        {selectedOrders.includes(order._id) && (
+                            <tr className={index % 2 === 0 ? css.commentEven : css.commentOdd}>
+                                <td colSpan={columns.length}>
+                                    <Comment order={order} filters={filters}/>
+                                </td>
+                            </tr>
+                        )}
+                    </Fragment>
+                ))}
             </tbody>
         </table>
-    {selectedOrder && <Comment order={selectedOrder} filters={filters}/>}
-    </>
     );
 };
 

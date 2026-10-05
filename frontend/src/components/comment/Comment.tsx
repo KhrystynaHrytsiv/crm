@@ -9,12 +9,13 @@ import {useForm} from "react-hook-form";
 import {CommentDto, IComment} from "../../../../backend/src/interfaces/IComment";
 import {orderService} from "../../services/orderService";
 import {generalService} from "../../services/generalService";
+import {CommentResponse} from "../../interfaces/CommentResponse";
 
 const Comment = ({order, filters}: {order:IOrder, filters:Filter}) => {
     const [openForm, setOpenForm] = useState(false);
-    const [comments, setComments] = useState<IComment[]>([]);
+    const [comments, setComments] = useState<CommentResponse[]>([]);
     const router = useRouter();
-    const {handleSubmit, register} = useForm<CommentDto>();
+    const {handleSubmit, register, reset} = useForm<CommentDto>();
 
     const onClose = () =>{
         setOpenForm(false)
@@ -23,13 +24,14 @@ const Comment = ({order, filters}: {order:IOrder, filters:Filter}) => {
     const create = async (dto:CommentDto) =>{
         try{
            await orderService.createComment(order._id,dto);
-            router.refresh();
+           reset();
+           await generalService.get<CommentResponse[]>(`/orders/${order._id}/comments`).then((data) => setComments(data))
         }catch (e) {
             console.log(e);
         }
     }
     useEffect(() => {
-        generalService.get<IComment[]>(`/orders/${order._id}/comments`).then((data) => setComments(data))
+        generalService.get<CommentResponse[]>(`/orders/${order._id}/comments`).then((data) => setComments(data))
     }, [order._id]);
     return (
         <div className={css.container}>
@@ -39,10 +41,12 @@ const Comment = ({order, filters}: {order:IOrder, filters:Filter}) => {
             </div>
             <div className={css.rightBlock}>
             <div className={css.details}>
-                {comments.map(com => <div key={com._id}>
-                    <div>{com.comment}</div>
-                    <div>{com.manager} {new Date(com.created_At).toLocaleDateString("en-US", {month: "long", day: "2-digit", year: "numeric",})}</div>
-                </div>)}
+                {comments.length > 0 && <div className={css.commentBlock}>
+                    {comments.map(com => <div key={com._id} className={css.comment}>
+                        <div>{com.comment}</div>
+                        <div>{com.manager.surname} {new Date(com.created_At).toLocaleDateString("en-US", {month: "long", day: "2-digit", year: "numeric"})}</div>
+                    </div>)}
+                </div>}
                 <form onSubmit={handleSubmit(create)} className={css.commentForm}>
                     <input type={"text"} placeholder={"Comment"} {...register("comment")}/>
                     <button>Submit</button>

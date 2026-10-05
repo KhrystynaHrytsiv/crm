@@ -6,6 +6,7 @@ import {authService} from "../../services/authService";
 import {useRouter} from "next/navigation";
 import {IUser} from "../../../../backend/src/interfaces/IUser";
 import {RoleEnum} from "../../../../backend/src/enums/roleEnum";
+import Link from "next/link";
 
 const Header = ({me}: {me:IUser}) => {
     const router = useRouter();
@@ -20,12 +21,11 @@ const Header = ({me}: {me:IUser}) => {
 
     return (
         <header className={css.header}>
-            <h1>Logo</h1>
+            <h1><Link href={'/orders'}>Logo</Link></h1>
             <div className={css.content}>
                 <p>{me.name}</p>
                 {me.role === RoleEnum.admin &&
-                    <div className={css.icon} onClick={()=>router.push('/adminPanel')}>
-                    <RiUserSettingsLine size={"35px"}/></div>}
+                    <Link href={'/adminPanel'} className={css.icon}><RiUserSettingsLine size={"35px"}/></Link>}
                 <div className={css.icon} onClick={logout}><TbLogout size={"35px"} /></div>
             </div>
         </header>
