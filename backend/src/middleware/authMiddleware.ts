@@ -6,6 +6,7 @@ import {tokenService} from '../services/tokenService';
 import {StatusCode} from "../enums/StatusCode";
 import {TokenPayload} from "../interfaces/IToken";
 import {RoleEnum} from "../enums/roleEnum";
+import {orderService} from "../services/orderService";
 
 class AuthMiddleware {
     checkToken (tokenType:TokenEnum){
@@ -44,7 +45,7 @@ class AuthMiddleware {
             }
         }
     }
-    public hasPermission(req: Request, res: Response, next: NextFunction) {
+    hasPermission(req: Request, res: Response, next: NextFunction) {
         try {
             const { role } = res.locals.tokenPayload as TokenPayload;
             if (role !== RoleEnum.admin ) {
@@ -55,5 +56,21 @@ class AuthMiddleware {
             next(e);
         }
     }
+
+    async canModify(req: Request, res: Response, next: NextFunction){
+        try{
+          const orderId = req.params.orderId as string;
+            const {userId} = res.locals.tokenPayload as TokenPayload;
+            const {manager} = await orderService.getById(orderId);
+            if (manager && manager.toString() !== userId) {
+                throw new apiError("You can`t adjust this order", StatusCode.FORBIDDEN);
+            }
+            next();
+        }catch (e) {
+
+           next(e);
+        }
+    }
+
 }
 export const authMiddleware = new AuthMiddleware();

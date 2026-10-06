@@ -4,11 +4,12 @@ import {RiUserSettingsLine} from "react-icons/ri";
 import css from "./Header.module.css";
 import {authService} from "../../services/authService";
 import {useRouter} from "next/navigation";
-import {IUser} from "../../../../backend/src/interfaces/IUser";
 import {RoleEnum} from "../../../../backend/src/enums/roleEnum";
 import Link from "next/link";
+import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
-const Header = ({me}: {me:IUser}) => {
+const Header = () => {
+    const {me} = useAppSelector(state =>state.auth);
     const router = useRouter();
     const logout = async() =>{
         try {
@@ -23,8 +24,8 @@ const Header = ({me}: {me:IUser}) => {
         <header className={css.header}>
             <h1><Link href={'/orders'}>Logo</Link></h1>
             <div className={css.content}>
-                <p>{me.name}</p>
-                {me.role === RoleEnum.admin &&
+                {me && <p>{me.name}</p>}
+                {me && me.role === RoleEnum.admin &&
                     <Link href={'/adminPanel'} className={css.icon}><RiUserSettingsLine size={"35px"}/></Link>}
                 <div className={css.icon} onClick={logout}><TbLogout size={"35px"} /></div>
             </div>

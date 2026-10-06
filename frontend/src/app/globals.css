@@ -14,6 +14,17 @@ body{
     font-size:16px;
     margin: 10px;
 }
+.greyButton{
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: darkgrey;
+    color: #f6f5f5;
+    height: 40px;
+    text-transform: uppercase;
+    font-size:16px;
+    margin: 10px;
+}
 /******************************forms*************/
 .container{
     background-color: rgb(118, 184, 82);

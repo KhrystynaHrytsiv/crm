@@ -3,13 +3,17 @@ import css from "./Filters.module.css"
 import {TbReload} from "react-icons/tb";
 import {LiaFileExcel} from "react-icons/lia";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Filter, inputs} from "../../constants/filters";
+import {Filter, filters, inputs} from "../../constants/filters";
 import {useState} from "react";
+import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
-const Filters = ({surname, filters}:{surname:string, filters:Filter}) => {
+const Filters = () => {
     const [isDateFocused, setIsDateFocused] = useState(false);
+    const {me} = useAppSelector(state =>state.auth);
+    const {groups} = useAppSelector(state => state.orders);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const allFilters = filters(groups);
 
     const handleFilterChange = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -27,7 +31,7 @@ const Filters = ({surname, filters}:{surname:string, filters:Filter}) => {
                 {inputs.map((input) =>
                     (<input type={'text'} key={input.key} placeholder={input.label}
                             onChange={(e) => handleFilterChange(input.key, e.target.value)}/>))}
-                {filters.map((filter) => (
+                {allFilters.map((filter) => (
                     <select key={filter.key} value={searchParams.get(filter.key) || ""}
                             onChange={(e) => handleFilterChange(filter.key, e.target.value)}>
                         <option value="">{filter.placeholder}</option>
@@ -44,8 +48,9 @@ const Filters = ({surname, filters}:{surname:string, filters:Filter}) => {
             </div>
             <div className={css.info}>
                 <label>
-                    <input type="checkbox" checked={searchParams.get("manager") === surname}
-                           onChange={(e) =>{handleFilterChange("manager", e.target.checked ? surname : "")}}/>
+                    {me &&
+                    <input type="checkbox" checked={searchParams.get("manager") === me.surname}
+                           onChange={(e) =>{handleFilterChange("manager", e.target.checked ? me.surname : "")}}/> }
                     My
                 </label>
                 <div className={css.icon} onClick={()=>router.push('/orders')}>

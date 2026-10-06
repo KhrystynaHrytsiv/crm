@@ -33,9 +33,9 @@ class OrderController {
     }
     async update (req: Request, res:Response, next:NextFunction){
         try{
-            const id = req.params.id as string;
+            const orderId = req.params.orderId as string;
             const body = req.body as OrderDTO;
-            const order = await orderService.update(id, body);
+            const order = await orderService.update(orderId, body);
             res.status(StatusCode.OK).json(order);
         }catch (e) {
             next(e);

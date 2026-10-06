@@ -2,42 +2,48 @@
 import {IOrder} from "../../../../backend/src/interfaces/IOrder";
 import {useEffect, useState} from "react";
 import OrderForm from "../forms/OrderForm";
-import {Filter} from "../../constants/filters";
 import {useRouter} from "next/navigation";
 import css from "./Comment.module.css"
 import {useForm} from "react-hook-form";
-import {CommentDto, IComment} from "../../../../backend/src/interfaces/IComment";
+import {CommentDto} from "../../../../backend/src/interfaces/IComment";
 import {orderService} from "../../services/orderService";
-import {generalService} from "../../services/generalService";
-import {CommentResponse} from "../../interfaces/CommentResponse";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {CommentValidator} from "../../../../backend/src/validators/commentValidator";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
+import {orderActions} from "../../redux/slices/ordersSlice";
 
-const Comment = ({order, filters}: {order:IOrder, filters:Filter}) => {
+const Comment = ({order}: {order:IOrder}) => {
     const [openForm, setOpenForm] = useState(false);
-    const [comments, setComments] = useState<CommentResponse[]>([]);
+    const {comments} = useAppSelector(state => state.orders);
+    const {me} = useAppSelector(state => state.auth);
+    const dispatch = useAppDispatch();
     const router = useRouter();
-    const {handleSubmit, register, reset} = useForm<CommentDto>();
+    const {handleSubmit, register, reset, formState:{isValid, errors}} = useForm<CommentDto>({mode: "all", resolver:joiResolver(CommentValidator.comment)});
+    useEffect(() => {
+        dispatch(orderActions.getComments(order._id))
+    }, [order._id]);
 
     const onClose = () =>{
         setOpenForm(false)
         router.refresh();
     }
+
+    const hasPermission = !!me && (!order.manager ||
+        (typeof order.manager === "object" ? order.manager._id === me._id : order.manager === me._id));
     const create = async (dto:CommentDto) =>{
         try{
            await orderService.createComment(order._id,dto);
            reset();
-           await generalService.get<CommentResponse[]>(`/orders/${order._id}/comments`).then((data) => setComments(data))
+           await dispatch(orderActions.getComments(order._id))
         }catch (e) {
             console.log(e);
         }
     }
-    useEffect(() => {
-        generalService.get<CommentResponse[]>(`/orders/${order._id}/comments`).then((data) => setComments(data))
-    }, [order._id]);
     return (
         <div className={css.container}>
             <div>
-                <p>Message: {order.msg}</p>
-                <p>UTM: {order.utm}</p>
+                <p>Message: {order.msg ? order.msg : "null" }</p>
+                <p>UTM: {order.utm ? order.utm : "null" }</p>
             </div>
             <div className={css.rightBlock}>
             <div className={css.details}>
@@ -48,13 +54,18 @@ const Comment = ({order, filters}: {order:IOrder, filters:Filter}) => {
                     </div>)}
                 </div>}
                 <form onSubmit={handleSubmit(create)} className={css.commentForm}>
-                    <input type={"text"} placeholder={"Comment"} {...register("comment")}/>
-                    <button>Submit</button>
+                    <div className={css.inputBlock}>
+                        <input type={"text"} placeholder={"Comment"} {...register("comment")}/>
+                        {errors.comment?.message && <div className="error">{errors.comment?.message}</div>}
+                    </div>
+                    <button disabled={!isValid} className={isValid ? "greenButton" : "greyButton"}>Submit</button>
                 </form>
             </div>
-                <button className='greenButton' style={{width: "100px"}} onClick={()=>setOpenForm(true)}>Edit</button>
+                <button className={hasPermission ? "greenButton" : "greyButton"} style={{width: "100px"}}
+                        onClick={() => hasPermission && setOpenForm(true)}
+                        disabled={!hasPermission}>Edit</button>
             </div>
-            {openForm && <OrderForm filters={filters} onClose={onClose} order={order}/>}
+            {openForm && <OrderForm onClose={onClose} order={order}/>}
         </div>
     );
 };

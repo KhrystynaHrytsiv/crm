@@ -4,12 +4,13 @@ import {IOrder} from "../../../../backend/src/interfaces/IOrder";
 import css from "./Orders.module.css";
 import {columns} from "../../constants/orders";
 import {Fragment, useState} from "react";
-import {Filter} from "../../constants/filters";
 import Comment from "../comment/Comment";
+import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
-const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
+const Orders = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const {orders} = useAppSelector(state => state.orders);
     const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
     const handleSort = async(field: string) => {
@@ -65,7 +66,7 @@ const Orders = ({orders, filters}:{orders:IOrder[], filters:Filter}) => {
                         {selectedOrders.includes(order._id) && (
                             <tr className={index % 2 === 0 ? css.commentEven : css.commentOdd}>
                                 <td colSpan={columns.length}>
-                                    <Comment order={order} filters={filters}/>
+                                    <Comment order={order}/>
                                 </td>
                             </tr>
                         )}

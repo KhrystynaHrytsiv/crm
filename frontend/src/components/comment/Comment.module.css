@@ -7,7 +7,7 @@
 }
 .rightBlock{
     display: flex;
-    width: 60%;
+    width: 50%;
     align-items: center;
     gap: 20px;
 }
@@ -44,18 +44,11 @@
     align-items: center;
     gap: 10px;
 }
-.commentForm input{
-    width: 80%;
+.inputBlock{
     margin: 10px;
-    background-color: rgb(238, 238, 238)
+    width: 100%;
 }
-.commentForm button{
-    width: 15%;
-    border-radius: 5px;
-    border: none;
-    background-color: darkgrey;
-    color:#f6f5f5;
-    align-items: center;
-    height: 55px;
-    margin: 10px;
+.inputBlock input{
+    width: 100%;
+    background-color: rgb(238, 238, 238)
 }

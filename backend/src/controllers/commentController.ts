@@ -7,7 +7,6 @@ import {TokenPayload} from "../interfaces/IToken";
 class CommentController {
     async create (req: Request, res:Response, next:NextFunction){
         try{
-            console.log(res.locals.tokenPayload, "!!!!!!!!!!");
             const {userId} = res.locals.tokenPayload as TokenPayload;
             const orderId = req.params.orderId as string;
             const body = req.body as CommentDto;

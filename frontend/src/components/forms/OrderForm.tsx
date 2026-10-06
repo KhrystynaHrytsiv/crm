@@ -43,23 +43,25 @@
 "use client";
 
 import {useForm} from "react-hook-form";
-import {extendedInputs, fieldOrder, Filter} from "../../constants/filters";
+import {extendedInputs, fieldOrder, Filter, filters} from "../../constants/filters";
 import css from "./OrderForm.module.css";
 import {IOrder, OrderDTO} from "../../../../backend/src/interfaces/IOrder";
 import {orderService} from "../../services/orderService";
 import {FC, useState} from "react";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {OrderValidator} from "../../../../backend/src/validators/orderValidator";
+import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
 interface IProp {
-    filters: Filter,
     onClose: () => void,
     order:IOrder,
 }
 
-const OrderForm:FC<IProp> = ({filters, onClose, order}) => {
+const OrderForm:FC<IProp> = ({onClose, order}) => {
     const [showGroupAction, setShowGroupAction] = useState(false);
     const {_id, created_at, manager, msg, utm, alreadyPaid, ...formValues} = order;
+    const {groups} = useAppSelector(state => state.orders);
+    const allFilters = filters(groups);
     const { register, handleSubmit, formState:{ errors} } = useForm<OrderDTO>({mode: "all", resolver:joiResolver(OrderValidator.update), defaultValues: formValues});
     const submit = async (dto:OrderDTO) =>{
         try{
@@ -73,7 +75,7 @@ const OrderForm:FC<IProp> = ({filters, onClose, order}) => {
         <div className="overlay">
             <form className={css.form} onSubmit={handleSubmit(submit)}>
                 {fieldOrder.map((key) => {
-                    const filter = filters.find((item) => item.key === key);
+                    const filter = allFilters.find((item) => item.key === key);
 
                     if (filter) {
                         return (

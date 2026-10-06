@@ -9,7 +9,7 @@ export const orderService = {
         return data;
     },
     async createComment (orderId:string, dto:CommentDto):Promise<CommentResponse>{
-       const {data} = await api.post(`/orders/${orderId}`, dto);
+       const {data} = await api.post(`/orders/${orderId}/comments`, dto);
        return data;
     }
 }

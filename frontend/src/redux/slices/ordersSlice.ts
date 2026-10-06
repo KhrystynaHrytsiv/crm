@@ -1,0 +1,65 @@
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {IOrder} from "../../../../backend/src/interfaces/IOrder";
+import {generalService} from "../../services/generalService";
+import {IResPagination} from "../../../../backend/src/interfaces/IResPagination";
+import {CommentResponse} from "../../interfaces/CommentResponse";
+
+
+interface IState{
+    orders:IOrder[],
+    groups: string[],
+    comments:CommentResponse[]
+}
+const initialState: IState ={
+    orders:[],
+    groups: [],
+    comments:[]
+}
+
+const getOrders = createAsyncThunk<IResPagination<IOrder>, {query:string}>(
+    "orderSlice/getOrders",
+    async ({query}, {rejectWithValue}) =>{
+        try {
+           return await generalService.get<IResPagination<IOrder>>(`/orders?${query}`);
+        }catch (e) {
+            return rejectWithValue(e);
+        }
+    }
+);
+const getGroups = createAsyncThunk<string[]>(
+    "orderSlice/getGroups",
+    async (_, {rejectWithValue}) =>{
+        try{
+            return await generalService.get('/orders/groups');
+        }catch (e) {
+            return rejectWithValue(e);
+        }
+    }
+);
+const getComments = createAsyncThunk<CommentResponse[], string>(
+    "orderSlice/getComments",
+    async (orderId, {rejectWithValue})=>{
+        try {
+            return await generalService.get<CommentResponse[]>(`/orders/${orderId}/comments`);
+        }catch (e) {
+            return rejectWithValue(e);
+        }
+    }
+);
+export const orderSLice = createSlice({
+    name: "orderSlice",
+    initialState,
+    reducers:{},
+    extraReducers: builder =>
+        builder
+            .addCase(getOrders.fulfilled, (state, action) =>{
+                state.orders = action.payload.data
+            })
+            .addCase(getGroups.fulfilled, (state, action) =>{
+                state.groups = action.payload
+            })
+            .addCase(getComments.fulfilled, (state, action)=>{
+                state.comments = action.payload
+            })
+});
+export const orderActions = {...orderSLice.actions, getOrders, getGroups, getComments}

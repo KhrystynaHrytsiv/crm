@@ -4,6 +4,7 @@ import {IOrder, OrderDTO} from "../interfaces/IOrder";
 import {IResPagination} from "../interfaces/IResPagination";
 import {apiError} from "../error/apiError";
 import {StatusCode} from "../enums/StatusCode";
+import {CourseStatusEnum} from "../enums/courseStatusEnum";
 
 class OrderService {
     async getAll(query:IQuery):Promise<IResPagination<IOrder>>{
@@ -28,12 +29,14 @@ class OrderService {
         return order;
     }
     async update(id: string, dto: Partial<OrderDTO>): Promise<IOrder> {
-        await this.getById(id);
-        const order = await orderRepository.update(id, dto);
-        if (!order) {
+        const order = await this.getById(id);
+        const updatedOrder = await orderRepository.update(order._id,
+            dto.status === CourseStatusEnum.new ? { ...dto, manager: null } : dto);
+
+        if (!updatedOrder) {
             throw new apiError("Order not found", StatusCode.NOT_FOUND);
         }
-        return order;
+        return updatedOrder;
     }
 }
 export const orderService = new OrderService();
