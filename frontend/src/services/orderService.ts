@@ -4,7 +4,7 @@ import {CommentDto} from "../../../backend/src/interfaces/IComment";
 import {CommentResponse} from "../interfaces/CommentResponse";
 
 export const orderService = {
-    async update (id:string, dto:OrderDTO):Promise<IOrder> {
+    async update (id:string, dto:Partial<OrderDTO>):Promise<IOrder> {
         const {data} = await api.put<IOrder>(`/orders/${id}`, dto);
         return data;
     },

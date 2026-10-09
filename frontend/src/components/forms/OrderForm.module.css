@@ -2,7 +2,6 @@
     display: grid;
     grid-template-rows: repeat(6, 1fr);
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
     width: 600px;
     align-items: center;
     justify-content: center;
@@ -10,10 +9,10 @@
     background-color: #f6f5f5;
     border-radius: 8px;
     box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.25);
-    padding: 30px;
+    padding: 20px;
 }
-.form select{
-    height: 50px;
+.form select, .form input{
+    height: 45px;
     border-radius: 8px;
     border: none;
     background-color: #e3e3e3;
@@ -29,4 +28,22 @@
     grid-column: 1 / -1;
     display: flex;
     justify-content: flex-end;
+}
+.groupActions{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.addButtonsBlock{
+    display: flex;
+    height: 25px;
+}
+.addButton{
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(67, 160, 71);
+    color: #f6f5f5;
+    text-transform: uppercase;
+    font-size:13px;
 }
