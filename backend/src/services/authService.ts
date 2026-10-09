@@ -7,6 +7,8 @@ import {passwordService} from "./passwordService";
 import {userRepository} from "../repositories/userRepository";
 import {IAuth} from "../interfaces/IAuth";
 import {userService} from "./userService";
+import {TokenEnum} from "../enums/tokenEnum";
+import {tokenRepository} from "../repositories/tokenRepository";
 
 class AuthService {
     async login(dto:IAuth):Promise<{tokens:TokensPair, user:IUser}>{
@@ -31,6 +33,21 @@ class AuthService {
     }
     async me(userId:string):Promise<IUser>{
         return await userService.getById(userId);
+    }
+    public async refresh(refreshToken: string) {
+        const tokenFromDb = await tokenRepository.findByParams({refreshToken,});
+        if (!tokenFromDb) {
+            throw new apiError("Refresh token not found", StatusCode.UNAUTHORIZED);
+        }
+
+        const tokenPayload = tokenService.verifyTokens(refreshToken,
+            TokenEnum.refresh,
+        );
+
+        await tokenService.delete({ refreshToken });
+        const tokens = tokenService.generateTokens({userId: tokenPayload.userId, role: tokenPayload.role});
+        await tokenService.createToken(tokens, tokenPayload.userId);
+        return tokens;
     }
 };
 export const authService = new AuthService();
