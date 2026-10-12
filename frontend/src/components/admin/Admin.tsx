@@ -2,20 +2,17 @@ import {IUser} from "../../../../backend/src/interfaces/IUser";
 import Manager from "../manager/Manager";
 import {FC, useState} from "react";
 import CreateManagerForm from "../forms/CreateManagerForm";
+import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
-interface IProp {
-    managers:IUser[],
-    updateStatus:(id: string, isActive: boolean) => void;
-}
 
-const Admin:FC<IProp> = ({managers, updateStatus}) => {
+const Admin = () => {
     const [isOpen, setIsOpen] = useState(false);
-
+    const {managers} = useAppSelector(state => state.manager);
     return (
         <div>
             <button className='greenButton' onClick={()=> setIsOpen(true)}>Create</button>
             {isOpen && <CreateManagerForm onClose={()=>setIsOpen(false)}/>}
-            {managers.map(manager => <Manager key={manager._id} manager={manager} updateStatus={updateStatus}/>)}
+            {managers && managers.map(manager => <Manager key={manager._id} manager={manager}/>)}
         </div>
     );
 };

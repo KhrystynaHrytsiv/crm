@@ -15,7 +15,7 @@ import {orderActions} from "../../redux/slices/ordersSlice";
 const Comment = ({order}: {order:IOrder}) => {
     const [openForm, setOpenForm] = useState(false);
     const {comments} = useAppSelector(state => state.orders);
-    const {me} = useAppSelector(state => state.auth);
+    const {me} = useAppSelector(state => state.manager);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {handleSubmit, register, reset, formState:{isValid, errors}} = useForm<CommentDto>({mode: "all", resolver:joiResolver(CommentValidator.comment)});

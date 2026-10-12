@@ -5,11 +5,13 @@ import {managerService} from "../../services/managerService";
 import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
 import {ActionType} from "../../../../backend/src/interfaces/ActionType";
 import {Dispatch, FC, SetStateAction} from "react";
+import {useAppDispatch} from "../../redux/hooks/reduxHooks";
+import {managerAction} from "../../redux/slices/managerSlice";
 interface IProp {
     manager:IUser,
-    updateStatus:(id: string, isActive: boolean) => void;
 }
-const Manager:FC<IProp> = ({manager, updateStatus}) => {
+const Manager:FC<IProp> = ({manager}) => {
+    const dispatch = useAppDispatch();
    const handleAction = async (action:ActionTokenType) =>{
        try{
         const url = await managerService.actionRequest(manager._id, action);
@@ -22,7 +24,8 @@ const Manager:FC<IProp> = ({manager, updateStatus}) => {
    const changeStatus = async (action:ActionType) =>{
        try{
            await managerService.changeStatus(manager._id, action);
-           updateStatus(manager._id, action === "unban");
+           dispatch(managerAction.updateManagerStatus({id: manager._id, isActive: action === "unban"}));
+
        }catch (e) {
            console.log(e);
        }

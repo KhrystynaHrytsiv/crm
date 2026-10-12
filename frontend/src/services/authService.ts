@@ -1,5 +1,6 @@
 import {IAuth} from "../../../backend/src/interfaces/IAuth";
 import {api} from "./apiService";
+import {IToken} from "../../../backend/src/interfaces/IToken";
 
 
 export const authService = {
@@ -19,7 +20,19 @@ export const authService = {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
+    },
+    async refresh () {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken){
+            throw new Error("Refresh token is missing")
+        }
+        const {data: {accessToken, refreshToken: newRefresh}}= await api.post<IToken>('/auth/refresh', {}, {headers: {Authorization: `Bearer ${refreshToken}`}});
+        localStorage.setItem('accessToken', accessToken)
+        localStorage.setItem('refreshToken', newRefresh)
+    },
+    async deleteTokenFromLS (){
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
     }
-
 
 };

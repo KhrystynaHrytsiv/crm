@@ -6,7 +6,7 @@ import Orders from "../../components/orders/Orders";
 import Filters from "../../components/filters/Filters";
 import Header from "../../components/header/Header";
 import {useAppDispatch} from "../../redux/hooks/reduxHooks";
-import {authActions} from "../../redux/slices/authSlice";
+import {managerAction} from "../../redux/slices/managerSlice";
 import {orderActions} from "../../redux/slices/ordersSlice";
 
 const OrdersPage = () => {
@@ -15,7 +15,7 @@ const OrdersPage = () => {
 
     useEffect(() => {
         const query = searchParams.toString();
-        dispatch(authActions.getMe());
+        dispatch(managerAction.getMe());
         dispatch(orderActions.getOrders({query}));
         dispatch(orderActions.getGroups());
     }, [searchParams, dispatch]);

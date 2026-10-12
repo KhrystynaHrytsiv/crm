@@ -3,13 +3,13 @@ import css from "./Filters.module.css"
 import {TbReload} from "react-icons/tb";
 import {LiaFileExcel} from "react-icons/lia";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Filter, filters, inputs} from "../../constants/filters";
+import {filters, inputs} from "../../constants/filters";
 import {useState} from "react";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
 const Filters = () => {
     const [isDateFocused, setIsDateFocused] = useState(false);
-    const {me} = useAppSelector(state =>state.auth);
+    const {me} = useAppSelector(state =>state.manager);
     const {groups} = useAppSelector(state => state.orders);
     const router = useRouter();
     const searchParams = useSearchParams();

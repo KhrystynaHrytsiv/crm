@@ -9,7 +9,7 @@ import Link from "next/link";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";
 
 const Header = () => {
-    const {me} = useAppSelector(state =>state.auth);
+    const {me} = useAppSelector(state =>state.manager);
     const router = useRouter();
     const logout = async() =>{
         try {

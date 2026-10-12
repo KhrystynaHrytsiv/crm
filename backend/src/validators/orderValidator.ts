@@ -28,6 +28,7 @@ export class OrderValidator {
         sum: this.sum,
         alreadyPaid: this.alreadyPaid,
         group: this.group,
+        newGroup: joi.string().allow("").optional()
     });
 
     public static query = joi.object({
