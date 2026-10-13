@@ -4,9 +4,10 @@ import "./Manager.css";
 import {managerService} from "../../services/managerService";
 import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
 import {ActionType} from "../../../../backend/src/interfaces/ActionType";
-import {Dispatch, FC, SetStateAction} from "react";
+import {FC} from "react";
 import {useAppDispatch} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
+
 interface IProp {
     manager:IUser,
 }

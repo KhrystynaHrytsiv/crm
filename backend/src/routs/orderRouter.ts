@@ -9,6 +9,7 @@ import {authMiddleware} from "../middleware/authMiddleware";
 const router = Router();
 router.get('',  orderController.getAll);
 router.get('/groups', orderController.getGroups);
+router.get('/statistics', orderController.getStatistics)
 router.get('/:id',validationMiddleware.isIdValidate("id"), orderController.getById);
 router.put('/:orderId',
     validationMiddleware.isIdValidate("orderId"),

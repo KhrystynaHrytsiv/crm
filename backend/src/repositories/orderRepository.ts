@@ -57,6 +57,18 @@ class OrderRepository {
     update(id:string, dto:Partial<OrderDTO>):Promise<IOrder | null>{
         return Order.findByIdAndUpdate(id, dto, {returnDocument: "after"});
     }
-
+    async getStatistics() {
+        const statuses = Object.values(CourseStatusEnum);
+        const statistics = await Promise.all(
+            statuses.map(async (status) => ({
+                [status]: await Order.countDocuments({ status }),
+            }))
+        );
+        const total = await Order.countDocuments();
+        const nullCount = await Order.countDocuments({ status: null });
+        return {total, ...Object.assign({}, ...statistics),
+            null: nullCount,
+            };
+    }
 }
 export const orderRepository = new OrderRepository();

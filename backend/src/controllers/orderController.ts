@@ -41,6 +41,14 @@ class OrderController {
             next(e);
         }
     }
+    async getStatistics (req: Request, res:Response, next:NextFunction){
+        try{
+            const statistics  = await orderService.getStatistics();
+            res.status(StatusCode.OK).json(statistics);
+        }catch (e) {
+            next(e);
+        }
+    }
 
 }
 export const orderController = new OrderController();

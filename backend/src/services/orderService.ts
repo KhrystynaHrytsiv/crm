@@ -38,5 +38,8 @@ class OrderService {
         }
         return updatedOrder;
     }
+    async getStatistics(){
+        return orderRepository.getStatistics()
+    }
 }
 export const orderService = new OrderService();

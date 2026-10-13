@@ -8,12 +8,14 @@ import {CommentResponse} from "../../interfaces/CommentResponse";
 interface IState{
     orders:IOrder[],
     groups: string[],
-    comments:CommentResponse[]
+    comments:CommentResponse[],
+    statistics:Record<string, number>,
 }
 const initialState: IState ={
     orders:[],
     groups: [],
-    comments:[]
+    comments:[],
+    statistics:{},
 }
 
 const getOrders = createAsyncThunk<IResPagination<IOrder>, {query:string}>(
@@ -46,6 +48,16 @@ const getComments = createAsyncThunk<CommentResponse[], string>(
         }
     }
 );
+const getStatistics = createAsyncThunk<Record<string, number>>(
+    "orderSlice/getStatistics",
+    async (_, {rejectWithValue}) =>{
+        try{
+            return await generalService.get('/orders/statistics')
+        }catch (e) {
+            return rejectWithValue(e);
+        }
+    }
+)
 export const orderSLice = createSlice({
     name: "orderSlice",
     initialState,
@@ -61,5 +73,8 @@ export const orderSLice = createSlice({
             .addCase(getComments.fulfilled, (state, action)=>{
                 state.comments = action.payload
             })
+            .addCase(getStatistics.fulfilled, (state, action) =>{
+                state.statistics = action.payload;
+            })
 });
-export const orderActions = {...orderSLice.actions, getOrders, getGroups, getComments}
+export const orderActions = {...orderSLice.actions, getOrders, getGroups, getComments, getStatistics}

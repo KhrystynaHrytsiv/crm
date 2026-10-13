@@ -35,6 +35,7 @@ const Comment = ({order}: {order:IOrder}) => {
            await orderService.createComment(order._id,dto);
            reset();
            await dispatch(orderActions.getComments(order._id))
+            router.refresh();
         }catch (e) {
             console.log(e);
         }
