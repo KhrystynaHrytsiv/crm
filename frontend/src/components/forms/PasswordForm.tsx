@@ -11,7 +11,7 @@ interface IFormData{
 }
 
 const PasswordForm = ({token, action}: {token:string, action: ActionTokenType}) => {
-    const {register, handleSubmit, formState:{errors}} = useForm<IFormData>({mode: "all", resolver:joiResolver(PasswordValidator.passwordValid)});
+    const {register, handleSubmit, formState:{errors}} = useForm<IFormData>({mode: "all", resolver:joiResolver(PasswordValidator.passwordFormValid)});
     const router = useRouter();
     const submit = async (dto:IFormData) =>{
         try{

@@ -28,11 +28,13 @@ class OrderService {
         }
         return order;
     }
-    async update(id: string, dto: Partial<OrderDTO>): Promise<IOrder> {
+    async update(id: string, dto: Partial<OrderDTO>, userId:string): Promise<IOrder> {
         const order = await this.getById(id);
-        const updatedOrder = await orderRepository.update(order._id,
-            dto.status === CourseStatusEnum.new ? { ...dto, manager: null } : dto);
+        const updateData = dto.status === CourseStatusEnum.new
+            ? { ...dto, manager: null }
+            : { ...dto, manager: userId };
 
+        const updatedOrder = await orderRepository.update(order._id, updateData);
         if (!updatedOrder) {
             throw new apiError("Order not found", StatusCode.NOT_FOUND);
         }

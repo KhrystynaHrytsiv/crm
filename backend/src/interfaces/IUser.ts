@@ -8,7 +8,7 @@ export interface IUser {
     is_Active: boolean,
     name:string,
     surname:string,
-    last_login:Date
+    last_login:Date | null
 }
 
 export type ManagerDTO = Pick<IUser, "name" | "surname" | "email">;

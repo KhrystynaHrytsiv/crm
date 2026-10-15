@@ -1,17 +1,17 @@
-import {IUser} from "../../../../backend/src/interfaces/IUser";
-import '../../app/globals.css';
-import "./Manager.css";
+import css from "./Manager.module.css";
 import {managerService} from "../../services/managerService";
 import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
 import {ActionType} from "../../../../backend/src/interfaces/ActionType";
 import {FC} from "react";
 import {useAppDispatch} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
+import {IManagerWithStatistics} from "../../../../backend/src/interfaces/IManagerWithStatistics";
 
 interface IProp {
-    manager:IUser,
+    managerWithStatistic:IManagerWithStatistics,
 }
-const Manager:FC<IProp> = ({manager}) => {
+const Manager:FC<IProp> = ({managerWithStatistic}) => {
+    const {manager, statistics} = managerWithStatistic;
     const dispatch = useAppDispatch();
    const handleAction = async (action:ActionTokenType) =>{
        try{
@@ -32,11 +32,21 @@ const Manager:FC<IProp> = ({manager}) => {
        }
    }
     return (
-        <div className="block">
-            <div className="info">
+        <div className={css.block}>
+            <div className={css.info}>
                 {Object.entries(manager).map(([key, value]) => (
-                    <p key={key}>{key}: {String(value)}</p>
+                    (key !== 'role') &&
+                    <p key={key}>{key}: { key === "last_login" ? value
+                            ? new Date(String(value)).toLocaleDateString("en-US", {month: "long", day: "numeric", year: "numeric"})
+                            : "null"
+                        : String(value)
+                    }</p>
                 ))}
+            </div>
+            <div className={css.statistic}>
+                {Object.entries(statistics).map(([key, value]) =>
+                        (value > 0 || key === "total") && <p key={key}>{key}: {String(value)}</p>
+                    )}
             </div>
             <div className="buttonBlock">
                 <button className='greenButton' onClick={() =>

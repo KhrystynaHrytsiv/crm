@@ -1,10 +1,11 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {IUser} from "../../../../backend/src/interfaces/IUser";
 import {generalService} from "../../services/generalService";
+import {IManagerWithStatistics} from "../../../../backend/src/interfaces/IManagerWithStatistics";
 
 interface AuthState{
     me:IUser | null,
-    managers:IUser[],
+    managers:IManagerWithStatistics[],
 }
 let initialState: AuthState ={
     me: null,
@@ -21,11 +22,11 @@ const getMe = createAsyncThunk<IUser>(
         }
 
 });
-const getManagers = createAsyncThunk<IUser[]>(
+const getManagers = createAsyncThunk<IManagerWithStatistics[]>(
     "managerSlice/getManagers",
     async (_, {rejectWithValue}) =>{
         try {
-           return await generalService.get('/manager')
+            return await generalService.get('/manager');
         }catch (e) {
             return rejectWithValue(e);
         }
@@ -37,7 +38,8 @@ export const managerSlice = createSlice({
     reducers:{
         updateManagerStatus: (state, action) => {
             const { id, isActive } = action.payload;
-            state.managers = state.managers.map(manager => manager._id === id ? { ...manager, is_Active: isActive } : manager);
+            state.managers = state.managers.map((item) => item.manager._id === id ? { ...item, manager: {...item.manager, is_Active: isActive},
+                } : item);
         },
     },
     extraReducers: builder =>

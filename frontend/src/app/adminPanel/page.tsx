@@ -9,6 +9,7 @@ import {orderActions} from "../../redux/slices/ordersSlice";
 const AdminPanel =  () => {
     const dispatch = useAppDispatch();
     useEffect(() => {
+        dispatch(managerAction.getMe());
         dispatch(managerAction.getManagers())
         dispatch(orderActions.getStatistics())
     }, []);

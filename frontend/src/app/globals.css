@@ -5,13 +5,13 @@ body{
 }
 .greenButton{
     padding: 5px 10px;
-    border-radius: 8px;
+    border-radius: 5px;
     border: none;
     background-color: rgb(67, 160, 71);
-    color: #f6f5f5;
+    color:rgb(255, 255, 255);
     height: 40px;
     text-transform: uppercase;
-    font-size:16px;
+    font-size:14px;
     margin: 10px;
 }
 .greyButton{

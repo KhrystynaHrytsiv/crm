@@ -8,4 +8,4 @@ import {managerRouter} from "./userRouter";
 export const apiRouter = Router();
 apiRouter.use('/orders',authMiddleware.checkToken(TokenEnum.access), orderRouter);
 apiRouter.use('/auth', authRouter);
-apiRouter.use('/manager', authMiddleware.checkToken(TokenEnum.access), managerRouter)
+apiRouter.use('/manager', managerRouter)

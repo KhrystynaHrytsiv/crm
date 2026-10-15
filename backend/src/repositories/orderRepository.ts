@@ -4,6 +4,7 @@ import {IQuery} from "../interfaces/IQuery";
 import {QueryFilter} from "mongoose";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
 import {userRepository} from "./userRepository";
+import {IStatistic} from "../interfaces/IStatistic";
 
 class OrderRepository {
     async getAll(query:IQuery):Promise<[IOrder[], number]>{
@@ -57,18 +58,17 @@ class OrderRepository {
     update(id:string, dto:Partial<OrderDTO>):Promise<IOrder | null>{
         return Order.findByIdAndUpdate(id, dto, {returnDocument: "after"});
     }
-    async getStatistics() {
+    async getStatistics(managerId?: string):Promise<IStatistic> {
+        const filter = managerId ? { manager: managerId } : {};
         const statuses = Object.values(CourseStatusEnum);
         const statistics = await Promise.all(
             statuses.map(async (status) => ({
-                [status]: await Order.countDocuments({ status }),
+                [status]: await Order.countDocuments({ ...filter, status }),
             }))
         );
-        const total = await Order.countDocuments();
-        const nullCount = await Order.countDocuments({ status: null });
-        return {total, ...Object.assign({}, ...statistics),
-            null: nullCount,
-            };
+        const total = await Order.countDocuments(filter);
+        const nullCount = await Order.countDocuments({...filter, status: { $type: 10 }});
+        return {total, ...Object.assign({}, ...statistics), null: nullCount};
     }
 }
 export const orderRepository = new OrderRepository();

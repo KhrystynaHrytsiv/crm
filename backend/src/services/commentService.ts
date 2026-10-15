@@ -6,7 +6,7 @@ import {CourseStatusEnum} from "../enums/courseStatusEnum";
 class CommentService {
     async create(dto: CommentDto, orderId: string, userId: string): Promise<IComment> {
         const comment = await commentRepository.create({...dto, orderId, manager:userId, created_At: new Date()});
-        await orderService.update(orderId, {status: CourseStatusEnum.inWork, manager: userId})
+        await orderService.update(orderId, {status: CourseStatusEnum.inWork}, userId)
         return comment;
     }
     async getAll (orderId:string):Promise<IComment[]>{

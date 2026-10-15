@@ -17,10 +17,6 @@ class UserRepository {
     getByParams(params:Partial<IUser>):Promise<IUser[]>{
         return User.find(params).sort({_id: -1});
     }
-    // getManagersWithStatistics(params:Partial<IUser>):Promise<IUser[]>{
-    //     const user = this.getByParams(params);
-    //
-    //
-    // }
+
 }
 export const userRepository = new UserRepository();

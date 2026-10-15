@@ -12,6 +12,10 @@
 .info p{
     margin: 0;
 }
+.statistic p{
+    margin: 0;
+    width: 100px;
+}
 .buttonBlock{
     display: flex;
     gap: 20px;

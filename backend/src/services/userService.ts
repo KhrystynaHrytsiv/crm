@@ -8,6 +8,8 @@ import {ActionTokenType} from "../enums/tokenEnum";
 import {tokenService} from "./tokenService";
 import {config} from "../configs/config";
 import {passwordService} from "./passwordService";
+import {orderRepository} from "../repositories/orderRepository";
+import {IManagerWithStatistics} from "../interfaces/IManagerWithStatistics";
 
 class UserService {
     async getById(id:string):Promise<IUser>{
@@ -20,8 +22,14 @@ class UserService {
     async createManager(dto:ManagerDTO):Promise<IUser>{
         return userRepository.create({...dto, role: RoleEnum.manager});
     }
-    async getManagers():Promise<IUser[]>{
-        return userRepository.getByParams({role: RoleEnum.manager})
+    async getManagers():Promise<IManagerWithStatistics[]>  {
+        const managers = await userRepository.getByParams({role: RoleEnum.manager});
+       return await Promise.all(
+            managers.map(async (manager) => ({
+                manager,
+                statistics: await orderRepository.getStatistics(manager._id.toString())
+            }))
+       )
     }
     async update (id:string, dto:Partial<IUser>):Promise<IUser>{
         await userService.getById(id);
@@ -70,7 +78,7 @@ class UserService {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST)
         }
         const hashedPassword = await passwordService.hashPassword(password);
-        return this.update(userId, {password: hashedPassword,
+        return await this.update(userId, {password: hashedPassword,
             ...(action === ActionTokenType.activate && {is_Active: true})});
     }
 

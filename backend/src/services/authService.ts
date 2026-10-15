@@ -25,8 +25,8 @@ class AuthService {
         }
         const tokens = tokenService.generateTokens({userId: user._id, role: user.role});
         await tokenService.createToken(tokens, user._id);
-
-        return {user, tokens}
+        const updatedUser = await userService.update(user._id, {last_login: new Date()});
+        return {user: updatedUser, tokens}
     };
     async logout(refreshToken: string) {
         await tokenService.delete({ refreshToken });
