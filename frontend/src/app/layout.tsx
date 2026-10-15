@@ -15,7 +15,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <ReduxProvider>
         {children}
       </ReduxProvider>
-
       </body>
     </html>
   );

@@ -1,13 +1,16 @@
 "use client"
 import Admin from "../../components/admin/Admin";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import Header from "../../components/header/Header";
-import {useAppDispatch} from "../../redux/hooks/reduxHooks";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
 import {orderActions} from "../../redux/slices/ordersSlice";
+import Loading from "../loading";
 
 const AdminPanel =  () => {
     const dispatch = useAppDispatch();
+    const {loading} = useAppSelector(state => state.orders);
+
     useEffect(() => {
         dispatch(managerAction.getMe());
         dispatch(managerAction.getManagers())
@@ -17,6 +20,7 @@ const AdminPanel =  () => {
         <div>
             <Header/>
             <Admin/>
+            {loading && <Loading/>}
         </div>
     );
 };

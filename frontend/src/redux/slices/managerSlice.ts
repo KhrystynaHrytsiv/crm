@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, isPending} from "@reduxjs/toolkit";
 import {IUser} from "../../../../backend/src/interfaces/IUser";
 import {generalService} from "../../services/generalService";
 import {IManagerWithStatistics} from "../../../../backend/src/interfaces/IManagerWithStatistics";
@@ -6,10 +6,12 @@ import {IManagerWithStatistics} from "../../../../backend/src/interfaces/IManage
 interface AuthState{
     me:IUser | null,
     managers:IManagerWithStatistics[],
+    loading:boolean
 }
 let initialState: AuthState ={
     me: null,
-    managers: []
+    managers: [],
+    loading:false
 
 };
 const getMe = createAsyncThunk<IUser>(
@@ -45,10 +47,16 @@ export const managerSlice = createSlice({
     extraReducers: builder =>
         builder
             .addCase(getMe.fulfilled, (state, action) =>{
-                state.me = action.payload
+                state.me = action.payload;
+                state.loading = false;
+
             })
             .addCase(getManagers.fulfilled, (state, action) =>{
-                state.managers = action.payload
+                state.managers = action.payload;
+                state.loading = false;
+            })
+            .addMatcher(isPending(getManagers, getMe), state => {
+                state.loading = true;
             })
 });
 export const managerAction = {...managerSlice.actions, getMe, getManagers}

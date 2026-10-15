@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, isPending} from "@reduxjs/toolkit";
 import {IOrder} from "../../../../backend/src/interfaces/IOrder";
 import {generalService} from "../../services/generalService";
 import {IResPagination} from "../../../../backend/src/interfaces/IResPagination";
@@ -10,12 +10,14 @@ interface IState{
     groups: string[],
     comments:CommentResponse[],
     statistics:Record<string, number>,
+    loading:boolean
 }
 const initialState: IState ={
     orders:[],
     groups: [],
     comments:[],
-    statistics:{},
+    statistics: {},
+    loading:false,
 }
 
 const getOrders = createAsyncThunk<IResPagination<IOrder>, {query:string}>(
@@ -65,16 +67,23 @@ export const orderSLice = createSlice({
     extraReducers: builder =>
         builder
             .addCase(getOrders.fulfilled, (state, action) =>{
-                state.orders = action.payload.data
+                state.orders = action.payload.data;
+                state.loading = false;
             })
             .addCase(getGroups.fulfilled, (state, action) =>{
-                state.groups = action.payload
+                state.groups = action.payload;
+                state.loading = false;
             })
             .addCase(getComments.fulfilled, (state, action)=>{
-                state.comments = action.payload
+                state.comments = action.payload;
+                state.loading = false;
             })
             .addCase(getStatistics.fulfilled, (state, action) =>{
                 state.statistics = action.payload;
+                state.loading = false;
+            })
+            .addMatcher(isPending(getOrders, getGroups, getComments), state => {
+                state.loading = true;
             })
 });
 export const orderActions = {...orderSLice.actions, getOrders, getGroups, getComments, getStatistics}
