@@ -11,6 +11,7 @@ class OrderRepository {
         query.pageSize = 25;
         const skip = query.pageSize * (query.page - 1);
         const filterObject: QueryFilter<IOrder> = { };
+        const sortOrder = query.order || "-created_at";
         if (query.status === "null" || query.status === CourseStatusEnum.new) {
             filterObject.$or = [{ status: CourseStatusEnum.new }, { status: null }];
         } else if (query.status) {
@@ -44,7 +45,7 @@ class OrderRepository {
                 .populate("manager", "surname")
                 .limit(query.pageSize)
                 .skip(skip)
-                .sort(query.order),
+                .sort(sortOrder),
             Order.find(filterObject).countDocuments(),
         ]);
 

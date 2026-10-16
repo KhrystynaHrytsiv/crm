@@ -4,14 +4,18 @@ import {IUserDto} from "../../interfaces/IUserDto";
 import {managerService} from "../../services/managerService";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {ManagerValidator} from "../../../../backend/src/validators/managerValidator";
+import {managerAction} from "../../redux/slices/managerSlice";
+import {useAppDispatch} from "../../redux/hooks/reduxHooks";
 
 
 const CreateManagerForm = ({onClose}:{onClose:() => void}) => {
     const {register, handleSubmit, formState:{errors, isValid}} = useForm<IUserDto>({mode: "all", resolver:joiResolver(ManagerValidator.create)});
+    const dispatch = useAppDispatch();
     const submit = async (dto:IUserDto) =>{
         try {
             await managerService.createManager(dto);
-            onClose()
+            onClose();
+            await dispatch(managerAction.getManagers())
         }catch (e) {
             console.log(e);
         }

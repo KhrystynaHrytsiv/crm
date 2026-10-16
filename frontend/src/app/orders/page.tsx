@@ -9,6 +9,8 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
 import {orderActions} from "../../redux/slices/ordersSlice";
 import Loading from "../loading";
+import Footer from "../../components/footer/Footer";
+import Pagination from "../../components/pagination/Pagination";
 
 const OrdersPage = () => {
     const searchParams = useSearchParams();
@@ -21,12 +23,15 @@ const OrdersPage = () => {
         dispatch(orderActions.getOrders({query}));
         dispatch(orderActions.getGroups());
     }, [searchParams, dispatch]);
+
     return (
         <div>
             <Header/>
             <Filters/>
             <Orders/>
             {loading && <Loading/>}
+            <Pagination/>
+            <Footer/>
         </div>
     );
 };

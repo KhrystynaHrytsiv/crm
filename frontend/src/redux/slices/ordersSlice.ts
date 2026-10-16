@@ -10,7 +10,11 @@ interface IState{
     groups: string[],
     comments:CommentResponse[],
     statistics:Record<string, number>,
-    loading:boolean
+    loading:boolean,
+    totalPages: number,
+    prevPage: boolean;
+    nextPage: boolean;
+
 }
 const initialState: IState ={
     orders:[],
@@ -18,6 +22,9 @@ const initialState: IState ={
     comments:[],
     statistics: {},
     loading:false,
+    totalPages: 20,
+    prevPage: true,
+    nextPage: true
 }
 
 const getOrders = createAsyncThunk<IResPagination<IOrder>, {query:string}>(
@@ -68,6 +75,9 @@ export const orderSLice = createSlice({
         builder
             .addCase(getOrders.fulfilled, (state, action) =>{
                 state.orders = action.payload.data;
+                state.totalPages = action.payload.totalPages;
+                state.prevPage = action.payload.prevPage;
+                state.nextPage = action.payload.nextPage;
                 state.loading = false;
             })
             .addCase(getGroups.fulfilled, (state, action) =>{

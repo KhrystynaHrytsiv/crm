@@ -1,8 +1,7 @@
-import css from "../components/Loader.module.css";
 
 const Loading = () => {
   return (
-    <div className={css.loader}>
+    <div>
       <svg xmlns={"http://www.w3.org/2000/svg"} width={"200px"} height={"200px"}
            viewBox={"0 0 100 100"} preserveAspectRatio={"xMidYMid"} style={{margin: "auto", display: "block", shapeRendering: "auto"}}>
           <path fill={"none"} stroke="#76b852" strokeWidth={8}

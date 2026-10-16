@@ -6,6 +6,7 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
 import {orderActions} from "../../redux/slices/ordersSlice";
 import Loading from "../loading";
+import Footer from "../../components/footer/Footer";
 
 const AdminPanel =  () => {
     const dispatch = useAppDispatch();
@@ -21,6 +22,7 @@ const AdminPanel =  () => {
             <Header/>
             <Admin/>
             {loading && <Loading/>}
+            <Footer/>
         </div>
     );
 };

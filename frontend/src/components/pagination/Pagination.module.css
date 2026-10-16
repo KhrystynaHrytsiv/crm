@@ -1,0 +1,36 @@
+.paginationBlock{
+    width: 100%;
+    margin: 15px auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.button{
+    height: 35px;
+    width: 35px;
+    background-color: rgb(118, 184, 82);
+    border-radius: 50px;
+    color: rgb(255, 255, 255);
+    border: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.button:hover{
+    background-color:rgb(56, 142, 60);
+}
+.active{
+    background-color:rgb(56, 142, 60);
+}
+.arrow{
+    height: 35px;
+    width: 45px;
+    background-color: rgb(118, 184, 82);
+    border-radius: 40px;
+    color: rgb(255, 255, 255);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
