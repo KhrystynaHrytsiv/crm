@@ -14,19 +14,26 @@ const Filters = () => {
     const {groups} = useAppSelector(state => state.orders);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const params = new URLSearchParams(searchParams.toString());
     const allFilters = filters(groups);
 
     const handleFilterChange = (key: string, value: string) => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (value) {
+        if (key === "manager") {
+            params.set("page", "1");
+            if (value) {
+                params.set("manager", value);
+            } else {
+                params.delete("manager");
+            }
+        } else if (value) {
             params.set(key, value);
         } else {
             params.delete(key);
         }
         router.push(`/orders?${params.toString()}`);
     };
+
     const createExcel = async ()=>{
-        const params = new URLSearchParams(searchParams.toString());
         try{
             params.delete("page");
             params.delete("pageSize");
