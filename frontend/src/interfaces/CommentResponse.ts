@@ -1,4 +1,4 @@
-import {IComment} from "../../../backend/src/interfaces/IComment";
+import {IComment} from "../../../shared/interfaces/IComment";
 
 export interface CommentResponse extends Omit<IComment, "manager">{
     manager: {

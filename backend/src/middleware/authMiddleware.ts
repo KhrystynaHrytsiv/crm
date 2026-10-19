@@ -4,7 +4,7 @@ import {TokenEnum} from '../enums/tokenEnum';
 import {userService} from '../services/userService';
 import {tokenService} from '../services/tokenService';
 import {StatusCode} from "../enums/StatusCode";
-import {TokenPayload} from "../interfaces/IToken";
+import {TokenPayload} from "../../../shared/interfaces/IToken";
 import {RoleEnum} from "../enums/roleEnum";
 import {orderService} from "../services/orderService";
 

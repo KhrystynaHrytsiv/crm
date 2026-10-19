@@ -1,4 +1,4 @@
-import {IComment} from "../interfaces/IComment";
+import {IComment} from "../../../shared/interfaces/IComment";
 import {Comment} from "../models/commentModel"
 
 class CommentRepository {

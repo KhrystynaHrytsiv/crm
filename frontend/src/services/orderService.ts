@@ -1,6 +1,6 @@
-import {IOrder, OrderDTO} from "../../../backend/src/interfaces/IOrder";
+import {IOrder, OrderDTO} from "../../../shared/interfaces/IOrder";
 import {api} from "./apiService";
-import {CommentDto} from "../../../backend/src/interfaces/IComment";
+import {CommentDto} from "../../../shared/interfaces/IComment";
 import {CommentResponse} from "../interfaces/CommentResponse";
 
 export const orderService = {
@@ -11,5 +11,9 @@ export const orderService = {
     async createComment (orderId:string, dto:CommentDto):Promise<CommentResponse>{
        const {data} = await api.post(`/orders/${orderId}/comments`, dto);
        return data;
+    },
+    async getExcelFile (params: URLSearchParams){
+        const response = await api.get("/orders/excel", {params, responseType: "blob"});
+        return response.data;
     }
 }

@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice, isPending} from "@reduxjs/toolkit";
-import {IOrder} from "../../../../backend/src/interfaces/IOrder";
+import {IOrder} from "../../../../shared/interfaces/IOrder";
 import {generalService} from "../../services/generalService";
-import {IResPagination} from "../../../../backend/src/interfaces/IResPagination";
+import {IResPagination} from "../../../../shared/interfaces/IResPagination";
 import {CommentResponse} from "../../interfaces/CommentResponse";
 
 

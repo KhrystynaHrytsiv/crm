@@ -1,14 +1,14 @@
 "use client"
-import {IOrder} from "../../../../backend/src/interfaces/IOrder";
+import {IOrder} from "../../../../shared/interfaces/IOrder";
 import {useEffect, useState} from "react";
 import OrderForm from "../forms/OrderForm";
 import {useRouter} from "next/navigation";
 import css from "./Comment.module.css"
 import {useForm} from "react-hook-form";
-import {CommentDto} from "../../../../backend/src/interfaces/IComment";
+import {CommentDto} from "../../../../shared/interfaces/IComment";
 import {orderService} from "../../services/orderService";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {CommentValidator} from "../../../../backend/src/validators/commentValidator";
+import {CommentValidator} from "../../../../shared/validators/commentValidator";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import {orderActions} from "../../redux/slices/ordersSlice";
 

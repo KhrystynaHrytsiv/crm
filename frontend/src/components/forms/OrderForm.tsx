@@ -3,11 +3,11 @@
 import { useForm } from "react-hook-form";
 import { extendedInputs, fieldOrder, filters } from "../../constants/filters";
 import css from "./OrderForm.module.css";
-import { IOrder, OrderDTO } from "../../../../backend/src/interfaces/IOrder";
+import { IOrder, OrderDTO } from "../../../../shared/interfaces/IOrder";
 import { orderService } from "../../services/orderService";
 import { FC, useState } from "react";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { OrderValidator } from "../../../../backend/src/validators/orderValidator";
+import { OrderValidator } from "../../../../shared/validators/orderValidator";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import { orderActions } from "../../redux/slices/ordersSlice";
 

@@ -1,9 +1,9 @@
 import {Router} from "express";
 import {userController} from "../controllers/userController";
 import {validationMiddleware} from "../middleware/validationMiddleware";
-import {ManagerValidator} from "../validators/managerValidator";
+import {ManagerValidator} from "../../../shared/validators/managerValidator";
 import {authMiddleware} from "../middleware/authMiddleware";
-import {PasswordValidator} from "../validators/passwordValidator";
+import {PasswordValidator} from "../../../shared/validators/passwordValidator";
 import {TokenEnum} from "../enums/tokenEnum";
 
 const router = Router();

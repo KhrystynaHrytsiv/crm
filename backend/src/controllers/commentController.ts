@@ -1,8 +1,8 @@
 import {Request, Response, NextFunction} from "express";
-import {CommentDto} from "../interfaces/IComment";
+import {CommentDto} from "../../../shared/interfaces/IComment";
 import {commentService} from "../services/commentService";
 import {StatusCode} from "../enums/StatusCode";
-import {TokenPayload} from "../interfaces/IToken";
+import {TokenPayload} from "../../../shared/interfaces/IToken";
 
 class CommentController {
     async create (req: Request, res:Response, next:NextFunction){

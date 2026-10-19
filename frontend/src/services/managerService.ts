@@ -1,8 +1,8 @@
 import {ActionTokenType} from "../../../backend/src/enums/tokenEnum";
 import {generalService} from "./generalService";
 import {api} from "./apiService";
-import {ActionType} from "../../../backend/src/interfaces/ActionType";
-import {IUser} from "../../../backend/src/interfaces/IUser";
+import {ActionType} from "../../../shared/interfaces/ActionType";
+import {IUser} from "../../../shared/interfaces/IUser";
 import {IUserDto} from "../interfaces/IUserDto";
 
 export const managerService = {

@@ -1,5 +1,5 @@
 import {tokenRepository} from "../repositories/tokenRepository";
-import {IToken, TokenPayload, TokensPair} from "../interfaces/IToken";
+import {IToken, TokenPayload, TokensPair} from "../../../shared/interfaces/IToken";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import {StatusCode} from "../enums/StatusCode";
 import {apiError} from "../error/apiError";

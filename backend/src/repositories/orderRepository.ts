@@ -1,17 +1,29 @@
-import {IOrder, OrderDTO} from "../interfaces/IOrder";
+import {IOrder, OrderDTO} from "../../../shared/interfaces/IOrder";
 import {Order} from "../models/orderModel";
-import {IQuery} from "../interfaces/IQuery";
+import {IQuery} from "../../../shared/interfaces/IQuery";
 import {QueryFilter} from "mongoose";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
 import {userRepository} from "./userRepository";
-import {IStatistic} from "../interfaces/IStatistic";
+import {IStatistic} from "../../../shared/interfaces/IStatistic";
 
 class OrderRepository {
     async getAll(query:IQuery):Promise<[IOrder[], number]>{
         query.pageSize = 25;
+        const filterObject = await this.filter(query);
         const skip = query.pageSize * (query.page - 1);
-        const filterObject: QueryFilter<IOrder> = { };
         const sortOrder = query.order || "-created_at";
+        return Promise.all([
+            Order.find(filterObject)
+                .populate("manager", "surname")
+                .limit(query.pageSize)
+                .skip(skip)
+                .sort(sortOrder),
+            Order.find(filterObject).countDocuments(),
+        ]);
+
+    }
+    async filter(query: IQuery): Promise<QueryFilter<IOrder>>{
+        const filterObject: QueryFilter<IOrder> = { };
         if (query.status === "null" || query.status === CourseStatusEnum.new) {
             filterObject.$or = [{ status: CourseStatusEnum.new }, { status: null }];
         } else if (query.status) {
@@ -40,15 +52,7 @@ class OrderRepository {
                 filterObject.created_at.$lte = new Date(`${query.end_date}T23:59:59.999Z`);
             }
         }
-        return Promise.all([
-            Order.find(filterObject)
-                .populate("manager", "surname")
-                .limit(query.pageSize)
-                .skip(skip)
-                .sort(sortOrder),
-            Order.find(filterObject).countDocuments(),
-        ]);
-
+        return filterObject;
     }
     async getGroups():Promise<string[]>{
         return Order.distinct("group")
@@ -70,6 +74,10 @@ class OrderRepository {
         const total = await Order.countDocuments(filter);
         const nullCount = await Order.countDocuments({...filter, status: { $type: 10 }});
         return {total, ...Object.assign({}, ...statistics), null: nullCount};
+    }
+    async getDataForExcel(query: IQuery): Promise<IOrder[]>{
+        const filterObject = await this.filter(query);
+        return Order.find(filterObject).populate("manager", "surname").sort({created_at: -1})
     }
 }
 export const orderRepository = new OrderRepository();

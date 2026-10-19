@@ -1,4 +1,4 @@
-import {CommentDto, IComment} from "../interfaces/IComment";
+import {CommentDto, IComment} from "../../../shared/interfaces/IComment";
 import {commentRepository} from "../repositories/commentRepository";
 import {orderService} from "./orderService";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";

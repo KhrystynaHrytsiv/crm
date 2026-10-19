@@ -1,15 +1,15 @@
-import {IUser, ManagerDTO} from "../interfaces/IUser";
+import {IUser, ManagerDTO} from "../../../shared/interfaces/IUser";
 import {userRepository} from "../repositories/userRepository";
 import {apiError} from "../error/apiError";
 import {StatusCode} from "../enums/StatusCode";
 import {RoleEnum} from "../enums/roleEnum";
-import {ActionType} from "../interfaces/ActionType";
+import {ActionType} from "../../../shared/interfaces/ActionType";
 import {ActionTokenType} from "../enums/tokenEnum";
 import {tokenService} from "./tokenService";
 import {config} from "../configs/config";
 import {passwordService} from "./passwordService";
 import {orderRepository} from "../repositories/orderRepository";
-import {IManagerWithStatistics} from "../interfaces/IManagerWithStatistics";
+import {IManagerWithStatistics} from "../../../shared/interfaces/IManagerWithStatistics";
 
 class UserService {
     async getById(id:string):Promise<IUser>{

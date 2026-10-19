@@ -3,7 +3,7 @@ import {fields} from "../../constants/createManagerFields";
 import {IUserDto} from "../../interfaces/IUserDto";
 import {managerService} from "../../services/managerService";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {ManagerValidator} from "../../../../backend/src/validators/managerValidator";
+import {ManagerValidator} from "../../../../shared/validators/managerValidator";
 import {managerAction} from "../../redux/slices/managerSlice";
 import {useAppDispatch} from "../../redux/hooks/reduxHooks";
 

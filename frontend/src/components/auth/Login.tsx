@@ -1,6 +1,6 @@
 "use client";
 import {useForm} from "react-hook-form";
-import {IAuth} from "../../../../backend/src/interfaces/IAuth";
+import {IAuth} from "../../../../shared/interfaces/IAuth";
 import {authService} from "../../services/authService";
 import {useRouter} from "next/navigation";
 import {useState} from "react";

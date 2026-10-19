@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from "express";
-import {IQuery} from "../interfaces/IQuery";
+import {IQuery} from "../../../shared/interfaces/IQuery";
 import {orderService} from "../services/orderService";
 import {StatusCode} from "../enums/StatusCode";
-import {OrderDTO} from "../interfaces/IOrder";
-import {TokenPayload} from "../interfaces/IToken";
+import {OrderDTO} from "../../../shared/interfaces/IOrder";
+import {TokenPayload} from "../../../shared/interfaces/IToken";
 
 class OrderController {
     async getAll(req: Request, res:Response, next:NextFunction){
@@ -51,6 +51,15 @@ class OrderController {
             next(e);
         }
     }
-
+    async createExcel (req: Request, res:Response, next:NextFunction){
+        try{
+            const buffer = await orderService.createExcelSheet(req.query as unknown as IQuery);
+            res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            res.setHeader("Content-Disposition", 'attachment; filename="orders.xlsx"');
+            res.send(Buffer.from(buffer));
+        }catch (e) {
+          next(e);
+        }
+    }
 }
 export const orderController = new OrderController();

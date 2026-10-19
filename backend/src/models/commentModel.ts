@@ -1,7 +1,7 @@
 import {model, Schema} from "mongoose";
 import {Order} from "./orderModel";
 import {User} from "./userModel";
-import {IComment} from "../interfaces/IComment";
+import {IComment} from "../../../shared/interfaces/IComment";
 
 const commentSchema = new Schema({
     orderId: {type: Schema.Types.ObjectId, ref: Order, required:true},

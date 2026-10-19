@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from "express";
-import {IAuth} from "../interfaces/IAuth";
+import {IAuth} from "../../../shared/interfaces/IAuth";
 import {authService} from "../services/authService";
 import {StatusCode} from "../enums/StatusCode";
-import {RefreshToken, TokenPayload} from "../interfaces/IToken";
+import {RefreshToken, TokenPayload} from "../../../shared/interfaces/IToken";
 
 class AuthController {
     async login (req:Request, res:Response, next:NextFunction){

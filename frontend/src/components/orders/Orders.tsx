@@ -1,8 +1,8 @@
 "use client"
 import {useRouter, useSearchParams} from "next/navigation";
-import {IOrder} from "../../../../backend/src/interfaces/IOrder";
+import {IOrder} from "../../../../shared/interfaces/IOrder";
 import css from "./Orders.module.css";
-import {columns} from "../../constants/orders";
+import {columns} from "../../../../shared/constance/orders";
 import {Fragment, useState} from "react";
 import Comment from "../comment/Comment";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";

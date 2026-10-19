@@ -1,5 +1,5 @@
 import {model, Schema} from "mongoose";
-import {IOrder} from "../interfaces/IOrder";
+import {IOrder} from "../../../shared/interfaces/IOrder";
 import {CourseEnum, CourseFormat} from "../enums/CourseEnum";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
 import {User} from "./userModel";

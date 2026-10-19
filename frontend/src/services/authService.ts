@@ -1,6 +1,6 @@
-import {IAuth} from "../../../backend/src/interfaces/IAuth";
+import {IAuth} from "../../../shared/interfaces/IAuth";
 import {api} from "./apiService";
-import {IToken} from "../../../backend/src/interfaces/IToken";
+import {IToken} from "../../../shared/interfaces/IToken";
 
 
 export const authService = {

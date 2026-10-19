@@ -1,11 +1,11 @@
 import css from "./Manager.module.css";
 import {managerService} from "../../services/managerService";
 import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
-import {ActionType} from "../../../../backend/src/interfaces/ActionType";
+import {ActionType} from "../../../../shared/interfaces/ActionType";
 import {FC} from "react";
 import {useAppDispatch} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
-import {IManagerWithStatistics} from "../../../../backend/src/interfaces/IManagerWithStatistics";
+import {IManagerWithStatistics} from "../../../../shared/interfaces/IManagerWithStatistics";
 
 interface IProp {
     managerWithStatistic:IManagerWithStatistics,

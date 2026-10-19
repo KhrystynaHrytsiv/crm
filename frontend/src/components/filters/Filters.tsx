@@ -6,6 +6,7 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {filters, inputs} from "../../constants/filters";
 import {useState} from "react";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";
+import {orderService} from "../../services/orderService";
 
 const Filters = () => {
     const [isDateFocused, setIsDateFocused] = useState(false);
@@ -24,7 +25,24 @@ const Filters = () => {
         }
         router.push(`/orders?${params.toString()}`);
     };
-
+    const createExcel = async ()=>{
+        const params = new URLSearchParams(searchParams.toString());
+        try{
+            params.delete("page");
+            params.delete("pageSize");
+            const blob = await orderService.getExcelFile(params);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "orders.xlsx";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        }catch (e) {
+            console.log(e);
+        }
+    }
     return (
         <div className={css.container}>
             <div className={css.filters}>
@@ -50,14 +68,14 @@ const Filters = () => {
                 <label>
                     {me &&
                     <input type="checkbox" checked={searchParams.get("manager") === me.surname}
-                           onChange={(e) =>{handleFilterChange("manager", e.target.checked ? me.surname : "")}}/> }
+                           onChange={(e) => handleFilterChange("manager", e.target.checked ? me.surname : "")}/> }
                     My
                 </label>
                 <div className={css.icon} onClick={()=>router.push('/orders')}>
                     <TbReload size={"25px"} color={"white"}/>
                 </div>
                 <div className={css.icon}>
-                    <LiaFileExcel size={"25px"} color={"white"}/>
+                    <LiaFileExcel size={"25px"} color={"white"} onClick={createExcel}/>
                 </div>
             </div>
 

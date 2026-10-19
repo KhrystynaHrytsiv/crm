@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice, isPending} from "@reduxjs/toolkit";
-import {IUser} from "../../../../backend/src/interfaces/IUser";
+import {IUser} from "../../../../shared/interfaces/IUser";
 import {generalService} from "../../services/generalService";
-import {IManagerWithStatistics} from "../../../../backend/src/interfaces/IManagerWithStatistics";
+import {IManagerWithStatistics} from "../../../../shared/interfaces/IManagerWithStatistics";
 
 interface AuthState{
     me:IUser | null,

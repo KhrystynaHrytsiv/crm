@@ -1,15 +1,16 @@
 import {Router} from "express";
 import {orderController} from "../controllers/orderController";
 import {validationMiddleware} from "../middleware/validationMiddleware";
-import {OrderValidator} from "../validators/orderValidator";
+import {OrderValidator} from "../../../shared/validators/orderValidator";
 import {commentController} from "../controllers/commentController";
-import {CommentValidator} from "../validators/commentValidator";
+import {CommentValidator} from "../../../shared/validators/commentValidator";
 import {authMiddleware} from "../middleware/authMiddleware";
 
 const router = Router();
 router.get('',  orderController.getAll);
 router.get('/groups', orderController.getGroups);
 router.get('/statistics', orderController.getStatistics)
+router.get('/excel', orderController.createExcel)
 router.get('/:id',validationMiddleware.isIdValidate("id"), orderController.getById);
 router.put('/:orderId',
     validationMiddleware.isIdValidate("orderId"),

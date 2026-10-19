@@ -1,6 +1,6 @@
-import {CourseEnum, CourseFormat} from "../enums/CourseEnum";
-import {CourseStatusEnum} from "../enums/courseStatusEnum";
-import {CourseTypeEnum} from "../enums/courseTypeEnum";
+import {CourseEnum, CourseFormat} from "../../backend/src/enums/CourseEnum";
+import {CourseStatusEnum} from "../../backend/src/enums/courseStatusEnum";
+import {CourseTypeEnum} from "../../backend/src/enums/courseTypeEnum";
 
 export interface IOrder {
     _id:string;

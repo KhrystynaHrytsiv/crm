@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from "express";
-import {ManagerDTO} from "../interfaces/IUser";
+import {ManagerDTO} from "../../../shared/interfaces/IUser";
 import {userService} from "../services/userService";
 import {StatusCode} from "../enums/StatusCode";
-import {ActionType} from "../interfaces/ActionType";
+import {ActionType} from "../../../shared/interfaces/ActionType";
 import {ActionTokenType} from "../enums/tokenEnum";
 
 class UserController{

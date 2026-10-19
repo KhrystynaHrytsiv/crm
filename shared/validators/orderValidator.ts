@@ -1,5 +1,5 @@
 import joi from "joi";
-import {OrderSortEnum} from "../enums/OrderSortEnum";
+import {OrderSortEnum} from "../../backend/src/enums/OrderSortEnum";
 
 export class OrderValidator {
     private static name= joi.string().max(20).allow(null, "");

@@ -3,7 +3,7 @@ import {ActionTokenType} from "../../../../backend/src/enums/tokenEnum";
 import {managerService} from "../../services/managerService";
 import {useRouter} from "next/navigation";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {PasswordValidator} from "../../../../backend/src/validators/passwordValidator";
+import {PasswordValidator} from "../../../../shared/validators/passwordValidator";
 
 interface IFormData{
     password:string,

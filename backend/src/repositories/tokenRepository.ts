@@ -1,4 +1,4 @@
-import {IToken} from "../interfaces/IToken";
+import {IToken} from "../../../shared/interfaces/IToken";
 import {Token} from "../models/tokenModel";
 
 class TokenRepository {
