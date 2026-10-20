@@ -4,7 +4,7 @@ import {TbReload} from "react-icons/tb";
 import {LiaFileExcel} from "react-icons/lia";
 import {useRouter, useSearchParams} from "next/navigation";
 import {filters, inputs} from "../../constants/filters";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";
 import {orderService} from "../../services/orderService";
 
@@ -32,6 +32,19 @@ const Filters = () => {
         }
         router.push(`/orders?${params.toString()}`);
     };
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const handleInputChange = (key: string, value: string) => {
+            if (timer.current) {
+                clearTimeout(timer.current);
+            }
+            if (!value.trim()) {
+                handleFilterChange(key, "");
+                return;
+            }
+            timer.current = setTimeout(() => {
+                handleFilterChange(key, value);
+            }, 2000);
+    };
 
     const createExcel = async ()=>{
         try{
@@ -55,7 +68,7 @@ const Filters = () => {
             <div className={css.filters}>
                 {inputs.map((input) =>
                     (<input type={'text'} key={input.key} placeholder={input.label}
-                            onChange={(e) => handleFilterChange(input.key, e.target.value)}/>))}
+                            onChange={(e) => handleInputChange(input.key, e.target.value)}/>))}
                 {allFilters.map((filter) => (
                     <select key={filter.key} value={searchParams.get(filter.key) || ""}
                             onChange={(e) => handleFilterChange(filter.key, e.target.value)}>

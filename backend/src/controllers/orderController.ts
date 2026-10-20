@@ -23,15 +23,6 @@ class OrderController {
             next(e);
         }
     }
-    async getById (req: Request, res:Response, next:NextFunction){
-        try {
-            const id = req.params.id as string;
-            const order = await orderService.getById(id);
-            res.status(StatusCode.OK).json(order);
-        }catch (e) {
-            next(e);
-        }
-    }
     async update (req: Request, res:Response, next:NextFunction){
         try{
             const {userId} = res.locals.tokenPayload as TokenPayload;
