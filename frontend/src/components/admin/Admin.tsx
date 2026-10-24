@@ -18,7 +18,7 @@ const Admin = () => {
             </div>
             <button className='greenButton' onClick={()=> setIsOpen(true)}>Create</button>
             {isOpen && <CreateManagerForm onClose={()=>setIsOpen(false)}/>}
-            {managers && managers.map((manager, index) => <Manager key={index} managerWithStatistic={manager}/>)}
+            {managers && managers.map((manager) => <Manager key={manager.manager._id} managerWithStatistic={manager}/>)}
         </div>
     );
 };

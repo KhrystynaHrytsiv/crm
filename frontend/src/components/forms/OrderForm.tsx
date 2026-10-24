@@ -8,8 +8,8 @@ import { orderService } from "../../services/orderService";
 import { FC, useState } from "react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { OrderValidator } from "../../../../shared/validators/orderValidator";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
-import { orderActions } from "../../redux/slices/ordersSlice";
+import {useAppSelector} from "../../redux/hooks/reduxHooks";
+import {getErrorMessage} from "../../helpers/getErrorMessage";
 
 interface IProp {
     onClose: () => void;
@@ -20,42 +20,41 @@ type FormValues = OrderDTO & { newGroup?: string };
 
 const OrderForm: FC<IProp> = ({ onClose, order }) => {
     const [showGroupAction, setShowGroupAction] = useState(false);
-    const {_id, created_at, manager, msg, utm, alreadyPaid, ...formValues} = order;
+    const [newGroups, setNewGroups] = useState<string[]>([]);
+    const [serverError, setServerError] = useState<string | null>(null);
     const { groups } = useAppSelector((state) => state.orders);
-    const allFilters = filters(groups);
-    const dispatch = useAppDispatch();
+    const allGroups = [...groups, ...newGroups];
+    const allFilters = filters(allGroups);
+    const defaultValues = Object.fromEntries(fieldOrder.map((key) => [key, order[key] ?? ""])) as FormValues;
 
     const {register, handleSubmit, formState: { errors }, getValues, setError, clearErrors, setValue} = useForm<FormValues>({
-        mode: "all", resolver: joiResolver(OrderValidator.update), defaultValues: formValues});
+        mode: "all", resolver: joiResolver(OrderValidator.update), defaultValues});
 
     const submit = async (dto: OrderDTO) => {
         try {
-            await orderService.update(_id, dto);
+            setServerError(null);
+            await orderService.update(order._id, dto);
             onClose();
         } catch (e) {
-            console.log(e);
+            setServerError(getErrorMessage(e));
         }
     };
 
-    const addGroup = async () => {
+    const addGroup = () => {
         clearErrors("newGroup");
         const newGroup = getValues("newGroup")?.trim();
         if (!newGroup) {
             setError("newGroup", {type: "manual", message: "Group name is required"});
             return;
         }
-        if (groups.includes(newGroup)) {
+        if (allGroups.some((group) => group.toLowerCase() === newGroup.toLowerCase())) {
             setError("newGroup", {type: "manual", message: "This group already exists"});
             return;
         }
-        try {
-            await orderService.update(order._id, { group: newGroup });
-            await dispatch(orderActions.getGroups());
-            setValue("group", newGroup, {shouldDirty: true, shouldValidate: true});
-            setShowGroupAction(false);
-        } catch {
-            setError("newGroup", {type: "server", message: "Failed to add group. Please try again."});
-        }
+        setNewGroups((prev) => [...prev, newGroup]);
+        setValue("group", newGroup, {shouldDirty: true, shouldValidate: true});
+        setValue("newGroup", "");
+        setShowGroupAction(false);
     };
 
 
@@ -119,6 +118,7 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
                     }
                     return null;
                 })}
+                {serverError && <div className="error">{serverError}</div>}
                 <div className={css.buttonBlock}>
                      <button type="button" className="greenButton" onClick={onClose}>Close</button>
                     <button type="submit" className="greenButton">Submit</button>

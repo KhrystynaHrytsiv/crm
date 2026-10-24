@@ -13,5 +13,6 @@ export interface IQuery {
     status?:string,
     start_date?: string;
     end_date?: string;
-    manager?:string;
+    group?:string;
+    my?:string;
 }

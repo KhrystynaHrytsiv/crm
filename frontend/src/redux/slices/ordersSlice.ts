@@ -1,14 +1,12 @@
-import {createAsyncThunk, createSlice, isPending} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, isPending, isRejected} from "@reduxjs/toolkit";
 import {IOrder} from "../../../../shared/interfaces/IOrder";
 import {generalService} from "../../services/generalService";
 import {IResPagination} from "../../../../shared/interfaces/IResPagination";
-import {CommentResponse} from "../../interfaces/CommentResponse";
 
 
 interface IState{
     orders:IOrder[],
     groups: string[],
-    comments:CommentResponse[],
     statistics:Record<string, number>,
     loading:boolean,
     totalPages: number,
@@ -19,12 +17,11 @@ interface IState{
 const initialState: IState ={
     orders:[],
     groups: [],
-    comments:[],
     statistics: {},
     loading:false,
-    totalPages: 20,
-    prevPage: true,
-    nextPage: true
+    totalPages: 0,
+    prevPage: false,
+    nextPage: false
 }
 
 const getOrders = createAsyncThunk<IResPagination<IOrder>, {query:string}>(
@@ -42,16 +39,6 @@ const getGroups = createAsyncThunk<string[]>(
     async (_, {rejectWithValue}) =>{
         try{
             return await generalService.get('/orders/groups');
-        }catch (e) {
-            return rejectWithValue(e);
-        }
-    }
-);
-const getComments = createAsyncThunk<CommentResponse[], string>(
-    "orderSlice/getComments",
-    async (orderId, {rejectWithValue})=>{
-        try {
-            return await generalService.get<CommentResponse[]>(`/orders/${orderId}/comments`);
         }catch (e) {
             return rejectWithValue(e);
         }
@@ -84,16 +71,15 @@ export const orderSLice = createSlice({
                 state.groups = action.payload;
                 state.loading = false;
             })
-            .addCase(getComments.fulfilled, (state, action)=>{
-                state.comments = action.payload;
-                state.loading = false;
-            })
             .addCase(getStatistics.fulfilled, (state, action) =>{
                 state.statistics = action.payload;
                 state.loading = false;
             })
-            .addMatcher(isPending(getOrders, getGroups, getComments), state => {
+            .addMatcher(isPending(getOrders, getGroups), state => {
                 state.loading = true;
             })
+            .addMatcher(isRejected(getOrders, getGroups, getStatistics), state => {
+                state.loading = false;
+            })
 });
-export const orderActions = {...orderSLice.actions, getOrders, getGroups, getComments, getStatistics}
+export const orderActions = {...orderSLice.actions, getOrders, getGroups, getStatistics}

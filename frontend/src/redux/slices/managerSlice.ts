@@ -1,16 +1,19 @@
-import {createAsyncThunk, createSlice, isPending} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, isPending, isRejected} from "@reduxjs/toolkit";
 import {IUser} from "../../../../shared/interfaces/IUser";
 import {generalService} from "../../services/generalService";
 import {IManagerWithStatistics} from "../../../../shared/interfaces/IManagerWithStatistics";
+import {IResPagination} from "../../../../shared/interfaces/IResPagination";
 
 interface AuthState{
     me:IUser | null,
     managers:IManagerWithStatistics[],
+    managersTotalPages:number,
     loading:boolean
 }
-let initialState: AuthState ={
+const initialState: AuthState ={
     me: null,
     managers: [],
+    managersTotalPages: 0,
     loading:false
 
 };
@@ -24,11 +27,11 @@ const getMe = createAsyncThunk<IUser>(
         }
 
 });
-const getManagers = createAsyncThunk<IManagerWithStatistics[]>(
+const getManagers = createAsyncThunk<IResPagination<IManagerWithStatistics>, number>(
     "managerSlice/getManagers",
-    async (_, {rejectWithValue}) =>{
+    async (page, {rejectWithValue}) =>{
         try {
-            return await generalService.get('/manager');
+            return await generalService.get(`/manager?page=${page}`);
         }catch (e) {
             return rejectWithValue(e);
         }
@@ -52,11 +55,15 @@ export const managerSlice = createSlice({
 
             })
             .addCase(getManagers.fulfilled, (state, action) =>{
-                state.managers = action.payload;
+                state.managers = action.payload.data;
+                state.managersTotalPages = action.payload.totalPages;
                 state.loading = false;
             })
             .addMatcher(isPending(getManagers, getMe), state => {
                 state.loading = true;
+            })
+            .addMatcher(isRejected(getManagers, getMe), state => {
+                state.loading = false;
             })
 });
 export const managerAction = {...managerSlice.actions, getMe, getManagers}

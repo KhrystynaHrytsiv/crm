@@ -1,16 +1,16 @@
 "use client";
 import {useRouter, useSearchParams} from "next/navigation";
-import {useAppSelector} from "../../redux/hooks/reduxHooks";
 import css from "./Pagination.module.css";
 import {MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight} from "react-icons/md";
 
-const Pagination = () => {
-    const { totalPages, prevPage, nextPage } = useAppSelector(state => state.orders);
+const Pagination = ({totalPages}: {totalPages: number}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get("page")) || 1;
 
     if (totalPages <= 1) return null;
+    const prevPage = currentPage > 1;
+    const nextPage = currentPage < totalPages;
 
     const goToPage = (page: number) => {
         if (page < 1 || page > totalPages || page === currentPage) {

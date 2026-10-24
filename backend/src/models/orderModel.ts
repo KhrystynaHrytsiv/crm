@@ -3,16 +3,18 @@ import {IOrder} from "../../../shared/interfaces/IOrder";
 import {CourseEnum, CourseFormat} from "../enums/CourseEnum";
 import {CourseStatusEnum} from "../enums/courseStatusEnum";
 import {User} from "./userModel";
+import {CourseTypeEnum} from "../enums/courseTypeEnum";
 
 const orderSchema = new Schema({
-    id: {type: String, },
+    id: {type: Number, unique: true, sparse: true},
     name: {type: String, required: true},
     surname: {type: String, required: true},
     email: {type: String, required: true},
     phone: {type: String, required: true},
     age: {type: Number, required: true},
     course:{type: String, enum:CourseEnum, required:true},
-    format:{type: String, enum:CourseFormat, required:true},
+    course_format:{type: String, enum:CourseFormat, required:true},
+    course_type:{type: String, enum: CourseTypeEnum, required:true},
     status:{type: String, enum:CourseStatusEnum,required:true},
     sum:{type:Number, required:true},
     alreadyPaid:{type:Number, required:true},

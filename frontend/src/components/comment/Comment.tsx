@@ -1,8 +1,8 @@
 "use client"
 import {IOrder} from "../../../../shared/interfaces/IOrder";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import OrderForm from "../forms/OrderForm";
-import {useRouter} from "next/navigation";
+import {useSearchParams} from "next/navigation";
 import css from "./Comment.module.css"
 import {useForm} from "react-hook-form";
 import {CommentDto} from "../../../../shared/interfaces/IComment";
@@ -11,35 +11,51 @@ import {joiResolver} from "@hookform/resolvers/joi";
 import {CommentValidator} from "../../../../shared/validators/commentValidator";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import {orderActions} from "../../redux/slices/ordersSlice";
+import {CommentResponse} from "../../interfaces/CommentResponse";
+import {getErrorMessage} from "../../helpers/getErrorMessage";
 
 const Comment = ({order}: {order:IOrder}) => {
     const [openForm, setOpenForm] = useState(false);
-    const {comments} = useAppSelector(state => state.orders);
+    const [comments, setComments] = useState<CommentResponse[]>([]);
+    const [serverError, setServerError] = useState<string | null>(null);
     const {me} = useAppSelector(state => state.manager);
     const dispatch = useAppDispatch();
-    const router = useRouter();
+    const searchParams = useSearchParams();
     const {handleSubmit, register, reset, formState:{isValid, errors}} = useForm<CommentDto>({mode: "all", resolver:joiResolver(CommentValidator.comment)});
+
+    const loadComments = useCallback(() => orderService.getComments(order._id), [order._id]);
+
     useEffect(() => {
-        dispatch(orderActions.getComments(order._id))
-    }, [order._id]);
+        let active = true;
+        loadComments()
+            .then((data) => active && setComments(data))
+            .catch((e) => active && setServerError(getErrorMessage(e)));
+        return () => {
+            active = false;
+        };
+    }, [loadComments]);
+
+    const refreshOrders = () => dispatch(orderActions.getOrders({query: searchParams.toString()}));
 
     const onClose = () =>{
         setOpenForm(false)
-        router.refresh();
+        void refreshOrders();
     }
 
     const hasPermission = !!me && (!order.manager ||
         (typeof order.manager === "object" ? order.manager._id === me._id : order.manager === me._id));
     const create = async (dto:CommentDto) =>{
         try{
-           await orderService.createComment(order._id,dto);
-           reset();
-           await dispatch(orderActions.getComments(order._id))
-            router.refresh();
+            setServerError(null);
+            await orderService.createComment(order._id,dto);
+            reset();
+            setComments(await loadComments());
+            void refreshOrders();
         }catch (e) {
-            console.log(e);
+            setServerError(getErrorMessage(e));
         }
     }
+    const canSubmit = hasPermission && isValid;
     return (
         <div className={css.container}>
             <div>
@@ -56,10 +72,11 @@ const Comment = ({order}: {order:IOrder}) => {
                 </div>}
                 <form onSubmit={handleSubmit(create)} className={css.commentForm}>
                     <div className={css.inputBlock}>
-                        <input type={"text"} placeholder={"Comment"} {...register("comment")}/>
+                        <input type={"text"} placeholder={"Comment"} disabled={!hasPermission} {...register("comment")}/>
                         {errors.comment?.message && <div className="error">{errors.comment?.message}</div>}
+                        {serverError && <div className="error">{serverError}</div>}
                     </div>
-                    <button disabled={!isValid} className={isValid ? "greenButton" : "greyButton"}>Submit</button>
+                    <button disabled={!canSubmit} className={canSubmit ? "greenButton" : "greyButton"}>Submit</button>
                 </form>
             </div>
                 <button className={hasPermission ? "greenButton" : "greyButton"} style={{width: "100px"}}

@@ -8,6 +8,10 @@ export const orderService = {
         const {data} = await api.put<IOrder>(`/orders/${id}`, dto);
         return data;
     },
+    async getComments (orderId:string):Promise<CommentResponse[]>{
+        const {data} = await api.get<CommentResponse[]>(`/orders/${orderId}/comments`);
+        return data;
+    },
     async createComment (orderId:string, dto:CommentDto):Promise<CommentResponse>{
        const {data} = await api.post(`/orders/${orderId}/comments`, dto);
        return data;

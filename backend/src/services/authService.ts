@@ -16,6 +16,9 @@ class AuthService {
         if (!user){
             throw new apiError("Invalid email or password", StatusCode.UNAUTHORIZED)
         }
+        if (!user.password){
+            throw new apiError("Account is not activated", StatusCode.FORBIDDEN)
+        }
         const isValidPassword = await passwordService.comparePassword(dto.password, user.password);
         if (!isValidPassword){
             throw new apiError("Invalid email or password", StatusCode.UNAUTHORIZED)

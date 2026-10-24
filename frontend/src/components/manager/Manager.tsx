@@ -6,6 +6,7 @@ import {FC} from "react";
 import {useAppDispatch} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
 import {IManagerWithStatistics} from "../../../../shared/interfaces/IManagerWithStatistics";
+import {getErrorMessage} from "../../helpers/getErrorMessage";
 
 interface IProp {
     managerWithStatistic:IManagerWithStatistics,
@@ -19,7 +20,7 @@ const Manager:FC<IProp> = ({managerWithStatistic}) => {
            await navigator.clipboard.writeText(url);
            alert("Link copied to clipboard");
        }catch (e) {
-           console.log(e);
+           alert(getErrorMessage(e));
        }
    }
    const changeStatus = async (action:ActionType) =>{
@@ -28,7 +29,7 @@ const Manager:FC<IProp> = ({managerWithStatistic}) => {
            dispatch(managerAction.updateManagerStatus({id: manager._id, isActive: action === "unban"}));
 
        }catch (e) {
-           console.log(e);
+           alert(getErrorMessage(e));
        }
    }
     return (

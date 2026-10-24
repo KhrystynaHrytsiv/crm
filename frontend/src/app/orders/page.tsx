@@ -1,7 +1,7 @@
 "use client";
 
 import {useSearchParams} from "next/navigation";
-import {useEffect} from "react";
+import {Suspense, useEffect} from "react";
 import Orders from "../../components/orders/Orders";
 import Filters from "../../components/filters/Filters";
 import Header from "../../components/header/Header";
@@ -12,16 +12,18 @@ import Loading from "../loading";
 import Footer from "../../components/footer/Footer";
 import Pagination from "../../components/pagination/Pagination";
 
-const OrdersPage = () => {
+const OrdersContent = () => {
     const searchParams = useSearchParams();
     const dispatch = useAppDispatch();
-    const {loading} = useAppSelector(state => state.orders);
+    const {loading, totalPages} = useAppSelector(state => state.orders);
 
     useEffect(() => {
-        const query = searchParams.toString();
         dispatch(managerAction.getMe());
-        dispatch(orderActions.getOrders({query}));
         dispatch(orderActions.getGroups());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(orderActions.getOrders({query: searchParams.toString()}));
     }, [searchParams, dispatch]);
 
     return (
@@ -30,10 +32,16 @@ const OrdersPage = () => {
             <Filters/>
             <Orders/>
             {loading && <Loading/>}
-            <Pagination/>
+            <Pagination totalPages={totalPages}/>
             <Footer/>
         </div>
     );
 };
+
+const OrdersPage = () => (
+    <Suspense fallback={<Loading/>}>
+        <OrdersContent/>
+    </Suspense>
+);
 
 export default OrdersPage;

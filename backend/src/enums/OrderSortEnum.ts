@@ -1,5 +1,5 @@
 export enum OrderSortEnum {
-    _id="_id",
+    id="id",
     name="name",
     surname="surname",
     email="email",

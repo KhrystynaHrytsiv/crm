@@ -63,6 +63,21 @@
                   "key": "order",
                   "value": "phone",
                   "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "my",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "group",
+                  "value": "default",
+                  "disabled": true
                 }
               ]
             }
@@ -645,6 +660,13 @@
               ],
               "path": [
                 "manager"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                }
               ]
             }
           },

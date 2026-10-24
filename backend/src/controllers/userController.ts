@@ -17,7 +17,8 @@ class UserController{
     }
     async getManagers (req: Request, res:Response, next: NextFunction){
         try {
-            const managers = await userService.getManagers();
+            const page = Math.max(Number(req.query.page) || 1, 1);
+            const managers = await userService.getManagers(page);
             res.status(StatusCode.OK).json(managers);
         }catch (e) {
             next(e);
@@ -36,7 +37,6 @@ class UserController{
     async actionRequest(req:Request, res:Response, next:NextFunction){
         try{
             const {id, action} = req.params as {id:string; action:ActionTokenType};
-            console.log(id, action);
             const url = await userService.actionRequest(id, action);
             res.status(StatusCode.OK).json(url);
         }catch (e) {

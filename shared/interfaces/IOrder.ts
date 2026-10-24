@@ -4,6 +4,7 @@ import {CourseTypeEnum} from "../../backend/src/enums/courseTypeEnum";
 
 export interface IOrder {
     _id:string;
+    id:number;
     name:string;
     surname:string;
     email:string;

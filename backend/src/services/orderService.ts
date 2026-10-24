@@ -9,13 +9,15 @@ import {IResPagination} from "../../../shared/interfaces/IResPagination";
 import {columns} from "../../../shared/constance/orders";
 
 class OrderService {
-    async getAll(query:IQuery):Promise<IResPagination<IOrder>>{
-        const [data, totalItems] = await orderRepository.getAll(query);
+    async getAll(query:IQuery, userId:string):Promise<IResPagination<IOrder>>{
+        query.pageSize = 25;
+        query.page = Math.max(Number(query.page) || 1, 1);
+        const [data, totalItems] = await orderRepository.getAll(query, userId);
         const totalPages = Math.ceil(totalItems/query.pageSize);
         return {
             totalItems,
             totalPages,
-            prevPage: !!(query.page - 1),
+            prevPage: query.page > 1,
             nextPage: query.page < totalPages,
             data,
         };
@@ -45,8 +47,8 @@ class OrderService {
     async getStatistics(){
         return orderRepository.getStatistics()
     }
-    async createExcelSheet(query: IQuery): Promise<ExcelJS.Buffer> {
-        const orders = await orderRepository.getDataForExcel(query);
+    async createExcelSheet(query: IQuery, userId: string): Promise<ExcelJS.Buffer> {
+        const orders = await orderRepository.getDataForExcel(query, userId);
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Report");
         worksheet.columns = [...columns];

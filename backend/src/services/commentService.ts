@@ -5,8 +5,10 @@ import {CourseStatusEnum} from "../enums/courseStatusEnum";
 
 class CommentService {
     async create(dto: CommentDto, orderId: string, userId: string): Promise<IComment> {
+        const order = await orderService.getById(orderId);
         const comment = await commentRepository.create({...dto, orderId, manager:userId, created_At: new Date()});
-        await orderService.update(orderId, {status: CourseStatusEnum.inWork}, userId)
+        const isNewOrder = !order.status || order.status === CourseStatusEnum.new;
+        await orderService.update(orderId, isNewOrder ? {status: CourseStatusEnum.inWork} : {}, userId);
         return comment;
     }
     async getAll (orderId:string):Promise<IComment[]>{

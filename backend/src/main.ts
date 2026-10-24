@@ -6,12 +6,16 @@ import dns from "node:dns";
 import cors from "cors";
 import {apiError} from "./error/apiError";
 import {seed} from "./seed/adminSeed";
+import {seedOrderIds} from "./seed/orderIdSeed";
+import swaggerUi from "swagger-ui-express";
+import {swaggerDocument} from "./docs/swagger";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors({ origin: ["http://localhost:3000"] }));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/', apiRouter);
 app.use((err: apiError, req: Request, res: Response, next: NextFunction) => {
     const status = err.status || 500;
@@ -42,6 +46,7 @@ const start = async () =>{
     try{
         await connection();
         await seed();
+        await seedOrderIds();
         app.listen(config.PORT, async () =>{
             console.log(`server listen ${config.PORT} port`);
         })

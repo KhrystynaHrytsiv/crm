@@ -8,8 +8,9 @@ import {TokenPayload} from "../../../shared/interfaces/IToken";
 class OrderController {
     async getAll(req: Request, res:Response, next:NextFunction){
         try{
-           const query = req.query as any as IQuery;
-            const orders = await orderService.getAll(query);
+            const {userId} = res.locals.tokenPayload as TokenPayload;
+            const query = {...req.query} as unknown as IQuery;
+            const orders = await orderService.getAll(query, userId);
            res.status(StatusCode.OK).json(orders);
         }catch (e) {
             next(e);
@@ -44,7 +45,8 @@ class OrderController {
     }
     async createExcel (req: Request, res:Response, next:NextFunction){
         try{
-            const buffer = await orderService.createExcelSheet(req.query as unknown as IQuery);
+            const {userId} = res.locals.tokenPayload as TokenPayload;
+            const buffer = await orderService.createExcelSheet(req.query as unknown as IQuery, userId);
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             res.setHeader("Content-Disposition", 'attachment; filename="orders.xlsx"');
             res.send(Buffer.from(buffer));
