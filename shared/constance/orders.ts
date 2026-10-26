@@ -18,6 +18,6 @@ export const columns: {
     { header: "sum", key: "sum", width: 10 },
     { header: "alreadyPaid", key: "alreadyPaid", width: 17 },
     { header: "created_at", key: "created_at", width: 25 },
-    { header: "manager", key: "manager", width: 15 },
     { header: "group", key: "group", width: 12 },
+    { header: "manager", key: "manager", width: 15 },
 ];

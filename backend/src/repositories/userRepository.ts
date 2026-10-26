@@ -15,9 +15,6 @@ class UserRepository {
     update(id:string, dto:Partial<IUser>):Promise<IUser | null>{
         return User.findByIdAndUpdate(id, dto, {returnDocument: "after"})
     }
-    getByParams(params:Partial<IUser>):Promise<IUser[]>{
-        return User.find(params).sort({_id: -1});
-    }
     getManagersPage(page:number, pageSize:number):Promise<[IUser[], number]>{
         const filter = {role: RoleEnum.manager};
         return Promise.all([

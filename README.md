@@ -1,4 +1,4 @@
-# CRM Programming School
+# CRM 
 
 CRM для обліку та обробки заявок студентів на курси.
 
@@ -85,7 +85,10 @@ cp .env.example .env
 2. Запустити бекенд (в окремому терміналі):
 
    ```bash
-   cd backend && npm start
+   cd backend 
+   ``` 
+   ```bash
+   npm start
    ```
 
    У консолі з'явиться `server listen 4000 port`.
@@ -93,10 +96,13 @@ cp .env.example .env
 3. Запустити фронтенд (в іншому терміналі):
 
    ```bash
-   cd frontend && npm run dev
+   cd frontend
+   ```
+   ```bash
+   npm run dev
    ```
 
-4. Відкрити http://localhost:3000 і увійти як `admin@gmail.com` / `admin`.
+4. Відкрити http://localhost:3000 і увійти як `admin@gmail.com` з паролем `admin`.
 
 ## Запуск через Docker
 
