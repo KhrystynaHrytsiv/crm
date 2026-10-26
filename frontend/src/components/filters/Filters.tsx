@@ -7,6 +7,7 @@ import {filters, inputs} from "../../constants/filters";
 import {useEffect, useRef, useState} from "react";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";
 import {orderService} from "../../services/orderService";
+import {logger} from "../../../../shared/logger";
 
 const Filters = () => {
     const [isDateFocused, setIsDateFocused] = useState(false);
@@ -66,7 +67,7 @@ const Filters = () => {
             link.remove();
             window.URL.revokeObjectURL(url);
         }catch (e) {
-            console.log(e);
+            logger.error(e);
         }
     }
     return (

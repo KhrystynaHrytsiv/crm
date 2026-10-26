@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import {RoleEnum} from "../../../../backend/src/enums/roleEnum";
 import Link from "next/link";
 import {useAppSelector} from "../../redux/hooks/reduxHooks";
+import {logger} from "../../../../shared/logger";
 
 const Header = () => {
     const {me} = useAppSelector(state =>state.manager);
@@ -16,7 +17,7 @@ const Header = () => {
             await authService.logout();
             router.push("/login");
         } catch (error) {
-            console.error("Logout failed:", error);
+            logger.error(error, "Logout failed:");
         }
     }
 

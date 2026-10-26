@@ -9,6 +9,7 @@ import {seed} from "./seed/adminSeed";
 import {seedOrderIds} from "./seed/orderIdSeed";
 import swaggerUi from "swagger-ui-express";
 import {swaggerDocument} from "./docs/swagger";
+import {logger} from "../../shared/logger";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
@@ -23,7 +24,7 @@ app.use((err: apiError, req: Request, res: Response, next: NextFunction) => {
     res.status(status).json({ status, message });
 });
 process.on("uncaughtException", (err) => {
-    console.log("uncaughtException", err);
+    logger.error(err, "uncaughtException");
     process.exit(1);
 });
 
@@ -34,10 +35,10 @@ const connection = async () =>{
         try {
             await mongoose.connect(config.MONGO_URI);
             dbCon = true;
-            console.log("Connection available");
+            logger.info("Connection available");
         } catch (e) {
             await new Promise((resolve) => setTimeout(resolve, 3000));
-            console.log(e);
+            logger.error(e);
         }
     }
 }
@@ -48,10 +49,10 @@ const start = async () =>{
         await seed();
         await seedOrderIds();
         app.listen(config.PORT, async () =>{
-            console.log(`server listen ${config.PORT} port`);
+            logger.info(`server listen ${config.PORT} port`);
         })
     }catch (e){
-        console.log(e);
+        logger.error(e);
     }
 }
 void start();

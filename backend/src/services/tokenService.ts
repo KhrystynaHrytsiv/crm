@@ -5,6 +5,7 @@ import {StatusCode} from "../enums/StatusCode";
 import {apiError} from "../error/apiError";
 import {config} from "../configs/config";
 import {ActionTokenType, TokenEnum} from "../enums/tokenEnum";
+import {logger} from "../../../shared/logger";
 class TokenService {
     generateTokens(payload: TokenPayload): TokensPair {
         const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, { expiresIn: config.JWT_ACCESS_LIFETIME });
@@ -33,7 +34,7 @@ class TokenService {
             }
             return jwt.verify(token, secret) as TokenPayload;
         } catch (e) {
-            console.error(e);
+            logger.error(e);
             throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);
         }
     }
