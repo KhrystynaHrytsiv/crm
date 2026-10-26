@@ -1,6 +1,6 @@
 "use client"
 import Admin from "../../components/admin/Admin";
-import React, {Suspense, useEffect} from "react";
+import React, {useEffect} from "react";
 import Header from "../../components/header/Header";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
 import {managerAction} from "../../redux/slices/managerSlice";
@@ -11,7 +11,7 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {RoleEnum} from "../../../../backend/src/enums/roleEnum";
 import Pagination from "../../components/pagination/Pagination";
 
-const AdminContent = () => {
+const AdminPanel = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -32,14 +32,10 @@ const AdminContent = () => {
     useEffect(() => {
         if (isAdmin) {
             dispatch(orderActions.getStatistics());
-        }
-    }, [isAdmin, dispatch]);
-
-    useEffect(() => {
-        if (isAdmin) {
             dispatch(managerAction.getManagers(page));
         }
     }, [isAdmin, page, dispatch]);
+
 
     if (!isAdmin) {
         return <Loading/>;
@@ -55,10 +51,5 @@ const AdminContent = () => {
     );
 };
 
-const AdminPanel = () => (
-    <Suspense fallback={<Loading/>}>
-        <AdminContent/>
-    </Suspense>
-);
 
 export default AdminPanel;

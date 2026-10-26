@@ -70,33 +70,33 @@ cp .env.example .env
 
 Усі команди виконуються з кореня проєкту.
 
-1. Встановити залежності (корінь — для `shared/`, потім бекенд і фронтенд):
+1. Встановити залежності для `shared/`:
 
    ```bash
    npm install
    ```
-   ```bash
-   npm install --prefix backend
-   ```
-   ```bash
-   npm install --prefix frontend
-   ```
 
-2. Запустити бекенд (в окремому терміналі):
+2. Встановити залежності і запустити бекенд (в окремому терміналі):
 
    ```bash
    cd backend 
    ``` 
+    ```bash
+   npm install
+   ```
    ```bash
    npm start
    ```
 
    У консолі з'явиться `server listen 4000 port`.
 
-3. Запустити фронтенд (в іншому терміналі):
+3. Встановити залежності і запустити фронтенд (в іншому терміналі):
 
    ```bash
    cd frontend
+   ```
+    ```bash
+   npm install
    ```
    ```bash
    npm run dev
