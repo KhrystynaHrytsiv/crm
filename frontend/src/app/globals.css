@@ -1,20 +1,20 @@
 /*@import "tailwindcss";*/
-body{
+body {
     margin: 0;
     width: 100vw;
 }
-.greenButton{
+.greenButton {
     padding: 5px 10px;
     border-radius: 5px;
     border: none;
     background-color: rgb(67, 160, 71);
-    color:rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
     height: 40px;
     text-transform: uppercase;
-    font-size:14px;
+    font-size: 14px;
     margin: 10px;
 }
-.greyButton{
+.greyButton {
     padding: 5px 10px;
     border-radius: 8px;
     border: none;
@@ -22,11 +22,11 @@ body{
     color: #f6f5f5;
     height: 40px;
     text-transform: uppercase;
-    font-size:16px;
+    font-size: 16px;
     margin: 10px;
 }
 /******************************forms*************/
-.container{
+.container {
     background-color: rgb(118, 184, 82);
     margin: 0;
     display: flex;
@@ -35,7 +35,7 @@ body{
     min-height: 100vh;
     box-sizing: border-box;
 }
-.form{
+.form {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,7 +45,7 @@ body{
     box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.25);
     padding: 30px;
 }
-.field{
+.field {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -54,7 +54,7 @@ body{
     box-sizing: border-box;
     margin: 10px;
 }
-input{
+input {
     height: 55px;
     border-radius: 8px;
     border: none;
@@ -65,17 +65,17 @@ input:focus {
     outline: none;
     border: none;
 }
-.wide-button{
+.wide-button {
     height: 55px;
     border-radius: 10px;
     background-color: rgb(67, 160, 71);
     color: #f6f5f5;
     border: none;
     width: 220px;
-    font-size:18px;
+    font-size: 18px;
 }
 /************************************/
-.overlay{
+.overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
@@ -84,7 +84,7 @@ input:focus {
     align-items: center;
     z-index: 1000;
 }
-.error{
+.error {
     font-size: 16px;
     margin: 5px 0;
     color: red;

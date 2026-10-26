@@ -1,7 +1,7 @@
 import { IOrder } from "../interfaces/IOrder";
 
 export const columns: {
-    header:string;
+    header: string;
     key: keyof IOrder;
     width: number;
 }[] = [

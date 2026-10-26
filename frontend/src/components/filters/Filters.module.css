@@ -1,18 +1,19 @@
-.container{
+.container {
     width: 100%;
     display: flex;
     padding: 10px;
     box-sizing: border-box;
     justify-content: space-between;
 }
-.filters{
+.filters {
     width: 85%;
     display: grid;
-    grid-template-columns: repeat(6,minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     grid-template-rows: repeat(2, 1fr);
     gap: 10px;
 }
-.filters input, .filters select {
+.filters input,
+.filters select {
     height: 40px;
     border-radius: 8px;
     border: none;
@@ -20,7 +21,7 @@
     padding-left: 20px;
     font-size: 16px;
 }
-.info{
+.info {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -28,17 +29,17 @@
     gap: 10px;
     font-size: 20px;
 }
-.info label{
+.info label {
     display: flex;
     align-items: center;
 }
-.info input{
+.info input {
     width: 20px;
     height: 20px;
     accent-color: rgb(67, 160, 71);
 }
 
-.icon{
+.icon {
     height: 35px;
     width: 35px;
     background-color: rgb(67, 160, 71);
@@ -47,7 +48,7 @@
     align-items: center;
     justify-content: center;
 }
-.icon:hover{
-    background-color:rgb(56, 142, 60);
+.icon:hover {
+    background-color: rgb(56, 142, 60);
     transition: 0.2s linear;
 }

@@ -1,8 +1,9 @@
-import {useDispatch, useSelector} from "react-redux";
-import {store} from "../store";
+import { useDispatch, useSelector } from "react-redux";
 
-const useAppSelector = useSelector.withTypes<ReturnType<typeof store.getState>>();
+import { store } from "../store";
+
+const useAppSelector =
+    useSelector.withTypes<ReturnType<typeof store.getState>>();
 const useAppDispatch = useDispatch.withTypes<typeof store.dispatch>();
 
-
-export {useAppDispatch, useAppSelector}
+export { useAppDispatch, useAppSelector };

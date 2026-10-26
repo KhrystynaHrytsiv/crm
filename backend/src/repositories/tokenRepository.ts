@@ -1,8 +1,8 @@
-import {IToken} from "../../../shared/interfaces/IToken";
-import {Token} from "../models/tokenModel";
+import { IToken } from "../../../shared/interfaces/IToken";
+import { Token } from "../models/tokenModel";
 
 class TokenRepository {
-    create(dto:any):Promise<IToken>{
+    create(dto: any): Promise<IToken> {
         return Token.create(dto);
     }
     findByParams(params: Partial<IToken>): Promise<IToken | null> {
@@ -11,5 +11,5 @@ class TokenRepository {
     public delete(params: Partial<IToken>) {
         return Token.deleteOne(params);
     }
-};
+}
 export const tokenRepository = new TokenRepository();

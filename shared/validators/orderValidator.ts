@@ -1,22 +1,38 @@
 import joi from "joi";
-import {OrderSortEnum} from "../../backend/src/enums/OrderSortEnum";
-import {CourseEnum, CourseFormat} from "../../backend/src/enums/CourseEnum";
-import {CourseStatusEnum} from "../../backend/src/enums/courseStatusEnum";
-import {CourseTypeEnum} from "../../backend/src/enums/courseTypeEnum";
+
+import { CourseEnum, CourseFormat } from "../../backend/src/enums/CourseEnum";
+import { CourseStatusEnum } from "../../backend/src/enums/courseStatusEnum";
+import { CourseTypeEnum } from "../../backend/src/enums/courseTypeEnum";
+import { OrderSortEnum } from "../../backend/src/enums/OrderSortEnum";
 
 export class OrderValidator {
-    private static nameField= joi.string().max(20).allow(null, "");
-    private static surname= joi.string().max(35).allow(null, "");
-    private static email= joi.string().email().allow(null, "");
-    private static phone= joi.string().pattern(/^(?:\+380|380|0)(\d{9})$/).allow(null, "");
-    private static age= joi.number().min(16).max(90).allow(null, "");
-    private static course= joi.string().valid(...Object.values(CourseEnum)).allow(null, "");
-    private static course_format= joi.string().valid(...Object.values(CourseFormat)).allow(null, "");
-    private static course_type= joi.string().valid(...Object.values(CourseTypeEnum)).allow(null, "");
-    private static status= joi.string().valid(...Object.values(CourseStatusEnum)).allow(null, "");
-    private static sum= joi.number().allow(null, "");
-    private static alreadyPaid= joi.number().allow(null, "");
-    private static group= joi.string().allow(null, "");
+    private static nameField = joi.string().max(20).allow(null, "");
+    private static surname = joi.string().max(35).allow(null, "");
+    private static email = joi.string().email().allow(null, "");
+    private static phone = joi
+        .string()
+        .pattern(/^(?:\+380|380|0)(\d{9})$/)
+        .allow(null, "");
+    private static age = joi.number().min(16).max(90).allow(null, "");
+    private static course = joi
+        .string()
+        .valid(...Object.values(CourseEnum))
+        .allow(null, "");
+    private static course_format = joi
+        .string()
+        .valid(...Object.values(CourseFormat))
+        .allow(null, "");
+    private static course_type = joi
+        .string()
+        .valid(...Object.values(CourseTypeEnum))
+        .allow(null, "");
+    private static status = joi
+        .string()
+        .valid(...Object.values(CourseStatusEnum))
+        .allow(null, "");
+    private static sum = joi.number().allow(null, "");
+    private static alreadyPaid = joi.number().allow(null, "");
+    private static group = joi.string().allow(null, "");
 
     public static update = joi.object({
         name: this.nameField,
@@ -31,7 +47,7 @@ export class OrderValidator {
         sum: this.sum,
         alreadyPaid: this.alreadyPaid,
         group: this.group,
-        newGroup: joi.any().strip()
+        newGroup: joi.any().strip(),
     });
 
     public static query = joi.object({

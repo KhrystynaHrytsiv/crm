@@ -1,4 +1,4 @@
-# CRM 
+# CRM
 
 CRM для обліку та обробки заявок студентів на курси.
 
@@ -20,12 +20,12 @@ crm/
 
 ## Вимоги
 
-| Інструмент | Версія |
-|---|---|
-| Node.js | 24.x (перевірено на 24.15.0) |
-| npm | 11.x |
-| MongoDB | хмарний кластер MongoDB Atlas (або будь-який MongoDB 7+) |
-| Docker (опційно) | Docker Desktop / Docker Engine з `docker compose` |
+| Інструмент       | Версія                                                   |
+| ---------------- | -------------------------------------------------------- |
+| Node.js          | 24.x (перевірено на 24.15.0)                             |
+| npm              | 11.x                                                     |
+| MongoDB          | хмарний кластер MongoDB Atlas (або будь-який MongoDB 7+) |
+| Docker (опційно) | Docker Desktop / Docker Engine з `docker compose`        |
 
 ## База даних
 
@@ -35,10 +35,11 @@ crm/
 Колекції: `orders`, `users`, `comments`, `tokens`.
 
 ### Дамп
+
 Використаний дамп: https://github.com/OktenSchool/dumps/blob/main/final/orders.dump
 
-
 Під час першого старту бекенд автоматично:
+
 - створює суперадміна `admin@gmail.com` / `admin` (якщо його ще немає);
 - проставляє числовий `id` (1, 2, 3, ...) заявкам, у яких його немає (у порядку імпорту).
 
@@ -50,15 +51,15 @@ crm/
 cp .env.example .env
 ```
 
-| Змінна | Опис |
-|---|---|
-| `MONGO_URI` | рядок підключення до MongoDB |
-| `PORT` | порт бекенду (`4000`) |
-| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | секрети access/refresh токенів |
-| `JWT_ACCESS_LIFETIME`, `JWT_REFRESH_LIFETIME` | час життя токенів (`1h`, `90m`) |
-| `JWT_ACTIVATE_SECRET`, `JWT_RECOVERY_SECRET` | секрети токенів активації / відновлення пароля |
-| `JWT_ACTIVATE_LIFETIME`, `JWT_RECOVERY_LIFETIME` | час життя посилань активації (`30m`) |
-| `FRONTEND_URL` | адреса фронтенду, з якої генеруються посилання активації (`http://localhost:3000`) |
+| Змінна                                           | Опис                                                                               |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `MONGO_URI`                                      | рядок підключення до MongoDB                                                       |
+| `PORT`                                           | порт бекенду (`4000`)                                                              |
+| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`        | секрети access/refresh токенів                                                     |
+| `JWT_ACCESS_LIFETIME`, `JWT_REFRESH_LIFETIME`    | час життя токенів (`1h`, `90m`)                                                    |
+| `JWT_ACTIVATE_SECRET`, `JWT_RECOVERY_SECRET`     | секрети токенів активації / відновлення пароля                                     |
+| `JWT_ACTIVATE_LIFETIME`, `JWT_RECOVERY_LIFETIME` | час життя посилань активації (`30m`)                                               |
+| `FRONTEND_URL`                                   | адреса фронтенду, з якої генеруються посилання активації (`http://localhost:3000`) |
 
 Фронтенд (опційно): `NEXT_PUBLIC_API_URL` — адреса API, за замовчуванням `http://localhost:4000`.
 
@@ -68,35 +69,39 @@ cp .env.example .env
 
 1. Встановити залежності для `shared/`:
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 2. Встановити залежності і запустити бекенд (в окремому терміналі):
 
-   ```bash
-   cd backend 
-   ``` 
     ```bash
-   npm install
-   ```
-   ```bash
-   npm start
-   ```
+    cd backend
+    ```
 
-   У консолі з'явиться `server listen 4000 port`.
+    ```bash
+    npm install
+    ```
+
+    ```bash
+    npm start
+    ```
+
+    У консолі з'явиться `server listen 4000 port`.
 
 3. Встановити залежності і запустити фронтенд (в іншому терміналі):
 
-   ```bash
-   cd frontend
-   ```
     ```bash
-   npm install
-   ```
-   ```bash
-   npm run dev
-   ```
+    cd frontend
+    ```
+
+    ```bash
+    npm install
+    ```
+
+    ```bash
+    npm run dev
+    ```
 
 4. Відкрити http://localhost:3000 і увійти як `admin@gmail.com` з паролем `admin`.
 
@@ -105,9 +110,9 @@ cp .env.example .env
 1. Створити `.env` у корені (див. вище).
 2. Зібрати та запустити:
 
-   ```bash
-   docker compose up --build
-   ```
+    ```bash
+    docker compose up --build
+    ```
 
 3. Фронтенд: http://localhost:3000, API: http://localhost:4000.
 
@@ -119,24 +124,24 @@ cp .env.example .env
 
 Основні ендпоінти:
 
-| Метод | Шлях | Доступ | Опис |
-|---|---|---|---|
-| POST | `/auth/login` | публічний | логін, повертає `user` і `tokens` |
-| POST | `/auth/refresh` | refresh token | нова пара токенів |
-| POST | `/auth/logout` | refresh token | вихід |
-| GET | `/auth/me` | access token | поточний користувач |
-| GET | `/orders` | access token | заявки (25 на сторінку), фільтри та сортування через query |
-| GET | `/orders/excel` | access token | Excel-файл заявок за тими ж фільтрами |
-| GET | `/orders/groups` | access token | список груп |
-| GET | `/orders/statistics` | access token | статистика заявок за статусами |
-| PUT | `/orders/:orderId` | access token, своя/нічия заявка | редагування заявки |
-| GET | `/orders/:orderId/comments` | access token | коментарі заявки |
-| POST | `/orders/:orderId/comments` | access token, своя/нічия заявка | додати коментар (заявка закріплюється за користувачем) |
-| GET | `/manager?page=1` | admin | менеджери зі статистикою (10 на сторінку) |
-| POST | `/manager` | admin | створити менеджера |
-| GET | `/manager/:id/activate` \| `/manager/:id/recovery` | admin | посилання активації / відновлення пароля (30 хв) |
-| PATCH | `/manager/:id/ban` \| `/manager/:id/unban` | admin | заблокувати / розблокувати |
-| POST | `/manager/:action/:token` | публічний | встановити пароль за посиланням |
+| Метод | Шлях                                               | Доступ                          | Опис                                                       |
+| ----- | -------------------------------------------------- | ------------------------------- | ---------------------------------------------------------- |
+| POST  | `/auth/login`                                      | публічний                       | логін, повертає `user` і `tokens`                          |
+| POST  | `/auth/refresh`                                    | refresh token                   | нова пара токенів                                          |
+| POST  | `/auth/logout`                                     | refresh token                   | вихід                                                      |
+| GET   | `/auth/me`                                         | access token                    | поточний користувач                                        |
+| GET   | `/orders`                                          | access token                    | заявки (25 на сторінку), фільтри та сортування через query |
+| GET   | `/orders/excel`                                    | access token                    | Excel-файл заявок за тими ж фільтрами                      |
+| GET   | `/orders/groups`                                   | access token                    | список груп                                                |
+| GET   | `/orders/statistics`                               | access token                    | статистика заявок за статусами                             |
+| PUT   | `/orders/:orderId`                                 | access token, своя/нічия заявка | редагування заявки                                         |
+| GET   | `/orders/:orderId/comments`                        | access token                    | коментарі заявки                                           |
+| POST  | `/orders/:orderId/comments`                        | access token, своя/нічия заявка | додати коментар (заявка закріплюється за користувачем)     |
+| GET   | `/manager?page=1`                                  | admin                           | менеджери зі статистикою (10 на сторінку)                  |
+| POST  | `/manager`                                         | admin                           | створити менеджера                                         |
+| GET   | `/manager/:id/activate` \| `/manager/:id/recovery` | admin                           | посилання активації / відновлення пароля (30 хв)           |
+| PATCH | `/manager/:id/ban` \| `/manager/:id/unban`         | admin                           | заблокувати / розблокувати                                 |
+| POST  | `/manager/:action/:token`                          | публічний                       | встановити пароль за посиланням                            |
 
 Query-параметри `/orders`: `page`, `order` (`id`, `-id`, `name`, `-created_at`, ...), `name`, `surname`, `email`, `phone`
 (пошук підрядка без урахування регістру), `age`, `course`, `course_format`, `course_type`, `status`, `group`,

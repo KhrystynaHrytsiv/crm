@@ -1,7 +1,7 @@
-import {IUser} from "./IUser";
-import {IStatistic} from "./IStatistic";
+import { IStatistic } from "./IStatistic";
+import { IUser } from "./IUser";
 
 export interface IManagerWithStatistics {
-    manager:IUser,
-    statistics: IStatistic
+    manager: IUser;
+    statistics: IStatistic;
 }

@@ -1,23 +1,25 @@
-import express, {NextFunction, Request, Response} from "express";
-import {apiRouter} from "./routs/apiRouter";
-import mongoose from "mongoose";
-import {config} from "./configs/config";
 import dns from "node:dns";
+
 import cors from "cors";
-import {apiError} from "./error/apiError";
-import {seed} from "./seed/adminSeed";
-import {seedOrderIds} from "./seed/orderIdSeed";
+import express, { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 import swaggerUi from "swagger-ui-express";
-import {swaggerDocument} from "./docs/swagger";
-import {logger} from "../../shared/logger";
+
+import { logger } from "../../shared/logger";
+import { config } from "./configs/config";
+import { swaggerDocument } from "./docs/swagger";
+import { apiError } from "./error/apiError";
+import { apiRouter } from "./routs/apiRouter";
+import { seed } from "./seed/adminSeed";
+import { seedOrderIds } from "./seed/orderIdSeed";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: ["http://localhost:3000"] }));
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use('/', apiRouter);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/", apiRouter);
 app.use((err: apiError, req: Request, res: Response, next: NextFunction) => {
     const status = err.status || 500;
     const message = err.message ?? "Something went wrong";
@@ -28,9 +30,8 @@ process.on("uncaughtException", (err) => {
     process.exit(1);
 });
 
-
-const connection = async () =>{
-    let dbCon =false;
+const connection = async () => {
+    let dbCon = false;
     while (!dbCon) {
         try {
             await mongoose.connect(config.MONGO_URI);
@@ -41,18 +42,18 @@ const connection = async () =>{
             logger.error(e);
         }
     }
-}
+};
 
-const start = async () =>{
-    try{
+const start = async () => {
+    try {
         await connection();
         await seed();
         await seedOrderIds();
-        app.listen(config.PORT, async () =>{
+        app.listen(config.PORT, async () => {
             logger.info(`server listen ${config.PORT} port`);
-        })
-    }catch (e){
+        });
+    } catch (e) {
         logger.error(e);
     }
-}
+};
 void start();

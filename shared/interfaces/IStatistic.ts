@@ -1,4 +1,4 @@
 export interface IStatistic {
-    key:string,
-    value:number
+    key: string;
+    value: number;
 }

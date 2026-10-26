@@ -1,4 +1,4 @@
-import {api} from "./apiService";
+import { api } from "./apiService";
 
 export const generalService = {
     get: async <T>(endpoint: string): Promise<T> => {

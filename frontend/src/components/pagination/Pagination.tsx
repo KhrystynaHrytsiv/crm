@@ -1,9 +1,13 @@
 "use client";
-import {useRouter, useSearchParams} from "next/navigation";
-import css from "./Pagination.module.css";
-import {MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight} from "react-icons/md";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+    MdOutlineKeyboardArrowLeft,
+    MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 
-const Pagination = ({totalPages}: {totalPages: number}) => {
+import css from "./Pagination.module.css";
+
+const Pagination = ({ totalPages }: { totalPages: number }) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get("page")) || 1;
@@ -37,27 +41,51 @@ const Pagination = ({totalPages}: {totalPages: number}) => {
 
     return (
         <nav aria-label="Orders pagination" className={css.paginationBlock}>
-            {prevPage && <MdOutlineKeyboardArrowLeft onClick={() => goToPage(currentPage - 1)} className={css.arrow} aria-label="Prev page"/>}
+            {prevPage && (
+                <MdOutlineKeyboardArrowLeft
+                    onClick={() => goToPage(currentPage - 1)}
+                    className={css.arrow}
+                    aria-label="Prev page"
+                />
+            )}
             {showLeftDots && (
                 <>
-                    <button onClick={() => goToPage(1)} className={css.button}>1</button>
+                    <button onClick={() => goToPage(1)} className={css.button}>
+                        1
+                    </button>
                     <div className={css.button}>...</div>
                 </>
             )}
 
             {pages.map((page) => (
-                <button key={page} type="button" onClick={() => goToPage(page)}
-                        className={`${css.button} ${page === currentPage ? css.active : ""}`}
-                    aria-current={page === currentPage ? "page" : undefined} disabled={page === currentPage}>
+                <button
+                    key={page}
+                    type="button"
+                    onClick={() => goToPage(page)}
+                    className={`${css.button} ${page === currentPage ? css.active : ""}`}
+                    aria-current={page === currentPage ? "page" : undefined}
+                    disabled={page === currentPage}
+                >
                     {page}
                 </button>
             ))}
 
             {showRightDots && <div className={css.button}>...</div>}
             {pages[pages.length - 1] < totalPages && (
-                <button onClick={() => goToPage(totalPages)} className={css.button}>{totalPages}</button>
+                <button
+                    onClick={() => goToPage(totalPages)}
+                    className={css.button}
+                >
+                    {totalPages}
+                </button>
             )}
-            {nextPage && <MdOutlineKeyboardArrowRight onClick={() => goToPage(currentPage + 1)} className={css.arrow} aria-label="Next page"/>}
+            {nextPage && (
+                <MdOutlineKeyboardArrowRight
+                    onClick={() => goToPage(currentPage + 1)}
+                    className={css.arrow}
+                    aria-label="Next page"
+                />
+            )}
         </nav>
     );
 };

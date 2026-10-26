@@ -1,11 +1,10 @@
-import axios, {AxiosError} from "axios";
-import {authService} from "./authService";
+import axios, { AxiosError } from "axios";
 
+import { authService } from "./authService";
 
-
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-let isRefreshing = false
-export const api = axios.create({baseURL});
+const baseURL = "http://localhost:4000";
+let isRefreshing = false;
+export const api = axios.create({ baseURL });
 api.interceptors.request.use((config) => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken && !config.headers.Authorization) {
@@ -40,7 +39,7 @@ api.interceptors.response.use(
                     }
                     const accessToken = localStorage.getItem("accessToken");
                     if (accessToken) {
-                        originalRequest.headers.Authorization =`Bearer ${accessToken}`;
+                        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                     }
 
                     api(originalRequest).then(resolve).catch(reject);
@@ -62,12 +61,12 @@ api.interceptors.response.use(
         } catch (refreshError) {
             runAfterRefresh(refreshError);
             await authService.deleteTokenFromLS();
-            window.location.href = "/login?SessionExpired=true";
+            window.location.replace("/login?SessionExpired=true");
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;
         }
-    }
+    },
 );
 
 type IWaitList = (error?: unknown) => void;

@@ -9,13 +9,13 @@
     box-sizing: border-box;
     height: 80px;
 }
-.content{
+.content {
     display: flex;
     gap: 20px;
     font-size: 28px;
     align-items: center;
 }
-.icon{
+.icon {
     width: 45px;
     height: 45px;
     border-radius: 8px;
@@ -24,11 +24,11 @@
     justify-content: center;
     background-color: rgb(67, 160, 71);
 }
-.icon:hover{
-    background-color:rgb(56, 142, 60);
+.icon:hover {
+    background-color: rgb(56, 142, 60);
     transition: 0.2s linear;
 }
-.header a{
+.header a {
     text-decoration: none;
     color: white;
 }

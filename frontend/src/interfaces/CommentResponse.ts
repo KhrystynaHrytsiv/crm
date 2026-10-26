@@ -1,8 +1,8 @@
-import {IComment} from "../../../shared/interfaces/IComment";
+import { IComment } from "../../../shared/interfaces/IComment";
 
-export interface CommentResponse extends Omit<IComment, "manager">{
+export interface CommentResponse extends Omit<IComment, "manager"> {
     manager: {
-        _id:string,
-        surname:string
-    }
+        _id: string;
+        surname: string;
+    };
 }

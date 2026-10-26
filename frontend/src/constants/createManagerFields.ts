@@ -1,4 +1,4 @@
-import {IUserDto} from "../interfaces/IUserDto";
+import { IUserDto } from "../interfaces/IUserDto";
 
 export const fields: {
     name: keyof IUserDto;
@@ -10,18 +10,18 @@ export const fields: {
         name: "email",
         label: "Email",
         type: "email",
-        placeholder: "Email"
+        placeholder: "Email",
     },
     {
         name: "name",
         label: "Name",
         type: "text",
-        placeholder: "Name"
+        placeholder: "Name",
     },
     {
         name: "surname",
         label: "Surname",
         type: "text",
-        placeholder: "Surname"
-    }
+        placeholder: "Surname",
+    },
 ];

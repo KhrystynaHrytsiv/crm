@@ -1,8 +1,9 @@
-import {ObjectSchema, ValidationError} from "joi";
-import {NextFunction, Request, Response} from "express";
-import {apiError} from "../error/apiError";
-import {StatusCode} from "../enums/StatusCode";
-import {isObjectIdOrHexString} from "mongoose";
+import { NextFunction, Request, Response } from "express";
+import { ObjectSchema, ValidationError } from "joi";
+import { isObjectIdOrHexString } from "mongoose";
+
+import { StatusCode } from "../enums/StatusCode";
+import { apiError } from "../error/apiError";
 
 class ValidationMiddleware {
     isIdValidate(key: string) {
@@ -10,7 +11,10 @@ class ValidationMiddleware {
             try {
                 const id = req.params[key];
                 if (!isObjectIdOrHexString(id)) {
-                    throw new apiError(`${key}: ${id} invalid Id`, StatusCode.BAD_REQUEST);
+                    throw new apiError(
+                        `${key}: ${id} invalid Id`,
+                        StatusCode.BAD_REQUEST,
+                    );
                 }
                 next();
             } catch (e) {
@@ -18,16 +22,21 @@ class ValidationMiddleware {
             }
         };
     }
-    validateBody(validator:ObjectSchema){
+    validateBody(validator: ObjectSchema) {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 req.body = await validator.validateAsync(req.body);
                 next();
-            }catch (e) {
+            } catch (e) {
                 const err = e as ValidationError;
-                next(new apiError(err.details[0].message, StatusCode.BAD_REQUEST));
+                next(
+                    new apiError(
+                        err.details[0].message,
+                        StatusCode.BAD_REQUEST,
+                    ),
+                );
             }
-        }
+        };
     }
 }
 export const validationMiddleware = new ValidationMiddleware();

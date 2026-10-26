@@ -1,38 +1,46 @@
-import {IAuth} from "../../../shared/interfaces/IAuth";
-import {api} from "./apiService";
-import {IToken} from "../../../shared/interfaces/IToken";
-
+import { IAuth } from "../../../shared/interfaces/IAuth";
+import { IToken } from "../../../shared/interfaces/IToken";
+import { api } from "./apiService";
 
 export const authService = {
-    async login (data: IAuth) {
-        const response = await api.post('/auth/login', data);
-        const {accessToken, refreshToken} = response.data.tokens;
+    async login(data: IAuth) {
+        const response = await api.post("/auth/login", data);
+        const { accessToken, refreshToken } = response.data.tokens;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("user", JSON.stringify(response.data.user))
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         return response.data;
     },
-    async logout (){
+    async logout() {
         const refreshToken = localStorage.getItem("refreshToken");
-        if(refreshToken){
-            await api.post('/auth/logout',  {}, {headers: {Authorization: `Bearer ${refreshToken}`}});
+        if (refreshToken) {
+            await api.post(
+                "/auth/logout",
+                {},
+                { headers: { Authorization: `Bearer ${refreshToken}` } },
+            );
         }
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
     },
-    async refresh () {
+    async refresh() {
         const refreshToken = localStorage.getItem("refreshToken");
-        if (!refreshToken){
-            throw new Error("Refresh token is missing")
+        if (!refreshToken) {
+            throw new Error("Refresh token is missing");
         }
-        const {data: {accessToken, refreshToken: newRefresh}}= await api.post<IToken>('/auth/refresh', {}, {headers: {Authorization: `Bearer ${refreshToken}`}});
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', newRefresh)
+        const {
+            data: { accessToken, refreshToken: newRefresh },
+        } = await api.post<IToken>(
+            "/auth/refresh",
+            {},
+            { headers: { Authorization: `Bearer ${refreshToken}` } },
+        );
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", newRefresh);
     },
-    async deleteTokenFromLS (){
+    async deleteTokenFromLS() {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-    }
-
+    },
 };

@@ -1,1 +1,1 @@
-export type ActionType = "ban" | "unban"
+export type ActionType = "ban" | "unban";

@@ -1,22 +1,21 @@
-.block{
+.block {
     width: 80%;
     margin: 10px auto;
     border: 2px solid green;
     border-radius: 8px;
     box-sizing: border-box;
-    padding: 10px 20px;
+    padding: 20px 20px;
     display: flex;
     gap: 50px;
-    height: 150px;
 }
-.info p{
+.info p {
     margin: 0;
 }
-.statistic p{
+.statistic p {
     margin: 0;
     width: 100px;
 }
-.buttonBlock{
+.buttonBlock {
     display: flex;
     gap: 20px;
 }

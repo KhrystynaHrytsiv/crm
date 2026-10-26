@@ -1,6 +1,6 @@
-import {userRepository} from "../repositories/userRepository";
-import {RoleEnum} from "../enums/roleEnum";
-import {passwordService} from "../services/passwordService";
+import { RoleEnum } from "../enums/roleEnum";
+import { userRepository } from "../repositories/userRepository";
+import { passwordService } from "../services/passwordService";
 
 export const seed = async () => {
     const existingAdmin = await userRepository.getByEmail("admin@gmail.com");
@@ -11,7 +11,7 @@ export const seed = async () => {
     await userRepository.create({
         email: "admin@gmail.com",
         password: hashPassword,
-        name: 'admin',
+        name: "admin",
         surname: "admin",
         role: RoleEnum.admin,
         is_Active: true,

@@ -1,10 +1,12 @@
-import {CourseEnum, CourseFormat} from "../../../backend/src/enums/CourseEnum";
-import {CourseTypeEnum} from "../../../backend/src/enums/courseTypeEnum";
-import {CourseStatusEnum} from "../../../backend/src/enums/courseStatusEnum";
-import {OrderDTO} from "../../../shared/interfaces/IOrder";
+import {
+    CourseEnum,
+    CourseFormat,
+} from "../../../backend/src/enums/CourseEnum";
+import { CourseStatusEnum } from "../../../backend/src/enums/courseStatusEnum";
+import { CourseTypeEnum } from "../../../backend/src/enums/courseTypeEnum";
+import { OrderDTO } from "../../../shared/interfaces/IOrder";
 
-
-export const filters =(groups:string[]) =>[
+export const filters = (groups: string[]) => [
     {
         key: "course",
         placeholder: "all courses",
@@ -34,49 +36,49 @@ export const filters =(groups:string[]) =>[
         placeholder: "all groups",
         label: "Group",
         options: groups,
-    }
+    },
 ];
 export const inputs = [
     {
         key: "name",
         label: "Name",
-        type: "string"
+        type: "string",
     },
     {
         key: "surname",
         label: "Surname",
-        type: "string"
+        type: "string",
     },
     {
         key: "email",
         label: "Email",
-        type: "email"
+        type: "email",
     },
     {
         key: "phone",
         label: "Phone",
-        type: "number"
+        type: "number",
     },
     {
         key: "age",
         label: "Age",
-        type: "number"
-    }
+        type: "number",
+    },
 ];
-export const extendedInputs = [...inputs,
+export const extendedInputs = [
+    ...inputs,
     {
-        key: 'sum',
+        key: "sum",
         label: "Sum",
-        type: "number"
+        type: "number",
     },
     {
-        key: 'alreadyPaid',
+        key: "alreadyPaid",
         label: "Already paid",
-        type: "number"
-    }
-
+        type: "number",
+    },
 ];
-export const fieldOrder:(keyof OrderDTO)[] = [
+export const fieldOrder: (keyof OrderDTO)[] = [
     "group",
     "status",
     "name",

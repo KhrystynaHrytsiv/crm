@@ -1,22 +1,25 @@
-"use client"
+"use client";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
+
+import { RoleEnum } from "../../../../backend/src/enums/roleEnum";
 import Admin from "../../components/admin/Admin";
-import React, {useEffect} from "react";
-import Header from "../../components/header/Header";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks/reduxHooks";
-import {managerAction} from "../../redux/slices/managerSlice";
-import {orderActions} from "../../redux/slices/ordersSlice";
-import Loading from "../loading";
 import Footer from "../../components/footer/Footer";
-import {useRouter, useSearchParams} from "next/navigation";
-import {RoleEnum} from "../../../../backend/src/enums/roleEnum";
+import Header from "../../components/header/Header";
 import Pagination from "../../components/pagination/Pagination";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
+import { managerAction } from "../../redux/slices/managerSlice";
+import { orderActions } from "../../redux/slices/ordersSlice";
+import Loading from "../loading";
 
 const AdminPanel = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const searchParams = useSearchParams();
     const page = Number(searchParams.get("page")) || 1;
-    const {me, loading, managersTotalPages} = useAppSelector(state => state.manager);
+    const { me, loading, managersTotalPages } = useAppSelector(
+        (state) => state.manager,
+    );
     const isAdmin = me?.role === RoleEnum.admin;
 
     useEffect(() => {
@@ -36,20 +39,18 @@ const AdminPanel = () => {
         }
     }, [isAdmin, page, dispatch]);
 
-
     if (!isAdmin) {
-        return <Loading/>;
+        return <Loading />;
     }
     return (
         <div>
-            <Header/>
-            <Admin/>
-            {loading && <Loading/>}
-            <Pagination totalPages={managersTotalPages}/>
-            <Footer/>
+            <Header />
+            <Admin />
+            {loading && <Loading />}
+            <Pagination totalPages={managersTotalPages} />
+            <Footer />
         </div>
     );
 };
-
 
 export default AdminPanel;
