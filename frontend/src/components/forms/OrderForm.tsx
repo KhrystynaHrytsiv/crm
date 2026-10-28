@@ -8,8 +8,7 @@ import { IOrder, OrderDTO } from "../../../../shared/interfaces/IOrder";
 import { OrderValidator } from "../../../../shared/validators/orderValidator";
 import { extendedInputs, fieldOrder, filters } from "../../constants/filters";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
-import { orderActions } from "../../redux/slices/ordersSlice";
+import { useAppSelector } from "../../redux/hooks/reduxHooks";
 import { orderService } from "../../services/orderService";
 import css from "./OrderForm.module.css";
 
@@ -25,7 +24,6 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
     const [newGroups, setNewGroups] = useState<string[]>([]);
     const [serverError, setServerError] = useState<string | null>(null);
     const { groups } = useAppSelector((state) => state.orders);
-    const dispatch = useAppDispatch();
     const allGroups = [...groups, ...newGroups];
     const allFilters = filters(allGroups);
     const defaultValues = Object.fromEntries(
@@ -84,7 +82,6 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
         });
         setValue("newGroup", "");
         setShowGroupAction(false);
-        await dispatch(orderActions.getGroups());
     };
 
     return (
