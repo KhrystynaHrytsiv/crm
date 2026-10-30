@@ -33,6 +33,7 @@ export class OrderValidator {
     private static sum = joi.number().allow(null, "");
     private static alreadyPaid = joi.number().allow(null, "");
     private static group = joi.string().allow(null, "");
+    private static manager = joi.string().allow(null, "");
 
     public static update = joi.object({
         name: this.nameField,
@@ -58,6 +59,14 @@ export class OrderValidator {
         email: this.email,
         phone: this.phone,
         age: this.age,
+        manager: this.manager,
+        course: this.course,
+        course_format: this.course_format,
+        course_type: this.course_type,
+        group: this.group,
+        status: this.status,
+        start_date: joi.date().iso(),
+        end_date: joi.date().iso(),
         order: joi
             .string()
             .valid(

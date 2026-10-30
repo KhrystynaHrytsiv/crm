@@ -25,22 +25,21 @@ const Filters = () => {
         );
     const [textValues, setTextValues] =
         useState<Record<string, string>>(getTextValues);
-    const searchParamsString = searchParams.toString();
-    const [syncedParams, setSyncedParams] = useState(searchParamsString);
-    if (syncedParams !== searchParamsString) {
-        setSyncedParams(searchParamsString);
-        setTextValues(getTextValues());
-    }
 
     const handleFilterChange = (key: string, value: string) => {
-        const newParams = new URLSearchParams(window.location.search);
-        newParams.delete("page");
-        if (value) {
-            newParams.set(key, value);
+        if (key === "manager") {
+            params.set("page", "1");
+            if (value) {
+                params.set("manager", value);
+            } else {
+                params.delete("manager");
+            }
+        } else if (value) {
+            params.set(key, value);
         } else {
-            newParams.delete(key);
+            params.delete(key);
         }
-        router.push(`/orders?${newParams.toString()}`);
+        router.push(`/orders?${params.toString()}`);
     };
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
     useEffect(
@@ -133,11 +132,11 @@ const Filters = () => {
                     {me && (
                         <input
                             type="checkbox"
-                            checked={searchParams.get("my") === "true"}
+                            checked={searchParams.get("manager") === me.surname}
                             onChange={(e) =>
                                 handleFilterChange(
-                                    "my",
-                                    e.target.checked ? "true" : "",
+                                    "manager",
+                                    e.target.checked ? me.surname : "",
                                 )
                             }
                         />

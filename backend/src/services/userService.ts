@@ -63,6 +63,7 @@ class UserService {
         }
         return user;
     }
+
     async changeStatus(userId: string, action: ActionType) {
         const user = await this.getById(userId);
         if (user.role !== RoleEnum.manager) {
@@ -71,6 +72,7 @@ class UserService {
                 StatusCode.BAD_REQUEST,
             );
         }
+
         if (action === "ban") {
             if (!user.is_Active) {
                 throw new apiError(
@@ -78,8 +80,10 @@ class UserService {
                     StatusCode.BAD_REQUEST,
                 );
             }
+
             return await this.update(userId, { is_Active: false });
         }
+
         if (action === "unban") {
             if (user.is_Active) {
                 throw new apiError(
@@ -87,9 +91,13 @@ class UserService {
                     StatusCode.BAD_REQUEST,
                 );
             }
+
             return await this.update(userId, { is_Active: true });
         }
+
+        throw new apiError("Invalid status action", StatusCode.BAD_REQUEST);
     }
+
     async actionRequest(id: string, action: ActionTokenType) {
         if (
             action !== ActionTokenType.activate &&

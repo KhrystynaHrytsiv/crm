@@ -18,7 +18,7 @@ const escapeRegex = (value: string) =>
 
 class OrderRepository {
     async getAll(query: IQuery, userId: string): Promise<[IOrder[], number]> {
-        const filterObject = this.filter(query, userId);
+        const filterObject = await this.filter(query, userId);
         const skip = query.pageSize * (query.page - 1);
         const sortOrder = query.order || "-id";
         return Promise.all([
@@ -30,18 +30,17 @@ class OrderRepository {
             Order.find(filterObject).countDocuments(),
         ]);
     }
-    filter(query: IQuery, userId: string): QueryFilter<IOrder> {
+    async filter(query: IQuery, userId: string): Promise<QueryFilter<IOrder>> {
         const filterObject: QueryFilter<IOrder> = {};
         if (query.status === "null" || query.status === CourseStatusEnum.new) {
             filterObject.$or = [
                 { status: CourseStatusEnum.new },
                 { status: null },
-                { status: "" as CourseStatusEnum },
             ];
         } else if (query.status) {
             filterObject.status = query.status as CourseStatusEnum;
         }
-        if (query.my === "true") {
+        if (query.manager) {
             filterObject.manager = userId;
         }
         for (const key of searchFields) {
@@ -64,17 +63,20 @@ class OrderRepository {
         }
         if (query.start_date || query.end_date) {
             filterObject.created_at = {};
+
             if (query.start_date) {
                 filterObject.created_at.$gte = new Date(
                     `${query.start_date}T00:00:00.000Z`,
                 );
             }
+
             if (query.end_date) {
                 filterObject.created_at.$lte = new Date(
                     `${query.end_date}T23:59:59.999Z`,
                 );
             }
         }
+
         return filterObject;
     }
     async getGroups(): Promise<string[]> {
@@ -102,7 +104,7 @@ class OrderRepository {
         return { total, ...Object.assign({}, ...statistics), null: nullCount };
     }
     async getDataForExcel(query: IQuery, userId: string): Promise<IOrder[]> {
-        const filterObject = this.filter(query, userId);
+        const filterObject = await this.filter(query, userId);
         return Order.find(filterObject)
             .populate("manager", "surname")
             .sort(query.order || "-id");

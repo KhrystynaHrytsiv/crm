@@ -94,7 +94,15 @@ const Comment = ({ order }: { order: IOrder }) => {
                                             month: "long",
                                             day: "2-digit",
                                             year: "numeric",
-                                        })}
+                                        }) +
+                                            ", " +
+                                            new Date(
+                                                com.created_At,
+                                            ).toLocaleTimeString("en-US", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: true,
+                                            })}
                                     </div>
                                 </div>
                             ))}

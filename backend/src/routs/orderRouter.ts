@@ -8,9 +8,17 @@ import { authMiddleware } from "../middleware/authMiddleware";
 import { validationMiddleware } from "../middleware/validationMiddleware";
 
 const router = Router();
-router.get("", orderController.getAll);
+router.get(
+    "",
+    validationMiddleware.validateQuery(OrderValidator.query),
+    orderController.getAll,
+);
 router.get("/groups", orderController.getGroups);
-router.get("/statistics", orderController.getStatistics);
+router.get(
+    "/statistics",
+    authMiddleware.hasPermission,
+    orderController.getStatistics,
+);
 router.get("/excel", orderController.createExcel);
 router.put(
     "/:orderId",

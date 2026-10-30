@@ -12,6 +12,16 @@ import { userService } from "./userService";
 
 class AuthService {
     async login(dto: IAuth): Promise<{ tokens: TokensPair; user: IUser }> {
+        if (
+            !dto ||
+            typeof dto.email !== "string" ||
+            typeof dto.password !== "string"
+        ) {
+            throw new apiError(
+                "Email and password must be strings",
+                StatusCode.BAD_REQUEST,
+            );
+        }
         const user = await userRepository.getByEmail(dto.email);
         if (!user) {
             throw new apiError(
@@ -21,8 +31,8 @@ class AuthService {
         }
         if (!user.password) {
             throw new apiError(
-                "Account is not activated",
-                StatusCode.FORBIDDEN,
+                "Invalid email or password",
+                StatusCode.UNAUTHORIZED,
             );
         }
         const isValidPassword = await passwordService.comparePassword(
@@ -36,7 +46,10 @@ class AuthService {
             );
         }
         if (!user.is_Active) {
-            throw new apiError("Account is inactive", StatusCode.FORBIDDEN);
+            throw new apiError(
+                "Invalid email or password",
+                StatusCode.UNAUTHORIZED,
+            );
         }
         const tokens = tokenService.generateTokens({
             userId: user._id,

@@ -128,11 +128,10 @@ export default [
 
     // Next.js configuration runs in Node.js
     {
-        files: ["frontend/next.config.{js,mjs,ts}"],
-
+        files: ["frontend/**/*.{js,jsx,ts,tsx}"],
         languageOptions: {
             globals: {
-                ...globals.node,
+                ...globals.browser,
                 process: "readonly",
             },
         },

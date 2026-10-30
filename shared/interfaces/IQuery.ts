@@ -14,5 +14,5 @@ export interface IQuery {
     start_date?: string;
     end_date?: string;
     group?: string;
-    my?: string;
+    manager?: string;
 }

@@ -1,5 +1,4 @@
 import { IUser } from "../../../shared/interfaces/IUser";
-import { RoleEnum } from "../enums/roleEnum";
 import { User } from "../models/userModel";
 
 class UserRepository {
@@ -12,6 +11,9 @@ class UserRepository {
     getByEmail(email: string): Promise<IUser | null> {
         return User.findOne({ email });
     }
+    getByParams(params: Partial<IUser>): Promise<IUser[]> {
+        return User.find(params).sort({ _id: -1 });
+    }
     update(id: string, dto: Partial<IUser>): Promise<IUser | null> {
         return User.findByIdAndUpdate(id, dto, { returnDocument: "after" });
     }
@@ -19,13 +21,12 @@ class UserRepository {
         page: number,
         pageSize: number,
     ): Promise<[IUser[], number]> {
-        const filter = { role: RoleEnum.manager };
         return Promise.all([
-            User.find(filter)
+            User.find()
                 .sort({ _id: -1 })
                 .skip((page - 1) * pageSize)
                 .limit(pageSize),
-            User.countDocuments(filter),
+            User.countDocuments(),
         ]);
     }
 }
