@@ -76,7 +76,6 @@ class OrderRepository {
                 );
             }
         }
-
         return filterObject;
     }
     async getGroups(): Promise<string[]> {

@@ -1,6 +1,6 @@
 "use client";
 
-import { joiResolver } from "@hookform/resolvers/joi";
+import joi from "joi";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -33,21 +33,66 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, dirtyFields },
         getValues,
         setError,
         clearErrors,
         setValue,
     } = useForm<FormValues>({
         mode: "all",
-        resolver: joiResolver(OrderValidator.update),
         defaultValues,
     });
 
-    const submit = async (dto: OrderDTO) => {
+    // const submit = async (dto: OrderDTO) => {
+    //     try {
+    //         setServerError(null);
+    //         await orderService.update(order._id, dto);
+    //         onClose();
+    //     } catch (e) {
+    //         setServerError(getErrorMessage(e));
+    //     }
+    // };
+    const submit = async (dto: FormValues) => {
+        const updatedFields = Object.fromEntries(
+            Object.entries(dirtyFields)
+                .filter(([key, isDirty]) => isDirty && key !== "newGroup")
+                .map(([key]) => {
+                    const value = dto[key as keyof FormValues];
+
+                    return [
+                        key,
+                        value === "" || value === undefined ? null : value,
+                    ];
+                }),
+        ) as Partial<OrderDTO>;
+
+        const schema = joi.object(
+            Object.fromEntries(
+                Object.keys(updatedFields).map((key) => [
+                    key,
+                    OrderValidator.update.extract(key),
+                ]),
+            ),
+        );
+
+        const { error, value } = schema.validate(updatedFields, {
+            abortEarly: false,
+        });
+        clearErrors();
+        if (error) {
+            error.details.forEach((detail) => {
+                const field = detail.path[0] as keyof FormValues;
+                setError(field, {
+                    type: "manual",
+                    message: detail.message,
+                });
+            });
+
+            return;
+        }
         try {
             setServerError(null);
-            await orderService.update(order._id, dto);
+            await orderService.update(order._id, value);
             onClose();
         } catch (e) {
             setServerError(getErrorMessage(e));

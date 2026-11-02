@@ -1,6 +1,5 @@
-"use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LiaFileExcel } from "react-icons/lia";
 import { TbReload } from "react-icons/tb";
 
@@ -10,61 +9,94 @@ import { useAppSelector } from "../../redux/hooks/reduxHooks";
 import { orderService } from "../../services/orderService";
 import css from "./Filters.module.css";
 
+type TimerMap = Record<string, ReturnType<typeof setTimeout>>;
+
 const Filters = () => {
-    const [isDateFocused, setIsDateFocused] = useState(false);
     const { me } = useAppSelector((state) => state.manager);
     const { groups } = useAppSelector((state) => state.orders);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const params = new URLSearchParams(searchParams.toString());
     const allFilters = filters(groups);
-
+    const [isDateFocused, setIsDateFocused] = useState(false);
+    const [exportError, setExportError] = useState("");
     const getTextValues = () =>
         Object.fromEntries(
             inputs.map(({ key }) => [key, searchParams.get(key) || ""]),
         );
+
     const [textValues, setTextValues] =
         useState<Record<string, string>>(getTextValues);
+    const timers = useRef<TimerMap>({});
+    const paramsRef = useRef(new URLSearchParams(searchParams.toString()));
 
-    const handleFilterChange = (key: string, value: string) => {
-        if (key === "manager") {
+    useEffect(() => {
+        return () => {
+            Object.values(timers.current).forEach(clearTimeout);
+        };
+    }, []);
+
+    useEffect(() => {
+        paramsRef.current = new URLSearchParams(searchParams.toString());
+    }, [searchParams]);
+
+    const handleFilterChange = useCallback(
+        (key: string, value: string) => {
+            const params = new URLSearchParams(paramsRef.current);
             params.set("page", "1");
             if (value) {
-                params.set("manager", value);
+                params.set(key, value);
             } else {
-                params.delete("manager");
+                params.delete(key);
             }
-        } else if (value) {
-            params.set(key, value);
-        } else {
-            params.delete(key);
-        }
-        router.push(`/orders?${params.toString()}`);
-    };
-    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    useEffect(
-        () => () => {
-            if (timer.current) {
-                clearTimeout(timer.current);
-            }
+            paramsRef.current = params;
+            router.push(`/orders?${params.toString()}`);
         },
-        [],
+        [router],
     );
+
     const handleInputChange = (key: string, value: string) => {
-        setTextValues((prev) => ({ ...prev, [key]: value }));
-        if (timer.current) {
-            clearTimeout(timer.current);
+        setTextValues((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+        if (timers.current[key]) {
+            clearTimeout(timers.current[key]);
         }
-        timer.current = setTimeout(() => {
+
+        timers.current[key] = setTimeout(() => {
             handleFilterChange(key, value.trim());
+            delete timers.current[key];
         }, 500);
+    };
+
+    const clearTimers = () => {
+        Object.values(timers.current).forEach(clearTimeout);
+        timers.current = {};
+    };
+
+    const resetFilters = () => {
+        clearTimers();
+        setTextValues(Object.fromEntries(inputs.map(({ key }) => [key, ""])));
+        paramsRef.current = new URLSearchParams();
+        router.replace("/orders");
+        router.refresh();
     };
 
     const createExcel = async () => {
         try {
+            setExportError("");
+            const params = new URLSearchParams(searchParams.toString());
             params.delete("page");
             params.delete("pageSize");
+
             const blob = await orderService.getExcelFile(params);
+
+            if (!(blob instanceof Blob) || blob.size === 0) {
+                throw new Error(
+                    "Excel-файл порожній або не вдалося його сформувати.",
+                );
+            }
+
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
@@ -73,8 +105,11 @@ const Filters = () => {
             link.click();
             link.remove();
             window.URL.revokeObjectURL(url);
-        } catch (e) {
-            logger.error(e);
+        } catch (error) {
+            logger.error(error);
+            setExportError(
+                "Не вдалося завантажити Excel-файл. Спробуйте ще раз.",
+            );
         }
     };
     return (
@@ -143,15 +178,7 @@ const Filters = () => {
                     )}
                     My
                 </label>
-                <div
-                    className={css.icon}
-                    onClick={() => {
-                        if (timer.current) {
-                            clearTimeout(timer.current);
-                        }
-                        router.push("/orders");
-                    }}
-                >
+                <div className={css.icon} onClick={resetFilters}>
                     <TbReload size={"25px"} color={"white"} />
                 </div>
                 <div className={css.icon}>
@@ -160,6 +187,11 @@ const Filters = () => {
                         color={"white"}
                         onClick={createExcel}
                     />
+                    {exportError && (
+                        <p className={css.error} role="alert">
+                            {exportError}
+                        </p>
+                    )}
                 </div>
             </div>
         </div>

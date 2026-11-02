@@ -12,7 +12,7 @@ const Orders = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { orders } = useAppSelector((state) => state.orders);
-    const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+    const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 
     const handleSort = async (field: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -69,12 +69,10 @@ const Orders = () => {
                                 <td
                                     key={column.key}
                                     onClick={() => {
-                                        setSelectedOrders((prev) =>
-                                            prev.includes(order._id)
-                                                ? prev.filter(
-                                                      (id) => id !== order._id,
-                                                  )
-                                                : [...prev, order._id],
+                                        setSelectedOrder((prev) =>
+                                            prev === order._id
+                                                ? null
+                                                : order._id,
                                         );
                                     }}
                                 >
@@ -82,7 +80,7 @@ const Orders = () => {
                                 </td>
                             ))}
                         </tr>
-                        {selectedOrders.includes(order._id) && (
+                        {selectedOrder === order._id && (
                             <tr
                                 className={
                                     index % 2 === 0

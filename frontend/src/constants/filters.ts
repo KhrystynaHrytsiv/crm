@@ -57,7 +57,7 @@ export const inputs = [
     {
         key: "phone",
         label: "Phone",
-        type: "number",
+        type: "string",
     },
     {
         key: "age",
