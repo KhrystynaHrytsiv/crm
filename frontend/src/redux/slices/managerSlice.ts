@@ -47,12 +47,12 @@ export const managerSlice = createSlice({
     initialState,
     reducers: {
         updateManagerStatus: (state, action) => {
-            const { id, isActive } = action.payload;
+            const { id, is_Banned } = action.payload;
             state.managers = state.managers.map((item) =>
                 item.manager._id === id
                     ? {
                           ...item,
-                          manager: { ...item.manager, is_Active: isActive },
+                          manager: { ...item.manager, is_Banned: is_Banned },
                       }
                     : item,
             );

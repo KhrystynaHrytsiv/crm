@@ -38,6 +38,10 @@ crm/
 
 Використаний дамп: https://github.com/OktenSchool/dumps/blob/main/final/orders.dump
 
+```bash
+mongorestore --uri="<MONGO_URI>" --archive=orders.dump
+```
+
 Під час першого старту бекенд автоматично:
 
 - створює суперадміна `admin@gmail.com` / `admin` (якщо його ще немає);

@@ -3,6 +3,7 @@ import {
     createSlice,
     isPending,
     isRejected,
+    PayloadAction,
 } from "@reduxjs/toolkit";
 
 import { IOrder } from "../../../../shared/interfaces/IOrder";
@@ -63,7 +64,17 @@ const getStatistics = createAsyncThunk<Record<string, number>>(
 export const orderSLice = createSlice({
     name: "orderSlice",
     initialState,
-    reducers: {},
+    reducers: {
+        updateOrder: (state, action: PayloadAction<IOrder>) => {
+            const index = state.orders.findIndex(
+                (order) => order._id === action.payload._id,
+            );
+
+            if (index !== -1) {
+                state.orders[index] = action.payload;
+            }
+        },
+    },
     extraReducers: (builder) =>
         builder
             .addCase(getOrders.fulfilled, (state, action) => {

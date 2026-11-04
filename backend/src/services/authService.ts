@@ -51,6 +51,12 @@ class AuthService {
                 StatusCode.UNAUTHORIZED,
             );
         }
+        if (user.is_Banned) {
+            throw new apiError(
+                "Invalid email or password",
+                StatusCode.UNAUTHORIZED,
+            );
+        }
         const tokens = tokenService.generateTokens({
             userId: user._id,
             role: user.role,

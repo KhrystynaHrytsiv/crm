@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ActionType } from "../../../shared/interfaces/ActionType";
+import { TokenPayload } from "../../../shared/interfaces/IToken";
 import { ManagerDTO } from "../../../shared/interfaces/IUser";
 import { StatusCode } from "../enums/StatusCode";
 import { ActionTokenType } from "../enums/tokenEnum";
@@ -32,7 +33,9 @@ class UserController {
                 id: string;
                 action: ActionType;
             };
-            const user = await userService.changeStatus(id, action);
+            const { userId: currentId } = res.locals
+                .tokenPayload as TokenPayload;
+            const user = await userService.changeStatus(id, action, currentId);
             res.status(StatusCode.OK).json(user);
         } catch (e) {
             next(e);

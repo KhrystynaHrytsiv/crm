@@ -1,10 +1,11 @@
 import { FC } from "react";
 
+import { RoleEnum } from "../../../../backend/src/enums/roleEnum";
 import { ActionTokenType } from "../../../../backend/src/enums/tokenEnum";
 import { ActionType } from "../../../../shared/interfaces/ActionType";
 import { IManagerWithStatistics } from "../../../../shared/interfaces/IManagerWithStatistics";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
-import { useAppDispatch } from "../../redux/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
 import { managerAction } from "../../redux/slices/managerSlice";
 import { managerService } from "../../services/managerService";
 import css from "./Manager.module.css";
@@ -13,8 +14,10 @@ interface IProp {
     managerWithStatistic: IManagerWithStatistics;
 }
 const Manager: FC<IProp> = ({ managerWithStatistic }) => {
+    const { me } = useAppSelector((state) => state.manager);
     const { manager, statistics } = managerWithStatistic;
     const dispatch = useAppDispatch();
+    const isAdmin = manager.role === RoleEnum.admin && manager._id === me?._id;
     const handleAction = async (action: ActionTokenType) => {
         try {
             const url = await managerService.actionRequest(manager._id, action);
@@ -30,7 +33,7 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
             dispatch(
                 managerAction.updateManagerStatus({
                     id: manager._id,
-                    isActive: action === "unban",
+                    is_Banned: action === "ban",
                 }),
             );
         } catch (e) {
@@ -42,7 +45,8 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
             <div className={css.info}>
                 {Object.entries(manager).map(
                     ([key, value]) =>
-                        key !== "role" && (
+                        key !== "role" &&
+                        key !== "is_Banned" && (
                             <p key={key}>
                                 {key}:{" "}
                                 {key === "last_login"
@@ -81,18 +85,30 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                 >
                     {manager.is_Active ? "Recovery password" : "Activate"}
                 </button>
-                <button
-                    className="greenButton"
-                    onClick={() => changeStatus("ban")}
-                >
-                    Ban
-                </button>
-                <button
-                    className="greenButton"
-                    onClick={() => changeStatus("unban")}
-                >
-                    Unban
-                </button>
+                {!isAdmin && (
+                    <>
+                        <button
+                            className={
+                                !manager.is_Banned
+                                    ? "greenButton"
+                                    : "greyButton"
+                            }
+                            onClick={() => changeStatus("ban")}
+                            disabled={manager.is_Banned}
+                        >
+                            Ban
+                        </button>
+                        <button
+                            className={
+                                manager.is_Banned ? "greenButton" : "greyButton"
+                            }
+                            onClick={() => changeStatus("unban")}
+                            disabled={!manager.is_Banned}
+                        >
+                            Unban
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );

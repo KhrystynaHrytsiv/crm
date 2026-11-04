@@ -20,7 +20,7 @@ class OrderRepository {
     async getAll(query: IQuery, userId: string): Promise<[IOrder[], number]> {
         const filterObject = await this.filter(query, userId);
         const skip = query.pageSize * (query.page - 1);
-        const sortOrder = query.order || "-id";
+        let sortOrder = query.order || "-id";
         return Promise.all([
             Order.find(filterObject)
                 .populate("manager", "surname")
@@ -85,7 +85,9 @@ class OrderRepository {
         return Order.findById(id);
     }
     update(id: string, dto: Partial<OrderDTO>): Promise<IOrder | null> {
-        return Order.findByIdAndUpdate(id, dto, { returnDocument: "after" });
+        return Order.findByIdAndUpdate(id, dto, {
+            returnDocument: "after",
+        }).populate("manager", "surname");
     }
     async getStatistics(managerId?: string): Promise<IStatistic> {
         const filter = managerId ? { manager: managerId } : {};

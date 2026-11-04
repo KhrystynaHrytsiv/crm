@@ -11,6 +11,7 @@ const userSchema = new Schema(
         password: { type: String },
         role: { type: String, enum: RoleEnum },
         is_Active: { type: Boolean, default: false },
+        is_Banned: { type: Boolean, default: false },
         last_login: { type: Date, default: null },
     },
     {

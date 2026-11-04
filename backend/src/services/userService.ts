@@ -64,38 +64,34 @@ class UserService {
         return user;
     }
 
-    async changeStatus(userId: string, action: ActionType) {
-        const user = await this.getById(userId);
-        if (user.role !== RoleEnum.manager) {
+    async changeStatus(userId: string, action: ActionType, currentId: string) {
+        const manager = await this.getById(userId);
+        if (
+            manager.role === RoleEnum.admin &&
+            action === "ban" &&
+            userId === currentId
+        ) {
             throw new apiError(
-                "Only managers can be banned or unbanned",
+                "Admin cannot ban himself",
                 StatusCode.BAD_REQUEST,
             );
         }
-
-        if (action === "ban") {
-            if (!user.is_Active) {
-                throw new apiError(
-                    "Manager is already banned",
-                    StatusCode.BAD_REQUEST,
-                );
-            }
-
-            return await this.update(userId, { is_Active: false });
+        if (action !== "ban" && action !== "unban") {
+            throw new apiError("Invalid status action", StatusCode.BAD_REQUEST);
         }
-
-        if (action === "unban") {
-            if (user.is_Active) {
-                throw new apiError(
-                    "Manager is already unbanned",
-                    StatusCode.BAD_REQUEST,
-                );
-            }
-
-            return await this.update(userId, { is_Active: true });
+        if (action === "ban" && manager.is_Banned) {
+            throw new apiError(
+                "Manager is already banned",
+                StatusCode.BAD_REQUEST,
+            );
         }
-
-        throw new apiError("Invalid status action", StatusCode.BAD_REQUEST);
+        if (action === "unban" && !manager.is_Banned) {
+            throw new apiError(
+                "Manager is already unbanned",
+                StatusCode.BAD_REQUEST,
+            );
+        }
+        return this.update(manager._id, { is_Banned: action === "ban" });
     }
 
     async actionRequest(id: string, action: ActionTokenType) {
@@ -147,10 +143,11 @@ class UserService {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
         }
         const hashedPassword = await passwordService.hashPassword(password);
-        return await this.update(userId, {
+        const updatedUser = await this.update(userId, {
             password: hashedPassword,
             ...(action === ActionTokenType.activate && { is_Active: true }),
         });
+        return updatedUser;
     }
 }
 export const userService = new UserService();

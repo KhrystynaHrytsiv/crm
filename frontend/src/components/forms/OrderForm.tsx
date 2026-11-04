@@ -8,7 +8,8 @@ import { IOrder, OrderDTO } from "../../../../shared/interfaces/IOrder";
 import { OrderValidator } from "../../../../shared/validators/orderValidator";
 import { extendedInputs, fieldOrder, filters } from "../../constants/filters";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
-import { useAppSelector } from "../../redux/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
+import { orderActions } from "../../redux/slices/ordersSlice";
 import { orderService } from "../../services/orderService";
 import css from "./OrderForm.module.css";
 
@@ -24,6 +25,7 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
     const [newGroups, setNewGroups] = useState<string[]>([]);
     const [serverError, setServerError] = useState<string | null>(null);
     const { groups } = useAppSelector((state) => state.orders);
+    const dispatch = useAppDispatch();
     const allGroups = [...groups, ...newGroups];
     const allFilters = filters(allGroups);
     const defaultValues = Object.fromEntries(
@@ -43,22 +45,12 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
         defaultValues,
     });
 
-    // const submit = async (dto: OrderDTO) => {
-    //     try {
-    //         setServerError(null);
-    //         await orderService.update(order._id, dto);
-    //         onClose();
-    //     } catch (e) {
-    //         setServerError(getErrorMessage(e));
-    //     }
-    // };
     const submit = async (dto: FormValues) => {
         const updatedFields = Object.fromEntries(
             Object.entries(dirtyFields)
                 .filter(([key, isDirty]) => isDirty && key !== "newGroup")
                 .map(([key]) => {
                     const value = dto[key as keyof FormValues];
-
                     return [
                         key,
                         value === "" || value === undefined ? null : value,
@@ -92,7 +84,8 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
         }
         try {
             setServerError(null);
-            await orderService.update(order._id, value);
+            const updatedOrder = await orderService.update(order._id, value);
+            dispatch(orderActions.updateOrder(updatedOrder));
             onClose();
         } catch (e) {
             setServerError(getErrorMessage(e));

@@ -52,7 +52,6 @@ const Comment = ({ order }: { order: IOrder }) => {
 
     const onClose = () => {
         setOpenForm(false);
-        void refreshOrders();
     };
 
     const hasPermission =

@@ -15,5 +15,6 @@ export const seed = async () => {
         surname: "admin",
         role: RoleEnum.admin,
         is_Active: true,
+        is_Banned: false,
     });
 };
