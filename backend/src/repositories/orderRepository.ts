@@ -20,15 +20,45 @@ class OrderRepository {
     async getAll(query: IQuery, userId: string): Promise<[IOrder[], number]> {
         const filterObject = await this.filter(query, userId);
         const skip = query.pageSize * (query.page - 1);
-        let sortOrder = query.order || "-id";
-        return Promise.all([
-            Order.find(filterObject)
-                .populate("manager", "surname")
-                .limit(query.pageSize)
-                .skip(skip)
-                .sort(sortOrder),
-            Order.find(filterObject).countDocuments(),
+        const sortOrder = query.order || "-id";
+
+        const [orders, total] = await Promise.all([
+            sortOrder.replace("-", "") === "manager"
+                ? Order.aggregate([
+                      { $match: filterObject },
+                      {
+                          $lookup: {
+                              from: "users",
+                              localField: "manager",
+                              foreignField: "_id",
+                              as: "manager",
+                          },
+                      },
+                      {
+                          $unwind: {
+                              path: "$manager",
+                              preserveNullAndEmptyArrays: true,
+                          },
+                      },
+                      {
+                          $sort: {
+                              "manager.surname": sortOrder.startsWith("-")
+                                  ? -1
+                                  : 1,
+                          },
+                      },
+                      { $skip: skip },
+                      { $limit: query.pageSize },
+                  ]).collation({ locale: "en", strength: 2 })
+                : Order.find(filterObject)
+                      .populate("manager", "surname")
+                      .limit(query.pageSize)
+                      .skip(skip)
+                      .sort(sortOrder),
+            Order.countDocuments(filterObject),
         ]);
+
+        return [orders, total];
     }
     async filter(query: IQuery, userId: string): Promise<QueryFilter<IOrder>> {
         const filterObject: QueryFilter<IOrder> = {};
@@ -40,7 +70,7 @@ class OrderRepository {
         } else if (query.status) {
             filterObject.status = query.status as CourseStatusEnum;
         }
-        if (query.manager) {
+        if (query.manager === "true") {
             filterObject.manager = userId;
         }
         for (const key of searchFields) {
@@ -84,10 +114,23 @@ class OrderRepository {
     getById(id: string): Promise<IOrder | null> {
         return Order.findById(id);
     }
-    update(id: string, dto: Partial<OrderDTO>): Promise<IOrder | null> {
-        return Order.findByIdAndUpdate(id, dto, {
-            returnDocument: "after",
-        }).populate("manager", "surname");
+    update(
+        id: string,
+        dto: Partial<OrderDTO>,
+        userId: string,
+    ): Promise<IOrder | null> {
+        return Order.findOneAndUpdate(
+            {
+                _id: id,
+                $or: [
+                    { manager: null },
+                    { manager: "null" },
+                    { manager: userId },
+                ],
+            },
+            { $set: dto },
+            { returnDocument: "after" },
+        ).populate("manager", "surname");
     }
     private getStatisticsGroup(groupByManager: boolean) {
         const statuses = Object.values(CourseStatusEnum);

@@ -13,16 +13,19 @@ export const authService = {
     },
     async logout() {
         const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-            await api.post(
-                "/auth/logout",
-                {},
-                { headers: { Authorization: `Bearer ${refreshToken}` } },
-            );
+        try {
+            if (refreshToken) {
+                await api.post(
+                    "/auth/logout",
+                    {},
+                    { headers: { Authorization: `Bearer ${refreshToken}` } },
+                );
+            }
+        } finally {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
         }
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("user");
     },
     async refresh() {
         const refreshToken = localStorage.getItem("refreshToken");

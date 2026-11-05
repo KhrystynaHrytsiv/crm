@@ -167,11 +167,11 @@ const Filters = () => {
                     {me && (
                         <input
                             type="checkbox"
-                            checked={searchParams.get("manager") === me.surname}
+                            checked={searchParams.get("manager") === "true"}
                             onChange={(e) =>
                                 handleFilterChange(
                                     "manager",
-                                    e.target.checked ? me.surname : "",
+                                    e.target.checked ? "true" : "",
                                 )
                             }
                         />

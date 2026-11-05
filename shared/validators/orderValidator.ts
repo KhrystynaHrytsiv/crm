@@ -50,7 +50,7 @@ export class OrderValidator {
     private static sum = nullableNumber.max(10000000000);
     private static alreadyPaid = nullableNumber.max(10000000000);
     private static group = nullableString;
-    private static manager = nullableString;
+    private static manager = joi.string().valid("true").optional();
 
     public static update = joi.object({
         name: this.nameField,
