@@ -11,9 +11,6 @@ class UserRepository {
     getByEmail(email: string): Promise<IUser | null> {
         return User.findOne({ email });
     }
-    getByParams(params: Partial<IUser>): Promise<IUser[]> {
-        return User.find(params).sort({ _id: -1 });
-    }
     update(id: string, dto: Partial<IUser>): Promise<IUser | null> {
         return User.findByIdAndUpdate(id, dto, { returnDocument: "after" });
     }

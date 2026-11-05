@@ -1,8 +1,10 @@
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { IManagerWithStatistics } from "../../../shared/interfaces/IManagerWithStatistics";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";
+import { IStatistics } from "../../../shared/interfaces/IStatistics";
 import { IUser, ManagerDTO } from "../../../shared/interfaces/IUser";
 import { config } from "../configs/config";
+import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { RoleEnum } from "../enums/roleEnum";
 import { StatusCode } from "../enums/StatusCode";
 import { ActionTokenType } from "../enums/tokenEnum";
@@ -39,14 +41,23 @@ class UserService {
             pageSize,
         );
         const totalPages = Math.ceil(totalItems / pageSize);
-        const data = await Promise.all(
-            managers.map(async (manager) => ({
-                manager,
-                statistics: await orderRepository.getStatistics(
-                    manager._id.toString(),
-                ),
-            })),
+        const statisticsMap = await orderRepository.getManagersStatistics(
+            managers.map((manager) => manager._id),
         );
+
+        const emptyStatistics = Object.values(CourseStatusEnum).reduce(
+            (acc, status) => {
+                acc[status] = 0;
+                return acc;
+            },
+            { total: 0 } as IStatistics,
+        );
+        const data = managers.map((manager) => ({
+            manager,
+            statistics:
+                statisticsMap.get(manager._id.toString()) ?? emptyStatistics,
+        }));
+
         return {
             totalItems,
             totalPages,
@@ -143,11 +154,10 @@ class UserService {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
         }
         const hashedPassword = await passwordService.hashPassword(password);
-        const updatedUser = await this.update(userId, {
+        return await this.update(userId, {
             password: hashedPassword,
             ...(action === ActionTokenType.activate && { is_Active: true }),
         });
-        return updatedUser;
     }
 }
 export const userService = new UserService();

@@ -2,7 +2,7 @@ import { QueryFilter } from "mongoose";
 
 import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
-import { IStatistic } from "../../../shared/interfaces/IStatistic";
+import { IStatistics } from "../../../shared/interfaces/IStatistics";
 import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { Order } from "../models/orderModel";
 
@@ -89,20 +89,78 @@ class OrderRepository {
             returnDocument: "after",
         }).populate("manager", "surname");
     }
-    async getStatistics(managerId?: string): Promise<IStatistic> {
-        const filter = managerId ? { manager: managerId } : {};
+    private getStatisticsGroup(groupByManager: boolean) {
         const statuses = Object.values(CourseStatusEnum);
-        const statistics = await Promise.all(
-            statuses.map(async (status) => ({
-                [status]: await Order.countDocuments({ ...filter, status }),
-            })),
+        const statusCounts = Object.fromEntries(
+            statuses
+                .filter((status) => status !== CourseStatusEnum.new)
+                .map((status) => [
+                    status,
+                    {
+                        $sum: {
+                            $cond: [{ $eq: ["$status", status] }, 1, 0],
+                        },
+                    },
+                ]),
         );
-        const total = await Order.countDocuments(filter);
-        const nullCount = await Order.countDocuments({
-            ...filter,
-            status: { $type: 10 },
-        });
-        return { total, ...Object.assign({}, ...statistics), null: nullCount };
+
+        return {
+            _id: groupByManager ? "$manager" : null,
+            total: { $sum: 1 },
+            [CourseStatusEnum.new]: {
+                $sum: {
+                    $cond: [
+                        {
+                            $or: [
+                                { $eq: ["$status", CourseStatusEnum.new] },
+                                { $eq: [{ $type: "$status" }, "null"] },
+                            ],
+                        },
+                        1,
+                        0,
+                    ],
+                },
+            },
+
+            ...statusCounts,
+        };
+    }
+    async getStatistics(): Promise<IStatistics> {
+        const [statistics] = await Order.aggregate([
+            {
+                $group: this.getStatisticsGroup(false),
+            },
+            {
+                $project: {
+                    _id: 0,
+                    total: 1,
+                    ...Object.fromEntries(
+                        Object.values(CourseStatusEnum).map((status) => [
+                            status,
+                            1,
+                        ]),
+                    ),
+                },
+            },
+        ]);
+
+        return statistics;
+    }
+    async getManagersStatistics(
+        managerIds: string[],
+    ): Promise<Map<string, IStatistics>> {
+        const statistics = await Order.aggregate([
+            {
+                $match: {
+                    manager: { $in: managerIds },
+                },
+            },
+            {
+                $group: this.getStatisticsGroup(true),
+            },
+        ]);
+
+        return new Map(statistics.map((item) => [item._id.toString(), item]));
     }
     async getDataForExcel(query: IQuery, userId: string): Promise<IOrder[]> {
         const filterObject = await this.filter(query, userId);
