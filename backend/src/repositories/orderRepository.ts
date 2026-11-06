@@ -114,23 +114,10 @@ class OrderRepository {
     getById(id: string): Promise<IOrder | null> {
         return Order.findById(id);
     }
-    update(
-        id: string,
-        dto: Partial<OrderDTO>,
-        userId: string,
-    ): Promise<IOrder | null> {
-        return Order.findOneAndUpdate(
-            {
-                _id: id,
-                $or: [
-                    { manager: null },
-                    { manager: "null" },
-                    { manager: userId },
-                ],
-            },
-            { $set: dto },
-            { returnDocument: "after" },
-        ).populate("manager", "surname");
+    update(id: string, dto: Partial<OrderDTO>): Promise<IOrder | null> {
+        return Order.findByIdAndUpdate(id, dto, {
+            returnDocument: "after",
+        }).populate("manager", "surname");
     }
     private getStatisticsGroup(groupByManager: boolean) {
         const statuses = Object.values(CourseStatusEnum);

@@ -50,7 +50,6 @@ class OrderService {
         const updatedOrder = await orderRepository.update(
             order._id,
             updateData,
-            userId,
         );
         if (!updatedOrder) {
             throw new apiError("Order not found", StatusCode.NOT_FOUND);

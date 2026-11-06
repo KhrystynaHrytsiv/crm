@@ -142,7 +142,7 @@ class UserService {
         password: string,
         action: ActionTokenType,
     ): Promise<IUser> {
-        const { userId } = tokenService.verifyTokens(token, action);
+        const { userId, iat } = tokenService.verifyTokens(token, action);
         const user = await this.getById(userId);
         if (action === ActionTokenType.activate && user.is_Active) {
             throw new apiError(
@@ -153,9 +153,19 @@ class UserService {
         if (action === ActionTokenType.recovery && !user.is_Active) {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
         }
+        if (
+            user.passwordChangedAt &&
+            iat! <= Math.floor(user.passwordChangedAt.getTime() / 1000)
+        ) {
+            throw new apiError(
+                "Token is no longer valid",
+                StatusCode.BAD_REQUEST,
+            );
+        }
         const hashedPassword = await passwordService.hashPassword(password);
         return await this.update(userId, {
             password: hashedPassword,
+            passwordChangedAt: new Date(),
             ...(action === ActionTokenType.activate && { is_Active: true }),
         });
     }

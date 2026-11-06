@@ -6,6 +6,7 @@ export interface IUser {
     surname: string;
     email: string;
     password: string;
+    passwordChangedAt: Date;
     role: RoleEnum;
     is_Active: boolean;
     is_Banned: boolean;

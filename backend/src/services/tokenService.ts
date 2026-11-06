@@ -48,7 +48,16 @@ class TokenService {
                         StatusCode.BAD_REQUEST,
                     );
             }
-            return jwt.verify(token, secret) as TokenPayload;
+            const decoded = jwt.verify(token, secret) as TokenPayload;
+
+            if (
+                (type === ActionTokenType.activate ||
+                    type === ActionTokenType.recovery) &&
+                decoded.iat === undefined
+            ) {
+                throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);
+            }
+            return decoded;
         } catch (e) {
             logger.error(e);
             throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);

@@ -8,7 +8,7 @@ class TokenRepository {
     findByParams(params: Partial<IToken>): Promise<IToken | null> {
         return Token.findOne(params);
     }
-    public delete(params: Partial<IToken>) {
+    delete(params: Partial<IToken>) {
         return Token.deleteOne(params);
     }
 }

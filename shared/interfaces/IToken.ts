@@ -13,5 +13,7 @@ type RefreshToken = Pick<IToken, "refreshToken">;
 interface TokenPayload {
     userId: string;
     role: RoleEnum;
+    iat?: number;
+    exp?: number;
 }
 export type { IToken, RefreshToken, TokenPayload, TokensPair };
