@@ -108,16 +108,50 @@ class OrderRepository {
         }
         return filterObject;
     }
-    async getGroups(): Promise<string[]> {
-        return Order.distinct("group");
-    }
     getById(id: string): Promise<IOrder | null> {
         return Order.findById(id);
     }
-    update(id: string, dto: Partial<OrderDTO>): Promise<IOrder | null> {
-        return Order.findByIdAndUpdate(id, dto, {
-            returnDocument: "after",
-        }).populate("manager", "surname");
+    async update(
+        id: string,
+        userId: string,
+        dto: Partial<OrderDTO>,
+    ): Promise<IOrder | null> {
+        return Order.findOneAndUpdate(
+            {
+                _id: id,
+                $or: [{ manager: null }, { manager: userId }],
+            },
+            dto,
+            {
+                returnDocument: "after",
+            },
+        ).populate("manager", "surname");
+    }
+    async chooseOrder(orderId: string, userId: string): Promise<IOrder | null> {
+        return Order.findOneAndUpdate(
+            {
+                _id: orderId,
+                $and: [
+                    {
+                        $or: [{ manager: null }, { manager: userId }],
+                    },
+                    {
+                        $or: [
+                            { status: CourseStatusEnum.new },
+                            { manager: null },
+                            { manager: userId },
+                        ],
+                    },
+                ],
+            },
+            {
+                $set: {
+                    manager: userId,
+                    status: CourseStatusEnum.inWork,
+                },
+            },
+            { returnDocument: "after" },
+        );
     }
     private getStatisticsGroup(groupByManager: boolean) {
         const statuses = Object.values(CourseStatusEnum);

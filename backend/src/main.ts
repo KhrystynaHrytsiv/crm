@@ -14,10 +14,9 @@ import { seed } from "./seed/adminSeed";
 import { seedOrderIds } from "./seed/orderIdSeed";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(cors({ origin: ["http://localhost:3000"] }));
 app.use(cors({ origin: config.FRONTEND_URL }));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/", apiRouter);

@@ -47,9 +47,9 @@ export class OrderValidator {
         .valid(...Object.values(CourseStatusEnum))
         .allow(null);
 
-    private static sum = nullableNumber.max(10000000000);
-    private static alreadyPaid = nullableNumber.max(10000000000);
-    private static group = nullableString;
+    private static sum = nullableNumber.min(1).max(10000000000);
+    private static alreadyPaid = nullableNumber.min(1).max(10000000000);
+    private static group = joi.string().trim().min(1).allow(null);
     private static manager = joi.string().valid("true").optional();
 
     public static update = joi.object({

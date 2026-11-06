@@ -23,7 +23,7 @@ router.get("/excel", orderController.createExcel);
 router.put(
     "/:orderId",
     validationMiddleware.isIdValidate("orderId"),
-    authMiddleware.canModify,
+    // authMiddleware.canModify,
     validationMiddleware.validateBody(OrderValidator.update),
     orderController.update,
 );
@@ -35,7 +35,7 @@ router.get(
 router.post(
     "/:orderId/comments",
     validationMiddleware.isIdValidate("orderId"),
-    authMiddleware.canModify,
+    // authMiddleware.canModify,
     validationMiddleware.validateBody(CommentValidator.comment),
     commentController.create,
 );

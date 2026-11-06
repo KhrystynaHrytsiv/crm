@@ -21,7 +21,7 @@ const orderSchema = new Schema(
         sum: { type: Number, required: true },
         alreadyPaid: { type: Number, required: true },
         created_at: { type: Date, required: true },
-        group: { type: String, required: true },
+        group: { type: String, required: true, trim: true },
         msg: { type: String },
         utm: { type: String, default: null },
         manager: { type: Schema.Types.ObjectId, ref: User, default: null },

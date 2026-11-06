@@ -26,9 +26,6 @@ class OrderService {
             data,
         };
     }
-    async getGroups(): Promise<string[]> {
-        return await orderRepository.getGroups();
-    }
     async getById(id: string): Promise<IOrder> {
         const order = await orderRepository.getById(id);
         if (!order) {
@@ -41,18 +38,21 @@ class OrderService {
         dto: Partial<OrderDTO>,
         userId: string,
     ): Promise<IOrder> {
-        const order = await this.getById(id);
         const updateData =
             dto.status === CourseStatusEnum.new
                 ? { ...dto, manager: null }
                 : { ...dto, manager: userId };
 
         const updatedOrder = await orderRepository.update(
-            order._id,
+            id,
+            userId,
             updateData,
         );
         if (!updatedOrder) {
-            throw new apiError("Order not found", StatusCode.NOT_FOUND);
+            throw new apiError(
+                "Order is already assigned to another manager or not found",
+                StatusCode.FORBIDDEN,
+            );
         }
         return updatedOrder;
     }
