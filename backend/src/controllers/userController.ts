@@ -5,6 +5,7 @@ import { TokenPayload } from "../../../shared/interfaces/IToken";
 import { ManagerDTO } from "../../../shared/interfaces/IUser";
 import { StatusCode } from "../enums/StatusCode";
 import { ActionTokenType } from "../enums/tokenEnum";
+import { tokenService } from "../services/tokenService";
 import { userService } from "../services/userService";
 
 class UserController {
@@ -66,6 +67,18 @@ class UserController {
                 action,
             );
             res.status(StatusCode.OK).json(user);
+        } catch (e) {
+            next(e);
+        }
+    }
+    async verifyToken(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { token, action } = req.params as {
+                token: string;
+                action: ActionTokenType;
+            };
+            const isValid = await tokenService.verifyActionToken(token, action);
+            res.status(StatusCode.OK).json({ isValid });
         } catch (e) {
             next(e);
         }

@@ -39,4 +39,5 @@ router.post(
     validationMiddleware.validateBody(PasswordValidator.passwordValid),
     userController.completeAction,
 );
+router.get("/isValidToken/:action/:token", userController.verifyToken);
 export const managerRouter = router;

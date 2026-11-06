@@ -9,6 +9,11 @@ export const managerService = {
     async actionRequest(id: string, action: ActionTokenType) {
         return await generalService.get<string>(`/manager/${id}/${action}`);
     },
+    async verifyActionToken(action: ActionTokenType, token: string) {
+        return await generalService.get<{ isValid: boolean }>(
+            `/manager/isValidToken/${action}/${token}`,
+        );
+    },
     async actionComplete(
         action: ActionTokenType,
         token: string,

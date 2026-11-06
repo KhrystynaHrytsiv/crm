@@ -11,6 +11,7 @@ import { StatusCode } from "../enums/StatusCode";
 import { ActionTokenType, TokenEnum } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
 import { tokenRepository } from "../repositories/tokenRepository";
+import { userService } from "./userService";
 
 class TokenService {
     generateTokens(payload: TokenPayload): TokensPair {
@@ -115,6 +116,27 @@ class TokenService {
             userId,
             expiresAt: new Date(decoded.exp * 1000),
         });
+    }
+    async verifyActionToken(
+        token: string,
+        action: ActionTokenType,
+    ): Promise<boolean> {
+        const { userId, iat } = tokenService.verifyTokens(token, action);
+        const user = await userService.getById(userId);
+        if (action === ActionTokenType.activate && user.is_Active) {
+            return false;
+        }
+        if (action === ActionTokenType.recovery && !user.is_Active) {
+            return false;
+        }
+        if (
+            user.passwordChangedAt &&
+            iat! <= Math.floor(user.passwordChangedAt.getTime() / 1000)
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }
 export const tokenService = new TokenService();

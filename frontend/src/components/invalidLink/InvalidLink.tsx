@@ -4,8 +4,8 @@ const InvalidLink = () => {
     const router = useRouter();
 
     return (
-        <div className="form">
-            <div className="field">
+        <div className="container">
+            <div className="form">
                 <p>
                     The link is not valid, please contact the administrator to
                     solve the problem
@@ -15,7 +15,7 @@ const InvalidLink = () => {
                     onClick={() => router.push("/login")}
                     className="greenButton"
                 >
-                    BACK TO LOGIN
+                    back to login
                 </button>
             </div>
         </div>

@@ -7,7 +7,6 @@ import { ActionTokenType } from "../../../../backend/src/enums/tokenEnum";
 import { PasswordValidator } from "../../../../shared/validators/passwordValidator";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
 import { managerService } from "../../services/managerService";
-import InvalidLink from "../invalidLink/InvalidLink";
 
 interface IFormData {
     password: string;
@@ -31,20 +30,15 @@ const PasswordForm = ({
     });
     const router = useRouter();
     const [serverError, setServerError] = useState<string | null>(null);
-    const [isInvalidLink, setIsInvalidLink] = useState(false);
     const submit = async (dto: IFormData) => {
         try {
             setServerError(null);
             await managerService.actionComplete(action, token, dto.password);
             router.push("/login");
         } catch (e) {
-            setIsInvalidLink(true);
             setServerError(getErrorMessage(e));
         }
     };
-    if (isInvalidLink) {
-        return <InvalidLink />;
-    }
     return (
         <form onSubmit={handleSubmit(submit)} className="form">
             <div className="field">
