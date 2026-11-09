@@ -4,6 +4,7 @@ import { IOrder } from "../../../shared/interfaces/IOrder";
 import { CourseEnum, CourseFormat } from "../enums/CourseEnum";
 import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { CourseTypeEnum } from "../enums/courseTypeEnum";
+import { Group } from "./groupModel";
 import { User } from "./userModel";
 
 const orderSchema = new Schema(
@@ -21,7 +22,7 @@ const orderSchema = new Schema(
         sum: { type: Number, required: true },
         alreadyPaid: { type: Number, required: true },
         created_at: { type: Date, required: true },
-        group: { type: String, required: true, trim: true },
+        group: { type: String, ref: Group, required: true },
         msg: { type: String },
         utm: { type: String, default: null },
         manager: { type: Schema.Types.ObjectId, ref: User, default: null },

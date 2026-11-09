@@ -91,4 +91,7 @@ export class OrderValidator {
                 ...Object.values(OrderSortEnum).map((item) => `-${item}`),
             ),
     });
+    public static createGroup = joi.object({
+        name: joi.string().trim().min(1).max(30).lowercase().required(),
+    });
 }

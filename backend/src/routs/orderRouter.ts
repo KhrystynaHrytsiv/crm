@@ -3,6 +3,7 @@ import { Router } from "express";
 import { CommentValidator } from "../../../shared/validators/commentValidator";
 import { OrderValidator } from "../../../shared/validators/orderValidator";
 import { commentController } from "../controllers/commentController";
+import { groupController } from "../controllers/groupController";
 import { orderController } from "../controllers/orderController";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { validationMiddleware } from "../middleware/validationMiddleware";
@@ -13,7 +14,12 @@ router.get(
     validationMiddleware.validateQuery(OrderValidator.query),
     orderController.getAll,
 );
-router.get("/groups", orderController.getGroups);
+router.get("/groups", groupController.getGroups);
+router.post(
+    "/groups",
+    validationMiddleware.validateBody(OrderValidator.createGroup),
+    groupController.create,
+);
 router.get(
     "/statistics",
     authMiddleware.hasPermission,
