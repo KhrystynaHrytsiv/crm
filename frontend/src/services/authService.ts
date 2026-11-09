@@ -1,21 +1,24 @@
 import { IAuth } from "../../../shared/interfaces/IAuth";
 import { IToken } from "../../../shared/interfaces/IToken";
-import { api } from "./apiService";
+import { generalService } from "./generalService";
 
 export const authService = {
     async login(data: IAuth) {
-        const response = await api.post("/auth/login", data);
-        const { accessToken, refreshToken } = response.data.tokens;
+        const response = await generalService.post<{ tokens: IToken }, IAuth>(
+            "/auth/login",
+            data,
+        );
+        const { accessToken, refreshToken } = response.tokens;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        return response.data;
+
+        return response;
     },
     async logout() {
         const refreshToken = localStorage.getItem("refreshToken");
         try {
             if (refreshToken) {
-                await api.post(
+                await generalService.post(
                     "/auth/logout",
                     {},
                     { headers: { Authorization: `Bearer ${refreshToken}` } },
@@ -24,7 +27,6 @@ export const authService = {
         } finally {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            localStorage.removeItem("user");
         }
     },
     async refresh() {
@@ -32,13 +34,12 @@ export const authService = {
         if (!refreshToken) {
             throw new Error("Refresh token is missing");
         }
-        const {
-            data: { accessToken, refreshToken: newRefresh },
-        } = await api.post<IToken>(
-            "/auth/refresh",
-            {},
-            { headers: { Authorization: `Bearer ${refreshToken}` } },
-        );
+        const { accessToken, refreshToken: newRefresh } =
+            await generalService.post<IToken, Record<string, never>>(
+                "/auth/refresh",
+                {},
+                { headers: { Authorization: `Bearer ${refreshToken}` } },
+            );
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", newRefresh);
     },

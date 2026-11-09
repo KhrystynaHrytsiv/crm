@@ -2,7 +2,6 @@ import { ActionTokenType } from "../../../backend/src/enums/tokenEnum";
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { IUser } from "../../../shared/interfaces/IUser";
 import { IUserDto } from "../interfaces/IUserDto";
-import { api } from "./apiService";
 import { generalService } from "./generalService";
 
 export const managerService = {
@@ -19,14 +18,17 @@ export const managerService = {
         token: string,
         password: string,
     ) {
-        return await api.post<string>(`/manager/${action}/${token}`, {
-            password,
-        });
+        return await generalService.post<string, { password: string }>(
+            `/manager/${action}/${token}`,
+            {
+                password,
+            },
+        );
     },
     async changeStatus(id: string, action: ActionType) {
-        return await api.patch(`/manager/${id}/${action}`);
+        return await generalService.patch(`/manager/${id}/${action}`);
     },
     async createManager(dto: IUserDto): Promise<IUser> {
-        return await api.post("/manager", dto);
+        return await generalService.post<IUser, IUserDto>("/manager", dto);
     },
 };

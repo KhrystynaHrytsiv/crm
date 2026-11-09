@@ -16,7 +16,7 @@ const Filters = () => {
     const { groups } = useAppSelector((state) => state.orders);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const allFilters = filters(groups);
+    const allFilters = filters(groups.map((group) => group.name));
     const [isDateFocused, setIsDateFocused] = useState(false);
     const [exportError, setExportError] = useState("");
     const getTextValues = () =>

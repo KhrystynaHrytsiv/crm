@@ -22,12 +22,10 @@ type FormValues = OrderDTO & { newGroup?: string };
 
 const OrderForm: FC<IProp> = ({ onClose, order }) => {
     const [showGroupAction, setShowGroupAction] = useState(false);
-    const [newGroups, setNewGroups] = useState<string[]>([]);
     const [serverError, setServerError] = useState<string | null>(null);
     const { groups } = useAppSelector((state) => state.orders);
     const dispatch = useAppDispatch();
-    const allGroups = [...groups, ...newGroups];
-    const allFilters = filters(allGroups);
+    const allFilters = filters(groups.map(({ name }) => name));
     const defaultValues = Object.fromEntries(
         fieldOrder.map((key) => [key, order[key] ?? ""]),
     ) as FormValues;
@@ -102,24 +100,23 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
             });
             return;
         }
-        if (
-            allGroups.some(
-                (group) => group.toLowerCase() === newGroup.toLowerCase(),
-            )
-        ) {
+        try {
+            const createdGroup = await dispatch(
+                orderActions.createGroup({ name: newGroup }),
+            ).unwrap();
+            setValue("group", createdGroup.name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+
+            setValue("newGroup", "");
+            setShowGroupAction(false);
+        } catch (e) {
             setError("newGroup", {
                 type: "manual",
-                message: "This group already exists",
+                message: getErrorMessage(e),
             });
-            return;
         }
-        setNewGroups((prev) => [...prev, newGroup]);
-        setValue("group", newGroup, {
-            shouldDirty: true,
-            shouldValidate: true,
-        });
-        setValue("newGroup", "");
-        setShowGroupAction(false);
     };
 
     return (

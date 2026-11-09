@@ -4,7 +4,6 @@ import { OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
 import { TokenPayload } from "../../../shared/interfaces/IToken";
 import { StatusCode } from "../enums/StatusCode";
-import { groupService } from "../services/groupService";
 import { orderService } from "../services/orderService";
 
 class OrderController {
@@ -14,14 +13,6 @@ class OrderController {
             const query = req.query as any as IQuery;
             const orders = await orderService.getAll(query, userId);
             res.status(StatusCode.OK).json(orders);
-        } catch (e) {
-            next(e);
-        }
-    }
-    async getGroups(req: Request, res: Response, next: NextFunction) {
-        try {
-            const groups = await groupService.getGroups();
-            res.status(StatusCode.OK).json(groups);
         } catch (e) {
             next(e);
         }

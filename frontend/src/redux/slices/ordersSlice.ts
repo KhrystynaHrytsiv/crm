@@ -6,13 +6,15 @@ import {
     PayloadAction,
 } from "@reduxjs/toolkit";
 
+import { GroupDTO, IGroup } from "../../../../shared/interfaces/IGroup";
 import { IOrder } from "../../../../shared/interfaces/IOrder";
 import { IResPagination } from "../../../../shared/interfaces/IResPagination";
 import { generalService } from "../../services/generalService";
 
 interface IState {
     orders: IOrder[];
-    groups: string[];
+    groups: IGroup[];
+    group: IGroup | null;
     statistics: Record<string, number>;
     loading: boolean;
     totalPages: number;
@@ -22,6 +24,7 @@ interface IState {
 const initialState: IState = {
     orders: [],
     groups: [],
+    group: null,
     statistics: {},
     loading: false,
     totalPages: 0,
@@ -41,7 +44,7 @@ const getOrders = createAsyncThunk<IResPagination<IOrder>, { query: string }>(
         }
     },
 );
-const getGroups = createAsyncThunk<string[]>(
+const getGroups = createAsyncThunk<IGroup[]>(
     "orderSlice/getGroups",
     async (_, { rejectWithValue }) => {
         try {
@@ -56,6 +59,19 @@ const getStatistics = createAsyncThunk<Record<string, number>>(
     async (_, { rejectWithValue }) => {
         try {
             return await generalService.get("/orders/statistics");
+        } catch (e) {
+            return rejectWithValue(e);
+        }
+    },
+);
+const createGroup = createAsyncThunk<IGroup, GroupDTO>(
+    "orderSlice/createGroup",
+    async (dto: GroupDTO, { rejectWithValue }) => {
+        try {
+            return await generalService.post<IGroup, GroupDTO>(
+                "/orders/groups",
+                dto,
+            );
         } catch (e) {
             return rejectWithValue(e);
         }
@@ -92,11 +108,16 @@ export const orderSLice = createSlice({
                 state.statistics = action.payload;
                 state.loading = false;
             })
+            .addCase(createGroup.fulfilled, (state, action) => {
+                state.group = action.payload;
+                state.groups.push(action.payload);
+                state.loading = false;
+            })
             .addMatcher(isPending(getOrders, getGroups), (state) => {
                 state.loading = true;
             })
             .addMatcher(
-                isRejected(getOrders, getGroups, getStatistics),
+                isRejected(getOrders, getGroups, getStatistics, createGroup),
                 (state) => {
                     state.loading = false;
                 },
@@ -107,4 +128,5 @@ export const orderActions = {
     getOrders,
     getGroups,
     getStatistics,
+    createGroup,
 };

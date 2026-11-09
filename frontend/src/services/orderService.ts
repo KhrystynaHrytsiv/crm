@@ -1,31 +1,33 @@
 import { CommentDto } from "../../../shared/interfaces/IComment";
 import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
 import { CommentResponse } from "../interfaces/CommentResponse";
-import { api } from "./apiService";
+import { generalService } from "./generalService";
 
 export const orderService = {
     async update(id: string, dto: Partial<OrderDTO>): Promise<IOrder> {
-        const { data } = await api.put<IOrder>(`/orders/${id}`, dto);
-        return data;
+        return await generalService.put<IOrder, Partial<OrderDTO>>(
+            `/orders/${id}`,
+            dto,
+        );
     },
     async getComments(orderId: string): Promise<CommentResponse[]> {
-        const { data } = await api.get<CommentResponse[]>(
+        return await generalService.get<CommentResponse[]>(
             `/orders/${orderId}/comments`,
         );
-        return data;
     },
     async createComment(
         orderId: string,
         dto: CommentDto,
     ): Promise<CommentResponse> {
-        const { data } = await api.post(`/orders/${orderId}/comments`, dto);
-        return data;
+        return await generalService.post<CommentResponse, CommentDto>(
+            `/orders/${orderId}/comments`,
+            dto,
+        );
     },
     async getExcelFile(params: URLSearchParams) {
-        const response = await api.get("/orders/excel", {
+        return await generalService.get<Blob>("/orders/excel", {
             params,
             responseType: "blob",
         });
-        return response.data;
     },
 };

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { IGroup } from "../../../shared/interfaces/IGroup";
+import { GroupDTO } from "../../../shared/interfaces/IGroup";
 import { StatusCode } from "../enums/StatusCode";
 import { groupService } from "../services/groupService";
 
@@ -15,7 +15,7 @@ class GroupController {
     }
     async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const body = req.body as IGroup;
+            const body = req.body as GroupDTO;
             const group = await groupService.create(body);
             res.status(StatusCode.CREATED).json(group);
         } catch (e) {
