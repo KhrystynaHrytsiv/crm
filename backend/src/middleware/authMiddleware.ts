@@ -5,9 +5,8 @@ import { RoleEnum } from "../enums/roleEnum";
 import { StatusCode } from "../enums/StatusCode";
 import { TokenEnum } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
-import { orderService } from "../services/orderService";
+import { userRepository } from "../repositories/userRepository";
 import { tokenService } from "../services/tokenService";
-import { userService } from "../services/userService";
 
 class AuthMiddleware {
     checkToken(tokenType: TokenEnum) {
@@ -33,26 +32,15 @@ class AuthMiddleware {
                     tokenType,
                 );
                 res.locals.tokenPayload = tokenPayload;
-                if (tokenType === TokenEnum.access) {
-                    const user = await userService.getById(tokenPayload.userId);
-                    if (!user.is_Active) {
-                        throw new apiError(
-                            "Account is inactive",
-                            StatusCode.FORBIDDEN,
-                        );
-                    }
+                const user = await userRepository.getById(tokenPayload.userId);
+                // 401 (not 403) so the client drops the session and goes to login
+                if (!user || !user.is_Active || user.is_Banned) {
+                    throw new apiError(
+                        "Account is inactive or banned",
+                        StatusCode.UNAUTHORIZED,
+                    );
                 }
                 if (tokenType === TokenEnum.refresh) {
-                    const isTokenExist = await tokenService.isTokenExist(
-                        token,
-                        TokenEnum.refresh,
-                    );
-                    if (!isTokenExist) {
-                        throw new apiError(
-                            "Invalid token",
-                            StatusCode.UNAUTHORIZED,
-                        );
-                    }
                     res.locals.refreshToken = token;
                 }
                 next();
@@ -66,23 +54,6 @@ class AuthMiddleware {
             const { role } = res.locals.tokenPayload as TokenPayload;
             if (role !== RoleEnum.admin) {
                 throw new apiError("No has permission", StatusCode.FORBIDDEN);
-            }
-            next();
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    async canModify(req: Request, res: Response, next: NextFunction) {
-        try {
-            const orderId = req.params.orderId as string;
-            const { userId } = res.locals.tokenPayload as TokenPayload;
-            const { manager } = await orderService.getById(orderId);
-            if (manager && manager.toString() !== userId) {
-                throw new apiError(
-                    "You can`t adjust this order",
-                    StatusCode.FORBIDDEN,
-                );
             }
             next();
         } catch (e) {

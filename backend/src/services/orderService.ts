@@ -15,7 +15,6 @@ class OrderService {
         userId: string,
     ): Promise<IResPagination<IOrder>> {
         query.pageSize = 25;
-        query.page = Math.max(Number(query.page) || 1, 1);
         const [data, totalItems] = await orderRepository.getAll(query, userId);
         const totalPages = Math.ceil(totalItems / query.pageSize);
         return {
@@ -38,11 +37,11 @@ class OrderService {
         dto: Partial<OrderDTO>,
         userId: string,
     ): Promise<IOrder> {
+        // an empty status is the same as "new": the order is released
         const updateData =
-            dto.status === CourseStatusEnum.new
-                ? { ...dto, manager: null }
-                : { ...dto, manager: userId };
-
+            dto.status === null
+                ? { ...dto, status: CourseStatusEnum.new }
+                : dto;
         const updatedOrder = await orderRepository.update(
             id,
             userId,

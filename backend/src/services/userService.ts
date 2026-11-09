@@ -1,15 +1,17 @@
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { IManagerWithStatistics } from "../../../shared/interfaces/IManagerWithStatistics";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";
-import { IStatistics } from "../../../shared/interfaces/IStatistics";
 import { IUser, ManagerDTO } from "../../../shared/interfaces/IUser";
 import { config } from "../configs/config";
-import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { RoleEnum } from "../enums/roleEnum";
 import { StatusCode } from "../enums/StatusCode";
 import { ActionTokenType } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
-import { orderRepository } from "../repositories/orderRepository";
+import {
+    emptyStatistics,
+    orderRepository,
+} from "../repositories/orderRepository";
+import { tokenRepository } from "../repositories/tokenRepository";
 import { userRepository } from "../repositories/userRepository";
 import { passwordService } from "./passwordService";
 import { tokenService } from "./tokenService";
@@ -45,17 +47,10 @@ class UserService {
             managers.map((manager) => manager._id),
         );
 
-        const emptyStatistics = Object.values(CourseStatusEnum).reduce(
-            (acc, status) => {
-                acc[status] = 0;
-                return acc;
-            },
-            { total: 0 } as IStatistics,
-        );
         const data = managers.map((manager) => ({
             manager,
             statistics:
-                statisticsMap.get(manager._id.toString()) ?? emptyStatistics,
+                statisticsMap.get(manager._id.toString()) ?? emptyStatistics(),
         }));
 
         return {
@@ -102,7 +97,13 @@ class UserService {
                 StatusCode.BAD_REQUEST,
             );
         }
-        return this.update(manager._id, { is_Banned: action === "ban" });
+        const updatedManager = await this.update(manager._id, {
+            is_Banned: action === "ban",
+        });
+        if (action === "ban") {
+            await tokenRepository.deleteAllByUserId(manager._id);
+        }
+        return updatedManager;
     }
 
     async actionRequest(id: string, action: ActionTokenType) {

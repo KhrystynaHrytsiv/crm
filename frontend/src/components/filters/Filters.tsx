@@ -1,11 +1,13 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LiaFileExcel } from "react-icons/lia";
+import { MdFilterAltOff } from "react-icons/md";
 import { TbReload } from "react-icons/tb";
 
 import { logger } from "../../../../shared/logger";
 import { filters, inputs } from "../../constants/filters";
-import { useAppSelector } from "../../redux/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
+import { orderActions } from "../../redux/slices/ordersSlice";
 import { orderService } from "../../services/orderService";
 import css from "./Filters.module.css";
 
@@ -15,6 +17,7 @@ const Filters = () => {
     const { me } = useAppSelector((state) => state.manager);
     const { groups } = useAppSelector((state) => state.orders);
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const searchParams = useSearchParams();
     const allFilters = filters(groups.map((group) => group.name));
     const [isDateFocused, setIsDateFocused] = useState(false);
@@ -74,12 +77,20 @@ const Filters = () => {
         timers.current = {};
     };
 
+    const reloadOrders = () => {
+        dispatch(orderActions.getOrders({ query: searchParams.toString() }));
+    };
+
     const resetFilters = () => {
         clearTimers();
         setTextValues(Object.fromEntries(inputs.map(({ key }) => [key, ""])));
         paramsRef.current = new URLSearchParams();
-        router.replace("/orders");
-        router.refresh();
+        if (searchParams.toString()) {
+            // the URL changes, so the orders page reloads the data itself
+            router.push("/orders");
+        } else {
+            reloadOrders();
+        }
     };
 
     const createExcel = async () => {
@@ -178,7 +189,18 @@ const Filters = () => {
                     )}
                     My
                 </label>
-                <div className={css.icon} onClick={resetFilters}>
+                <div
+                    className={css.icon}
+                    onClick={resetFilters}
+                    title="Reset filters"
+                >
+                    <MdFilterAltOff size={"25px"} color={"white"} />
+                </div>
+                <div
+                    className={css.icon}
+                    onClick={reloadOrders}
+                    title="Refresh list"
+                >
                     <TbReload size={"25px"} color={"white"} />
                 </div>
                 <div className={css.icon}>

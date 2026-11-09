@@ -10,7 +10,7 @@ class OrderController {
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = res.locals.tokenPayload as TokenPayload;
-            const query = req.query as any as IQuery;
+            const query = res.locals.query as IQuery;
             const orders = await orderService.getAll(query, userId);
             res.status(StatusCode.OK).json(orders);
         } catch (e) {
@@ -40,7 +40,7 @@ class OrderController {
         try {
             const { userId } = res.locals.tokenPayload as TokenPayload;
             const buffer = await orderService.createExcelSheet(
-                req.query as unknown as IQuery,
+                res.locals.query as IQuery,
                 userId,
             );
             res.setHeader(

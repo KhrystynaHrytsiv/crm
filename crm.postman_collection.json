@@ -27,8 +27,12 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/orders",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["orders"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders"
+                            ],
                             "query": [
                                 {
                                     "key": "name",
@@ -66,7 +70,7 @@
                                     "disabled": true
                                 },
                                 {
-                                    "key": "my",
+                                    "key": "manager",
                                     "value": "true",
                                     "disabled": true
                                 },
@@ -98,9 +102,14 @@
                         "url": {
                             "raw": "http://localhost:4000/orders/groups",
                             "protocol": "http",
-                            "host": ["localhost"],
+                            "host": [
+                                "localhost"
+                            ],
                             "port": "4000",
-                            "path": ["orders", "groups"]
+                            "path": [
+                                "orders",
+                                "groups"
+                            ]
                         }
                     },
                     "response": []
@@ -131,8 +140,13 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/orders/:orderId",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["orders", ":orderId"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                ":orderId"
+                            ],
                             "variable": [
                                 {
                                     "key": "orderId",
@@ -169,8 +183,14 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/orders/:orderId/comments",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["orders", ":orderId", "comments"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                ":orderId",
+                                "comments"
+                            ],
                             "variable": [
                                 {
                                     "key": "orderId",
@@ -198,8 +218,14 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/orders/:orderId/comments",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["orders", ":orderId", "comments"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                ":orderId",
+                                "comments"
+                            ],
                             "variable": [
                                 {
                                     "key": "orderId",
@@ -227,8 +253,13 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/orders/statistics",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["orders", "statistics"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "statistics"
+                            ]
                         }
                     },
                     "response": []
@@ -250,8 +281,13 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/orders/excel",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["orders", "excel"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "excel"
+                            ]
                         }
                     },
                     "response": []
@@ -268,7 +304,9 @@
                             "listen": "prerequest",
                             "script": {
                                 "type": "text/javascript",
-                                "exec": [""]
+                                "exec": [
+                                    ""
+                                ]
                             }
                         },
                         {
@@ -295,8 +333,13 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/auth/login",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["auth", "login"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
                         }
                     },
                     "response": []
@@ -308,14 +351,18 @@
                             "listen": "test",
                             "script": {
                                 "type": "text/javascript",
-                                "exec": [""]
+                                "exec": [
+                                    ""
+                                ]
                             }
                         },
                         {
                             "listen": "prerequest",
                             "script": {
                                 "type": "text/javascript",
-                                "exec": [""]
+                                "exec": [
+                                    ""
+                                ]
                             }
                         }
                     ],
@@ -343,8 +390,13 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/auth/logout",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["auth", "logout"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
                         }
                     },
                     "response": []
@@ -366,8 +418,13 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/auth/me",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["auth", "me"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "me"
+                            ]
                         }
                     },
                     "response": []
@@ -400,8 +457,13 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/auth/refresh",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["auth", "refresh"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "refresh"
+                            ]
                         }
                     },
                     "response": []
@@ -437,8 +499,12 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/manager",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["manager"]
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "manager"
+                            ]
                         }
                     },
                     "response": []
@@ -459,8 +525,14 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/manager/:action/:token",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["manager", ":action", ":token"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "manager",
+                                ":action",
+                                ":token"
+                            ],
                             "variable": [
                                 {
                                     "key": "action",
@@ -496,8 +568,14 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/manager/:id/:action",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["manager", ":id", ":action"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "manager",
+                                ":id",
+                                ":action"
+                            ],
                             "variable": [
                                 {
                                     "key": "id",
@@ -538,8 +616,14 @@
                         },
                         "url": {
                             "raw": "{{baseUrl}}/manager/:id/:action",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["manager", ":id", ":action"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "manager",
+                                ":id",
+                                ":action"
+                            ],
                             "variable": [
                                 {
                                     "key": "id",
@@ -571,8 +655,12 @@
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/manager",
-                            "host": ["{{baseUrl}}"],
-                            "path": ["manager"],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "manager"
+                            ],
                             "query": [
                                 {
                                     "key": "page",
@@ -585,6 +673,80 @@
                     "response": []
                 }
             ]
+        },
+        {
+            "name": "createGroup",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/orders/groups",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "orders",
+                        "groups"
+                    ]
+                },
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "{{accessToken}}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"new-group\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "verifyActionToken",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/manager/isValidToken/:action/:token",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "manager",
+                        "isValidToken",
+                        ":action",
+                        ":token"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "health",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/health",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "health"
+                    ]
+                }
+            },
+            "response": []
         }
     ],
     "variable": [

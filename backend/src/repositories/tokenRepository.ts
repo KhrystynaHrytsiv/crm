@@ -11,5 +11,8 @@ class TokenRepository {
     delete(params: Partial<IToken>) {
         return Token.deleteOne(params);
     }
+    deleteAllByUserId(userId: string) {
+        return Token.deleteMany({ userId });
+    }
 }
 export const tokenRepository = new TokenRepository();

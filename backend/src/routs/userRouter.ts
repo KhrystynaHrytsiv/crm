@@ -5,6 +5,7 @@ import { PasswordValidator } from "../../../shared/validators/passwordValidator"
 import { userController } from "../controllers/userController";
 import { TokenEnum } from "../enums/tokenEnum";
 import { authMiddleware } from "../middleware/authMiddleware";
+import { actionTokenLimiter } from "../middleware/rateLimitMiddleware";
 import { validationMiddleware } from "../middleware/validationMiddleware";
 
 const router = Router();
@@ -25,6 +26,7 @@ router.patch(
     "/:id/:action",
     authMiddleware.checkToken(TokenEnum.access),
     authMiddleware.hasPermission,
+    validationMiddleware.isIdValidate("id"),
     userController.changeStatus,
 );
 router.get(
@@ -36,8 +38,13 @@ router.get(
 );
 router.post(
     "/:action/:token",
+    actionTokenLimiter,
     validationMiddleware.validateBody(PasswordValidator.passwordValid),
     userController.completeAction,
 );
-router.get("/isValidToken/:action/:token", userController.verifyToken);
+router.get(
+    "/isValidToken/:action/:token",
+    actionTokenLimiter,
+    userController.verifyToken,
+);
 export const managerRouter = router;

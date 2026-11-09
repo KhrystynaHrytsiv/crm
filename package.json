@@ -1,4 +1,6 @@
 {
+    "private": true,
+    "type": "module",
     "dependencies": {
         "joi": "^18.3.2",
         "pino": "^10.4.0"

@@ -68,20 +68,25 @@ export class OrderValidator {
         newGroup: joi.any().strip(),
     });
 
+    // Filters search by substring, so they must not use the edit-form formats (email, phone pattern)
+    private static searchString = joi.string().trim().max(100).empty("");
+
     public static query = joi.object({
-        pageSize: joi.number().min(1).max(100).default(25),
-        page: joi.number().min(1).default(1),
-        name: this.nameField,
-        surname: this.surname,
-        email: this.email,
-        phone: this.phone,
-        age: this.age,
+        page: joi.number().integer().min(1).default(1),
+        name: this.searchString,
+        surname: this.searchString,
+        email: this.searchString,
+        phone: this.searchString,
+        age: joi.number().integer().min(0).max(150).empty(""),
         manager: this.manager,
         course: this.course,
         course_format: this.course_format,
         course_type: this.course_type,
-        group: this.group,
-        status: this.status,
+        group: this.searchString,
+        status: joi
+            .string()
+            .valid(...Object.values(CourseStatusEnum))
+            .empty(""),
         start_date: joi.date().iso(),
         end_date: joi.date().iso(),
         order: joi

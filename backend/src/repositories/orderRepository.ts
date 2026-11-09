@@ -1,4 +1,4 @@
-import { QueryFilter } from "mongoose";
+import { PipelineStage, QueryFilter, Types, UpdateQuery } from "mongoose";
 
 import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
@@ -16,62 +16,43 @@ const exactFields = [
 const escapeRegex = (value: string) =>
     value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+// null and "new" are the same status: the order is free
+const freeStatuses = [null, CourseStatusEnum.new];
+const isFreeStatus = {
+    $in: [{ $ifNull: ["$status", null] }, freeStatuses],
+};
+// Commenting / editing a free order moves it to "in work", other statuses stay
+const takeInWorkStatus = {
+    $cond: [isFreeStatus, CourseStatusEnum.inWork, "$status"],
+};
+
+const parseSort = (order?: string): { field: string; direction: 1 | -1 } => {
+    const value = order || "-id";
+    return value.startsWith("-")
+        ? { field: value.slice(1), direction: -1 }
+        : { field: value, direction: 1 };
+};
+
 class OrderRepository {
     async getAll(query: IQuery, userId: string): Promise<[IOrder[], number]> {
-        const filterObject = await this.filter(query, userId);
+        const filterObject = this.filter(query, userId);
         const skip = query.pageSize * (query.page - 1);
-        const sortOrder = query.order || "-id";
-
-        const [orders, total] = await Promise.all([
-            sortOrder.replace("-", "") === "manager"
-                ? Order.aggregate([
-                      { $match: filterObject },
-                      {
-                          $lookup: {
-                              from: "users",
-                              localField: "manager",
-                              foreignField: "_id",
-                              as: "manager",
-                          },
-                      },
-                      {
-                          $unwind: {
-                              path: "$manager",
-                              preserveNullAndEmptyArrays: true,
-                          },
-                      },
-                      {
-                          $sort: {
-                              "manager.surname": sortOrder.startsWith("-")
-                                  ? -1
-                                  : 1,
-                          },
-                      },
-                      { $skip: skip },
-                      { $limit: query.pageSize },
-                  ]).collation({ locale: "en", strength: 2 })
-                : Order.find(filterObject)
-                      .populate("manager", "surname")
-                      .limit(query.pageSize)
-                      .skip(skip)
-                      .sort(sortOrder),
+        return Promise.all([
+            this.findSorted(filterObject, query.order, skip, query.pageSize),
             Order.countDocuments(filterObject),
         ]);
-
-        return [orders, total];
     }
-    async filter(query: IQuery, userId: string): Promise<QueryFilter<IOrder>> {
+
+    filter(query: IQuery, userId: string): QueryFilter<IOrder> {
         const filterObject: QueryFilter<IOrder> = {};
-        if (query.status === "null" || query.status === CourseStatusEnum.new) {
-            filterObject.$or = [
-                { status: CourseStatusEnum.new },
-                { status: null },
-            ];
+        if (query.status === CourseStatusEnum.new) {
+            filterObject.status = { $in: freeStatuses };
         } else if (query.status) {
             filterObject.status = query.status as CourseStatusEnum;
         }
-        if (query.manager === "true") {
-            filterObject.manager = userId;
+        if (String(query.manager) === "true") {
+            // ObjectId, not string: the filter is also used in aggregate, which does not cast
+            filterObject.manager = new Types.ObjectId(userId) as never;
         }
         for (const key of searchFields) {
             const value = query[key];
@@ -93,144 +74,188 @@ class OrderRepository {
         }
         if (query.start_date || query.end_date) {
             filterObject.created_at = {};
-
             if (query.start_date) {
                 filterObject.created_at.$gte = new Date(
-                    `${query.start_date}T00:00:00.000Z`,
+                    `${toDateString(query.start_date)}T00:00:00.000Z`,
                 );
             }
-
             if (query.end_date) {
                 filterObject.created_at.$lte = new Date(
-                    `${query.end_date}T23:59:59.999Z`,
+                    `${toDateString(query.end_date)}T23:59:59.999Z`,
                 );
             }
         }
         return filterObject;
     }
+
+    private async findSorted(
+        filterObject: QueryFilter<IOrder>,
+        order?: string,
+        skip = 0,
+        limit?: number,
+    ): Promise<IOrder[]> {
+        const { field, direction } = parseSort(order);
+        // _id as a tiebreaker keeps pagination stable for non-unique fields
+        const sort: Record<string, 1 | -1> =
+            field === "id"
+                ? { id: direction }
+                : { [field]: direction, _id: -1 };
+
+        if (field !== "manager") {
+            const find = Order.find(filterObject)
+                .populate("manager", "surname")
+                .sort(sort)
+                .skip(skip);
+            return (limit ? find.limit(limit) : find).lean<IOrder[]>();
+        }
+
+        const pipeline: PipelineStage[] = [
+            { $match: filterObject },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "manager",
+                    foreignField: "_id",
+                    // only the public fields of the manager, never password/email
+                    pipeline: [{ $project: { surname: 1 } }],
+                    as: "manager",
+                },
+            },
+            { $set: { manager: { $ifNull: [{ $first: "$manager" }, null] } } },
+            { $sort: { "manager.surname": direction, _id: -1 } },
+            { $skip: skip },
+            ...(limit ? [{ $limit: limit }] : []),
+        ];
+        return Order.aggregate<IOrder>(pipeline).collation({
+            locale: "en",
+            strength: 2,
+        });
+    }
+
     getById(id: string): Promise<IOrder | null> {
         return Order.findById(id);
     }
+
     async update(
         id: string,
         userId: string,
         dto: Partial<OrderDTO>,
     ): Promise<IOrder | null> {
+        const isRelease = dto.status === CourseStatusEnum.new;
+        const fields = Object.fromEntries(
+            Object.entries(dto).map(([key, value]) => [
+                key,
+                { $literal: value },
+            ]),
+        );
         return Order.findOneAndUpdate(
-            {
-                _id: id,
-                $or: [{ manager: null }, { manager: userId }],
-            },
-            dto,
-            {
-                returnDocument: "after",
-            },
+            this.editableBy(id, userId),
+            [
+                {
+                    $set: {
+                        ...fields,
+                        manager: isRelease ? null : new Types.ObjectId(userId),
+                        ...(dto.status === undefined && {
+                            status: takeInWorkStatus,
+                        }),
+                    },
+                },
+            ] as UpdateQuery<IOrder>,
+            { returnDocument: "after", updatePipeline: true },
         ).populate("manager", "surname");
     }
+
     async chooseOrder(orderId: string, userId: string): Promise<IOrder | null> {
         return Order.findOneAndUpdate(
-            {
-                _id: orderId,
-                $and: [
-                    {
-                        $or: [{ manager: null }, { manager: userId }],
+            this.editableBy(orderId, userId),
+            [
+                {
+                    $set: {
+                        manager: new Types.ObjectId(userId),
+                        status: takeInWorkStatus,
                     },
-                    {
-                        $or: [
-                            { status: CourseStatusEnum.new },
-                            { manager: null },
-                            { manager: userId },
-                        ],
-                    },
-                ],
-            },
-            {
-                $set: {
-                    manager: userId,
-                    status: CourseStatusEnum.inWork,
                 },
-            },
-            { returnDocument: "after" },
+            ] as UpdateQuery<IOrder>,
+            { returnDocument: "after", updatePipeline: true },
         );
     }
+
+    // the order is free or already belongs to this manager (checked atomically with the update)
+    private editableBy(orderId: string, userId: string): QueryFilter<IOrder> {
+        return {
+            _id: orderId,
+            manager: { $in: [null, new Types.ObjectId(userId)] },
+        } as QueryFilter<IOrder>;
+    }
+
     private getStatisticsGroup(groupByManager: boolean) {
-        const statuses = Object.values(CourseStatusEnum);
         const statusCounts = Object.fromEntries(
-            statuses
+            Object.values(CourseStatusEnum)
                 .filter((status) => status !== CourseStatusEnum.new)
                 .map((status) => [
                     status,
-                    {
-                        $sum: {
-                            $cond: [{ $eq: ["$status", status] }, 1, 0],
-                        },
-                    },
+                    { $sum: { $cond: [{ $eq: ["$status", status] }, 1, 0] } },
                 ]),
         );
-
         return {
             _id: groupByManager ? "$manager" : null,
             total: { $sum: 1 },
-            [CourseStatusEnum.new]: {
-                $sum: {
-                    $cond: [
-                        {
-                            $or: [
-                                { $eq: ["$status", CourseStatusEnum.new] },
-                                { $eq: [{ $type: "$status" }, "null"] },
-                            ],
-                        },
-                        1,
-                        0,
-                    ],
-                },
-            },
-
+            [CourseStatusEnum.new]: { $sum: { $cond: [isFreeStatus, 1, 0] } },
             ...statusCounts,
         };
     }
+
+    private statisticsProjection(keepId: boolean) {
+        return {
+            _id: keepId ? 1 : 0,
+            total: 1,
+            ...Object.fromEntries(
+                Object.values(CourseStatusEnum).map((status) => [status, 1]),
+            ),
+        };
+    }
+
     async getStatistics(): Promise<IStatistics> {
         const [statistics] = await Order.aggregate([
-            {
-                $group: this.getStatisticsGroup(false),
-            },
-            {
-                $project: {
-                    _id: 0,
-                    total: 1,
-                    ...Object.fromEntries(
-                        Object.values(CourseStatusEnum).map((status) => [
-                            status,
-                            1,
-                        ]),
-                    ),
-                },
-            },
+            { $group: this.getStatisticsGroup(false) },
+            { $project: this.statisticsProjection(false) },
         ]);
-
-        return statistics;
+        return statistics ?? emptyStatistics();
     }
+
     async getManagersStatistics(
         managerIds: string[],
     ): Promise<Map<string, IStatistics>> {
         const statistics = await Order.aggregate([
             {
                 $match: {
-                    manager: { $in: managerIds },
+                    manager: {
+                        $in: managerIds.map(
+                            (id) => new Types.ObjectId(String(id)),
+                        ),
+                    },
                 },
             },
-            {
-                $group: this.getStatisticsGroup(true),
-            },
+            { $group: this.getStatisticsGroup(true) },
+            { $project: this.statisticsProjection(true) },
         ]);
-
-        return new Map(statistics.map((item) => [item._id.toString(), item]));
+        return new Map(
+            statistics.map(({ _id, ...item }) => [_id.toString(), item]),
+        );
     }
+
     async getDataForExcel(query: IQuery, userId: string): Promise<IOrder[]> {
-        const filterObject = await this.filter(query, userId);
-        return Order.find(filterObject)
-            .populate("manager", "surname")
-            .sort(query.order || "-id");
+        return this.findSorted(this.filter(query, userId), query.order);
     }
 }
+
+const toDateString = (value: string | Date) =>
+    value instanceof Date ? value.toISOString().slice(0, 10) : value;
+
+export const emptyStatistics = (): IStatistics =>
+    Object.values(CourseStatusEnum).reduce(
+        (acc, status) => ({ ...acc, [status]: 0 }),
+        { total: 0 } as IStatistics,
+    );
+
 export const orderRepository = new OrderRepository();

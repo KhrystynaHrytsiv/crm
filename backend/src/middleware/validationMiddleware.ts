@@ -41,9 +41,7 @@ class ValidationMiddleware {
     public validateQuery(validator: ObjectSchema) {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
-                (req as any).validateQuery = await validator.validateAsync(
-                    req.query,
-                );
+                res.locals.query = await validator.validateAsync(req.query);
                 next();
             } catch (err) {
                 const e = err as ValidationError;

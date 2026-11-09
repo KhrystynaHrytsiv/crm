@@ -16,9 +16,10 @@ const Header = () => {
     const logout = async () => {
         try {
             await authService.logout();
-            router.push("/login");
         } catch (error) {
             logger.error(error, "Logout failed:");
+        } finally {
+            router.replace("/login");
         }
     };
 

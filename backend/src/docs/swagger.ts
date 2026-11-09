@@ -56,10 +56,14 @@ const orderFilters = [
         type: "string",
         format: "date",
     }),
-    queryParam("my", "'true' — only orders of the current user", {
-        type: "string",
-        enum: ["true"],
-    }),
+    queryParam(
+        "manager",
+        "'true' — only orders of the current user (checkbox My)",
+        {
+            type: "string",
+            enum: ["true"],
+        },
+    ),
 ];
 
 export const swaggerDocument = {
@@ -181,7 +185,6 @@ export const swaggerDocument = {
                     agree: { type: "integer" },
                     disagree: { type: "integer" },
                     dubbing: { type: "integer" },
-                    null: { type: "integer" },
                 },
             },
             Pagination: {
@@ -223,7 +226,8 @@ export const swaggerDocument = {
                         },
                     }),
                     401: errors[401],
-                    403: errors[403],
+                    400: errors[400],
+                    429: { description: "Too many login attempts" },
                 },
             },
         },
@@ -315,22 +319,53 @@ export const swaggerDocument = {
                 summary: "All groups",
                 security: bearer,
                 responses: {
-                    200: ok("Group names", {
+                    200: ok("Groups", {
                         type: "array",
-                        items: { type: "string" },
+                        items: {
+                            type: "object",
+                            properties: {
+                                _id: { type: "string" },
+                                name: { type: "string" },
+                            },
+                        },
                     }),
                     401: errors[401],
+                },
+            },
+            post: {
+                tags: ["Orders"],
+                summary:
+                    "Create group (name is trimmed, lowercased and unique)",
+                security: bearer,
+                requestBody: {
+                    required: true,
+                    content: json({
+                        type: "object",
+                        required: ["name"],
+                        properties: { name: { type: "string", maxLength: 30 } },
+                    }),
+                },
+                responses: {
+                    201: ok("Created group"),
+                    400: errors[400],
+                    401: errors[401],
+                    409: {
+                        description: "Group already exists",
+                        content: json(ref("Error")),
+                    },
                 },
             },
         },
         "/orders/statistics": {
             get: {
                 tags: ["Orders"],
-                summary: "Orders count by status",
+                summary:
+                    "Orders count by status (admin only). 'new' includes orders without status",
                 security: bearer,
                 responses: {
                     200: ok("Statistics", ref("Statistics")),
                     401: errors[401],
+                    403: errors[403],
                 },
             },
         },
@@ -507,6 +542,39 @@ export const swaggerDocument = {
                     200: ok("Manager", ref("User")),
                     400: errors[400],
                     401: errors[401],
+                    429: { description: "Too many requests" },
+                },
+            },
+        },
+        "/manager/isValidToken/{action}/{token}": {
+            get: {
+                tags: ["Managers (admin)"],
+                summary:
+                    "Check that an activation / recovery link is still valid (public, single-use)",
+                parameters: [
+                    pathParam("action", "Action", {
+                        type: "string",
+                        enum: ["activate", "recovery"],
+                    }),
+                    pathParam("token", "Token from the link"),
+                ],
+                responses: {
+                    200: ok("Result", {
+                        type: "object",
+                        properties: { isValid: { type: "boolean" } },
+                    }),
+                    401: errors[401],
+                },
+            },
+        },
+        "/health": {
+            get: {
+                tags: ["System"],
+                summary:
+                    "Health check (200 when the database is connected, 503 otherwise)",
+                responses: {
+                    200: ok("OK"),
+                    503: { description: "Database unavailable" },
                 },
             },
         },
