@@ -17,8 +17,6 @@ const normalizeGroup = (value: string): string | null =>
         .trim()
         .toLowerCase() || null;
 
-// Fixes values written before validation existed ("new\n", "null", '"   "'), so that
-// statistics add up to total and filters match. Idempotent: does nothing when data is clean.
 const normalizeOrders = async () => {
     const rawStatuses: unknown[] = await Order.distinct("status");
     for (const value of rawStatuses) {
@@ -50,7 +48,6 @@ const normalizeOrders = async () => {
     }
 };
 
-// After a fresh dump import the groups collection is empty, while orders already have groups
 const seedGroups = async () => {
     const orderGroups = (await Order.distinct("group")).filter(
         (group): group is string => typeof group === "string" && !!group,

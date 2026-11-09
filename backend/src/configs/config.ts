@@ -16,7 +16,6 @@ const required = [
     "FRONTEND_URL",
 ] as const;
 
-// Fail fast on startup instead of breaking on the first request
 const missing = required.filter((key) => !process.env[key]);
 if (missing.length) {
     throw new Error(`Missing environment variables: ${missing.join(", ")}`);
@@ -51,7 +50,6 @@ export const config: IConfig = {
     JWT_ACTIVATE_LIFETIME: process.env.JWT_ACTIVATE_LIFETIME!,
     JWT_RECOVERY_LIFETIME: process.env.JWT_RECOVERY_LIFETIME!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
-    // Optional: custom DNS for mongodb+srv when the local resolver can't resolve SRV records
     DNS_SERVERS: (process.env.DNS_SERVERS || "")
         .split(",")
         .map((server) => server.trim())

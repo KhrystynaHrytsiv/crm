@@ -565,16 +565,5 @@ export const swaggerDocument = {
                 },
             },
         },
-        "/health": {
-            get: {
-                tags: ["System"],
-                summary:
-                    "Health check (200 when the database is connected, 503 otherwise)",
-                responses: {
-                    200: ok("OK"),
-                    503: { description: "Database unavailable" },
-                },
-            },
-        },
     },
 };
