@@ -36,7 +36,6 @@ interface IConfig {
     JWT_RECOVERY_LIFETIME: any;
     FRONTEND_URL: string;
     DNS_SERVERS: string[];
-    TRUST_PROXY: number;
 }
 
 export const config: IConfig = {
@@ -57,6 +56,4 @@ export const config: IConfig = {
         .split(",")
         .map((server) => server.trim())
         .filter(Boolean),
-    // Number of reverse proxies in front of the app (needed for correct client IP in rate limiting)
-    TRUST_PROXY: Number(process.env.TRUST_PROXY) || 0,
 };

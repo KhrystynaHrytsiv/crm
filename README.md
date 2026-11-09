@@ -76,7 +76,6 @@ cp backend/.env.example backend/.env
 | `JWT_ACTIVATE_LIFETIME`, `JWT_RECOVERY_LIFETIME`                              | так         | час життя посилань активації / відновлення пароля (`30m`)                              |
 | `FRONTEND_URL`                                                                | так         | публічна адреса фронтенду: дозволений origin для CORS і основа посилань активації      |
 | `DNS_SERVERS`                                                                 | ні          | DNS-сервери через кому (`8.8.8.8,8.8.4.4`), якщо локальний DNS не резолвить `mongodb+srv` |
-| `TRUST_PROXY`                                                                 | ні          | кількість reverse-proxy перед бекендом (для коректного IP у rate limit)                |
 
 Якщо обов'язкової змінної немає, бекенд не стартує і пише в лог, якої саме.
 
@@ -134,22 +133,17 @@ cp frontend/.env.example frontend/.env
 
 ## Продакшн
 
-### Через Docker (рекомендовано)
+### Через Docker
 
 1. Створіть `backend/.env` (див. вище). `FRONTEND_URL` — публічна адреса фронтенду.
-2. Зберіть і запустіть. `NEXT_PUBLIC_API_URL` — публічна адреса бекенду, як її бачить браузер:
+2. Якщо бекенд буде доступний не за `http://localhost:4000`, змініть `NEXT_PUBLIC_API_URL` у `docker-compose.yaml` (`frontend.build.args`) — це адреса бекенду, як її бачить браузер.
+3. Зберіть і запустіть:
 
     ```bash
-    NEXT_PUBLIC_API_URL=http://localhost:4000 docker compose up -d --build
+    docker compose up -d --build
     ```
 
-3. Фронтенд: http://localhost:3000, API: http://localhost:4000, стан: http://localhost:4000/health.
-
-Що всередині образів:
-
-- бекенд збирається в один файл `dist/main.js` (esbuild) і запускається через `node`, тільки з production-залежностями;
-- фронтенд збирається в режимі `standalone` і запускається через `node frontend/server.js`;
-- обидва контейнери працюють від користувача `node` (не root), мають `HEALTHCHECK`, фронтенд стартує після того, як бекенд стане healthy.
+4. Фронтенд: http://localhost:3000, API: http://localhost:4000, стан: http://localhost:4000/health.
 
 ### Без Docker
 
@@ -167,7 +161,7 @@ cd frontend && npm ci && npm run build && npm start
 
 ### Що налаштовано для продакшену
 
-- **Безпека:** `helmet` (заголовки безпеки), CORS тільки для `FRONTEND_URL`, обмеження спроб логіну (10 невдалих за 15 хв з IP) і запитів за посиланнями активації, ліміт розміру тіла запиту, заголовки безпеки на фронтенді (`X-Frame-Options`, `Referrer-Policy` тощо).
+- **Безпека:** `helmet` (заголовки безпеки), CORS тільки для `FRONTEND_URL`, ліміт розміру тіла запиту, заголовки безпеки на фронтенді (`X-Frame-Options`, `Referrer-Policy` тощо).
 - **Помилки:** внутрішні помилки (Mongo, stack trace) пишуться в лог, клієнт отримує тільки `Internal server error`; невідомі маршрути — 404.
 - **Сесії:** бан менеджера одразу видаляє його токени і блокує всі запити, включно з refresh.
 - **Надійність:** перевірка env при старті, повторне підключення до БД, `GET /health`, коректне завершення за `SIGTERM` / `SIGINT`.
@@ -181,7 +175,7 @@ cd frontend && npm ci && npm run build && npm start
 
 | Метод | Шлях                                               | Доступ                          | Опис                                                                         |
 | ----- | -------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------- |
-| POST  | `/auth/login`                                      | публічний (rate limit)          | логін, повертає `user` і `tokens`                                            |
+| POST  | `/auth/login`                                      | публічний                       | логін, повертає `user` і `tokens`                                            |
 | POST  | `/auth/refresh`                                    | refresh token                   | нова пара токенів                                                            |
 | POST  | `/auth/logout`                                     | refresh token                   | вихід                                                                        |
 | GET   | `/auth/me`                                         | access token                    | поточний користувач                                                          |
@@ -197,8 +191,8 @@ cd frontend && npm ci && npm run build && npm start
 | POST  | `/manager`                                         | admin                           | створити менеджера                                                           |
 | GET   | `/manager/:id/activate` \| `/manager/:id/recovery` | admin                           | одноразове посилання активації / відновлення пароля (30 хв)                  |
 | PATCH | `/manager/:id/ban` \| `/manager/:id/unban`         | admin                           | заблокувати / розблокувати                                                   |
-| GET   | `/manager/isValidToken/:action/:token`             | публічний (rate limit)          | чи посилання ще дійсне                                                       |
-| POST  | `/manager/:action/:token`                          | публічний (rate limit)          | встановити пароль за посиланням                                              |
+| GET   | `/manager/isValidToken/:action/:token`             | публічний                       | чи посилання ще дійсне                                                       |
+| POST  | `/manager/:action/:token`                          | публічний                       | встановити пароль за посиланням                                              |
 | GET   | `/health`                                          | публічний                       | стан сервісу та підключення до БД                                            |
 
 Query-параметри `/orders` і `/orders/excel`:

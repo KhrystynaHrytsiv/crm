@@ -21,7 +21,6 @@ if (config.DNS_SERVERS.length) {
 }
 
 export const app = express();
-app.set("trust proxy", config.TRUST_PROXY);
 // Swagger UI ships inline scripts, so it is mounted before the strict CSP from helmet
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(helmet());

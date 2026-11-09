@@ -3,24 +3,20 @@ services:
         build:
             context: .
             dockerfile: backend/Dockerfile
-        env_file:
-            - backend/.env
-        environment:
-            NODE_ENV: production
         ports:
             - "4000:4000"
-        restart: unless-stopped
+        env_file:
+            - backend/.env
+        restart: on-failure
 
     frontend:
         build:
             context: .
             dockerfile: frontend/Dockerfile
             args:
-                # the browser calls the API directly, so this is the public address of the backend
-                NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+                NEXT_PUBLIC_API_URL: http://localhost:4000
         ports:
             - "3000:3000"
         depends_on:
-            backend:
-                condition: service_healthy
-        restart: unless-stopped
+            - backend
+        restart: on-failure
