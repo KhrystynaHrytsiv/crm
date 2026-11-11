@@ -1,4 +1,4 @@
-import { RoleEnum } from "../../backend/src/enums/roleEnum";
+import { RoleEnum } from "../enums/roleEnum";
 
 interface IToken {
     id: string;

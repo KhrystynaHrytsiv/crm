@@ -103,7 +103,7 @@ export const swaggerDocument = {
                     name: { type: "string" },
                     surname: { type: "string" },
                     role: { type: "string", enum: ["admin", "manager"] },
-                    is_Active: { type: "boolean" },
+                    is_active: { type: "boolean" },
                     last_login: {
                         type: "string",
                         format: "date-time",
@@ -173,7 +173,7 @@ export const swaggerDocument = {
                             surname: { type: "string" },
                         },
                     },
-                    created_At: { type: "string", format: "date-time" },
+                    created_at: { type: "string", format: "date-time" },
                 },
             },
             Statistics: {

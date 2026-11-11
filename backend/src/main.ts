@@ -10,7 +10,7 @@ import { config } from "./configs/config";
 import { swaggerDocument } from "./docs/swagger";
 import { StatusCode } from "./enums/StatusCode";
 import { apiError } from "./error/apiError";
-import { apiRouter } from "./routs/apiRouter";
+import { apiRouter } from "./routes/apiRouter";
 import { seed } from "./seed/adminSeed";
 import { seedOrderData } from "./seed/orderDataSeed";
 import { seedOrderIds } from "./seed/orderIdSeed";

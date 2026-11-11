@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 
+import { RoleEnum } from "../../../shared/enums/roleEnum";
 import { IUser } from "../../../shared/interfaces/IUser";
-import { RoleEnum } from "../enums/roleEnum";
 
 const userSchema = new Schema(
     {
@@ -11,17 +11,17 @@ const userSchema = new Schema(
         password: { type: String },
         passwordChangedAt: { type: Date, default: null },
         role: { type: String, enum: RoleEnum },
-        is_Active: { type: Boolean, default: false },
-        is_Banned: { type: Boolean, default: false },
+        is_active: { type: Boolean, default: false },
+        is_banned: { type: Boolean, default: false },
         last_login: { type: Date, default: null },
     },
     {
         timestamps: false,
         versionKey: false,
         toJSON: {
-            transform: (doc: any, ret: any) => {
-                delete (ret as any).password;
-                delete (ret as any).passwordChangedAt;
+            transform: (_doc, ret) => {
+                delete ret.password;
+                delete ret.passwordChangedAt;
                 return ret;
             },
         },

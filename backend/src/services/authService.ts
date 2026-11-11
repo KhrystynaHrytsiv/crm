@@ -1,8 +1,8 @@
+import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { IAuth } from "../../../shared/interfaces/IAuth";
 import { TokensPair } from "../../../shared/interfaces/IToken";
 import { IUser } from "../../../shared/interfaces/IUser";
 import { StatusCode } from "../enums/StatusCode";
-import { TokenEnum } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
 import { tokenRepository } from "../repositories/tokenRepository";
 import { userRepository } from "../repositories/userRepository";
@@ -20,8 +20,8 @@ class AuthService {
                 dto.password,
                 user.password,
             )) ||
-            !user.is_Active ||
-            user.is_Banned
+            !user.is_active ||
+            user.is_banned
         ) {
             throw new apiError(
                 "Invalid email or password",

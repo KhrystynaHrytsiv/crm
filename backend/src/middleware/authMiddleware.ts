@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
+import { RoleEnum } from "../../../shared/enums/roleEnum";
+import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { TokenPayload } from "../../../shared/interfaces/IToken";
-import { RoleEnum } from "../enums/roleEnum";
 import { StatusCode } from "../enums/StatusCode";
-import { TokenEnum } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
 import { userRepository } from "../repositories/userRepository";
 import { tokenService } from "../services/tokenService";
@@ -33,8 +33,7 @@ class AuthMiddleware {
                 );
                 res.locals.tokenPayload = tokenPayload;
                 const user = await userRepository.getById(tokenPayload.userId);
-                // 401 (not 403) so the client drops the session and goes to login
-                if (!user || !user.is_Active || user.is_Banned) {
+                if (!user || !user.is_active || user.is_banned) {
                     throw new apiError(
                         "Account is inactive or banned",
                         StatusCode.UNAUTHORIZED,

@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 
-import { RoleEnum } from "../../../../backend/src/enums/roleEnum";
+import { RoleEnum } from "../../../../shared/enums/roleEnum";
 import Admin from "../../components/admin/Admin";
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/Header";

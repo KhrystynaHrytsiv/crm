@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { TokenEnum } from "../enums/tokenEnum";
+import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { authRouter } from "./authRouter";
 import { orderRouter } from "./orderRouter";

@@ -1,4 +1,4 @@
-import { RoleEnum } from "../enums/roleEnum";
+import { RoleEnum } from "../../../shared/enums/roleEnum";
 import { userRepository } from "../repositories/userRepository";
 import { passwordService } from "../services/passwordService";
 
@@ -14,7 +14,7 @@ export const seed = async () => {
         name: "admin",
         surname: "admin",
         role: RoleEnum.admin,
-        is_Active: true,
-        is_Banned: false,
+        is_active: true,
+        is_banned: false,
     });
 };

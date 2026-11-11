@@ -1,9 +1,9 @@
 import {
     CourseEnum,
     CourseFormat,
-} from "../../../backend/src/enums/CourseEnum";
-import { CourseStatusEnum } from "../../../backend/src/enums/courseStatusEnum";
-import { CourseTypeEnum } from "../../../backend/src/enums/courseTypeEnum";
+} from "../../../shared/enums/CourseEnum";
+import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
+import { CourseTypeEnum } from "../../../shared/enums/courseTypeEnum";
 import { OrderDTO } from "../../../shared/interfaces/IOrder";
 
 export const filters = (groups: string[]) => [

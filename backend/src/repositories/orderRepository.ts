@@ -1,9 +1,9 @@
 import { PipelineStage, QueryFilter, Types, UpdateQuery } from "mongoose";
 
+import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
 import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
 import { IStatistics } from "../../../shared/interfaces/IStatistics";
-import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { Order } from "../models/orderModel";
 
 const searchFields = ["name", "surname", "email", "phone"] as const;
@@ -51,7 +51,6 @@ class OrderRepository {
             filterObject.status = query.status as CourseStatusEnum;
         }
         if (String(query.manager) === "true") {
-            // ObjectId, not string: the filter is also used in aggregate, which does not cast
             filterObject.manager = new Types.ObjectId(userId) as never;
         }
         for (const key of searchFields) {
@@ -95,7 +94,6 @@ class OrderRepository {
         limit?: number,
     ): Promise<IOrder[]> {
         const { field, direction } = parseSort(order);
-        // _id as a tiebreaker keeps pagination stable for non-unique fields
         const sort: Record<string, 1 | -1> =
             field === "id"
                 ? { id: direction }
@@ -116,7 +114,6 @@ class OrderRepository {
                     from: "users",
                     localField: "manager",
                     foreignField: "_id",
-                    // only the public fields of the manager, never password/email
                     pipeline: [{ $project: { surname: 1 } }],
                     as: "manager",
                 },
@@ -180,7 +177,6 @@ class OrderRepository {
         );
     }
 
-    // the order is free or already belongs to this manager (checked atomically with the update)
     private editableBy(orderId: string, userId: string): QueryFilter<IOrder> {
         return {
             _id: orderId,

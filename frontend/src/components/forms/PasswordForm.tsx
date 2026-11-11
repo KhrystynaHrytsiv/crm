@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { ActionTokenType } from "../../../../backend/src/enums/tokenEnum";
+import { ActionTokenType } from "../../../../shared/enums/tokenEnum";
 import { PasswordValidator } from "../../../../shared/validators/passwordValidator";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
 import { managerService } from "../../services/managerService";

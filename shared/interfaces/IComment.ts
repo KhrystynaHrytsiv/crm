@@ -3,6 +3,6 @@ export interface IComment {
     orderId: string;
     comment: string;
     manager: string;
-    created_At: Date;
+    created_at: Date;
 }
 export type CommentDto = Pick<IComment, "comment">;

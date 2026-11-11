@@ -1,7 +1,7 @@
 import { FC } from "react";
 
-import { RoleEnum } from "../../../../backend/src/enums/roleEnum";
-import { ActionTokenType } from "../../../../backend/src/enums/tokenEnum";
+import { RoleEnum } from "../../../../shared/enums/roleEnum";
+import { ActionTokenType } from "../../../../shared/enums/tokenEnum";
 import { ActionType } from "../../../../shared/interfaces/ActionType";
 import { IManagerWithStatistics } from "../../../../shared/interfaces/IManagerWithStatistics";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
@@ -18,37 +18,15 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
     const { manager, statistics } = managerWithStatistic;
     const dispatch = useAppDispatch();
     const isAdmin = manager.role === RoleEnum.admin && manager._id === me?._id;
-    // const handleAction = async (action: ActionTokenType) => {
-    //     //     try {
-    //     //         const url = await managerService.actionRequest(manager._id, action);
-    //     //         await navigator.clipboard.writeText(url);
-    //     //         alert("Link copied to clipboard");
-    //     //     } catch (e) {
-    //     //         alert(getErrorMessage(e));
-    //     //     }
-    //     // };
     const handleAction = async (action: ActionTokenType) => {
-        try {
-            console.log("1. Action:", action);
-
-            const url = await managerService.actionRequest(
-                manager._id,
-                action,
-            );
-
-            console.log("2. Backend response:", url);
-            console.log("3. Response type:", typeof url);
-
-            await navigator.clipboard.writeText(url);
-
-            console.log("4. Link copied successfully");
-
-            alert("Link copied to clipboard");
-        } catch (e) {
-            console.error("Recovery error:", e);
-            alert(getErrorMessage(e));
-        }
-    };
+            try {
+                const url = await managerService.actionRequest(manager._id, action);
+                await navigator.clipboard.writeText(url);
+                alert("Link copied to clipboard");
+            } catch (e) {
+                alert(getErrorMessage(e));
+            }
+        };
     const changeStatus = async (action: ActionType) => {
         try {
             await managerService.changeStatus(manager._id, action);
@@ -100,32 +78,32 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                 <button
                     className="greenButton"
                     onClick={() =>
-                        manager.is_Active
+                        manager.is_active
                             ? handleAction(ActionTokenType.recovery)
                             : handleAction(ActionTokenType.activate)
                     }
                 >
-                    {manager.is_Active ? "Recovery password" : "Activate"}
+                    {manager.is_active ? "Recovery password" : "Activate"}
                 </button>
                 {!isAdmin && (
                     <>
                         <button
                             className={
-                                !manager.is_Banned
+                                !manager.is_banned
                                     ? "greenButton"
                                     : "greyButton"
                             }
                             onClick={() => changeStatus("ban")}
-                            disabled={manager.is_Banned}
+                            disabled={manager.is_banned}
                         >
                             Ban
                         </button>
                         <button
                             className={
-                                manager.is_Banned ? "greenButton" : "greyButton"
+                                manager.is_banned ? "greenButton" : "greyButton"
                             }
                             onClick={() => changeStatus("unban")}
-                            disabled={!manager.is_Banned}
+                            disabled={!manager.is_banned}
                         >
                             Unban
                         </button>

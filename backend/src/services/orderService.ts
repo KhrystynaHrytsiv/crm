@@ -1,12 +1,13 @@
 import ExcelJS from "exceljs";
 
 import { columns } from "../../../shared/constants/orders";
+import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
 import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";
-import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
+import { groupRepository } from "../repositories/groupRepository";
 import { orderRepository } from "../repositories/orderRepository";
 
 class OrderService {
@@ -37,11 +38,16 @@ class OrderService {
         dto: Partial<OrderDTO>,
         userId: string,
     ): Promise<IOrder> {
-        // an empty status is the same as "new": the order is released
         const updateData =
             dto.status === null
                 ? { ...dto, status: CourseStatusEnum.new }
                 : dto;
+        if (dto.group) {
+            const isExists = await groupRepository.findByName(dto.group);
+            if (!isExists) {
+                throw new apiError("Group not found", StatusCode.NOT_FOUND);
+            }
+        }
         const updatedOrder = await orderRepository.update(
             id,
             userId,

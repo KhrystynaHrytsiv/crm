@@ -1,4 +1,4 @@
-import { RoleEnum } from "../../backend/src/enums/roleEnum";
+import { RoleEnum } from "../enums/roleEnum";
 
 export interface IUser {
     _id: string;
@@ -8,8 +8,8 @@ export interface IUser {
     password: string;
     passwordChangedAt: Date;
     role: RoleEnum;
-    is_Active: boolean;
-    is_Banned: boolean;
+    is_active: boolean;
+    is_banned: boolean;
     last_login: Date | null;
 }
 

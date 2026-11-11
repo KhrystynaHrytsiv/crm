@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { TbLogout } from "react-icons/tb";
 
-import { RoleEnum } from "../../../../backend/src/enums/roleEnum";
+import { RoleEnum } from "../../../../shared/enums/roleEnum";
 import { logger } from "../../../../shared/logger";
 import { useAppSelector } from "../../redux/hooks/reduxHooks";
 import { authService } from "../../services/authService";

@@ -1,4 +1,4 @@
-import { ActionTokenType } from "../../../backend/src/enums/tokenEnum";
+import { ActionTokenType } from "../../../shared/enums/tokenEnum";
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { IUser } from "../../../shared/interfaces/IUser";
 import { IUserDto } from "../interfaces/IUserDto";

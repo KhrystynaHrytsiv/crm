@@ -1,4 +1,4 @@
-import { CourseStatusEnum } from "../../backend/src/enums/courseStatusEnum";
+import { CourseStatusEnum } from "../enums/courseStatusEnum";
 
 export type IStatistics = {
     total: number;

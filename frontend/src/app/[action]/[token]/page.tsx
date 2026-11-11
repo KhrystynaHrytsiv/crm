@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { ActionTokenType } from "../../../../../backend/src/enums/tokenEnum";
+import { ActionTokenType } from "../../../../../shared/enums/tokenEnum";
 import PasswordForm from "../../../components/forms/PasswordForm";
 import InvalidLink from "../../../components/invalidLink/InvalidLink";
 import { managerService } from "../../../services/managerService";

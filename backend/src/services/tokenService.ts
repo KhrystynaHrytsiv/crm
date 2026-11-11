@@ -1,5 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+import { ActionTokenType, TokenEnum } from "../../../shared/enums/tokenEnum";
 import {
     IToken,
     TokenPayload,
@@ -8,10 +9,9 @@ import {
 import { logger } from "../../../shared/logger";
 import { config } from "../configs/config";
 import { StatusCode } from "../enums/StatusCode";
-import { ActionTokenType, TokenEnum } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
 import { tokenRepository } from "../repositories/tokenRepository";
-import { userService } from "./userService";
+import { userRepository } from "../repositories/userRepository";
 
 class TokenService {
     generateTokens(payload: TokenPayload): TokensPair {
@@ -122,11 +122,14 @@ class TokenService {
         action: ActionTokenType,
     ): Promise<boolean> {
         const { userId, iat } = this.verifyTokens(token, action);
-        const user = await userService.getById(userId);
-        if (action === ActionTokenType.activate && user.is_Active) {
+        const user = await userRepository.getById(userId);
+        if (!user) {
+            throw new apiError("User not found", StatusCode.NOT_FOUND);
+        }
+        if (action === ActionTokenType.activate && user.is_active) {
             return false;
         }
-        if (action === ActionTokenType.recovery && !user.is_Active) {
+        if (action === ActionTokenType.recovery && !user.is_active) {
             return false;
         }
         if (

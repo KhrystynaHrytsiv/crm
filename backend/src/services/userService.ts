@@ -1,11 +1,11 @@
+import { RoleEnum } from "../../../shared/enums/roleEnum";
+import { ActionTokenType } from "../../../shared/enums/tokenEnum";
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { IManagerWithStatistics } from "../../../shared/interfaces/IManagerWithStatistics";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";
 import { IUser, ManagerDTO } from "../../../shared/interfaces/IUser";
 import { config } from "../configs/config";
-import { RoleEnum } from "../enums/roleEnum";
 import { StatusCode } from "../enums/StatusCode";
-import { ActionTokenType } from "../enums/tokenEnum";
 import { apiError } from "../error/apiError";
 import {
     emptyStatistics,
@@ -84,20 +84,20 @@ class UserService {
         if (action !== "ban" && action !== "unban") {
             throw new apiError("Invalid status action", StatusCode.BAD_REQUEST);
         }
-        if (action === "ban" && manager.is_Banned) {
+        if (action === "ban" && manager.is_banned) {
             throw new apiError(
                 "Manager is already banned",
                 StatusCode.BAD_REQUEST,
             );
         }
-        if (action === "unban" && !manager.is_Banned) {
+        if (action === "unban" && !manager.is_banned) {
             throw new apiError(
                 "Manager is already unbanned",
                 StatusCode.BAD_REQUEST,
             );
         }
         const updatedManager = await this.update(manager._id, {
-            is_Banned: action === "ban",
+            is_banned: action === "ban",
         });
         if (action === "ban") {
             await tokenRepository.deleteAllByUserId(manager._id);
@@ -122,13 +122,13 @@ class UserService {
                 StatusCode.BAD_REQUEST,
             );
         }
-        if (action === ActionTokenType.activate && user.is_Active) {
+        if (action === ActionTokenType.activate && user.is_active) {
             throw new apiError(
                 "Manager is already active",
                 StatusCode.BAD_REQUEST,
             );
         }
-        if (action === ActionTokenType.recovery && !user.is_Active) {
+        if (action === ActionTokenType.recovery && !user.is_active) {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
         }
         const token = tokenService.generateActionToken(
@@ -144,13 +144,13 @@ class UserService {
     ): Promise<IUser> {
         const { userId, iat } = tokenService.verifyTokens(token, action);
         const user = await this.getById(userId);
-        if (action === ActionTokenType.activate && user.is_Active) {
+        if (action === ActionTokenType.activate && user.is_active) {
             throw new apiError(
                 "Manager is already active",
                 StatusCode.BAD_REQUEST,
             );
         }
-        if (action === ActionTokenType.recovery && !user.is_Active) {
+        if (action === ActionTokenType.recovery && !user.is_active) {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
         }
         if (
@@ -166,7 +166,7 @@ class UserService {
         return await this.update(userId, {
             password: hashedPassword,
             passwordChangedAt: new Date(),
-            ...(action === ActionTokenType.activate && { is_Active: true }),
+            ...(action === ActionTokenType.activate && { is_active: true }),
         });
     }
 }

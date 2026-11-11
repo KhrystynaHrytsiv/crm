@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { AuthValidator } from "../../../shared/validators/authValidator";
 import { authController } from "../controllers/authController";
-import { TokenEnum } from "../enums/tokenEnum";
+import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { validationMiddleware } from "../middleware/validationMiddleware";
 
