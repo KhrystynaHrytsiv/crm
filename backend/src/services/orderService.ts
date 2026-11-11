@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 
-import { columns } from "../../../shared/constance/orders";
+import { columns } from "../../../shared/constants/orders";
 import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";

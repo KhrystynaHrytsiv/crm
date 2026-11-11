@@ -62,7 +62,6 @@ class UserService {
         };
     }
     async update(id: string, dto: Partial<IUser>): Promise<IUser> {
-        await userService.getById(id);
         const user = await userRepository.update(id, dto);
         if (!user) {
             throw new apiError("User not found", StatusCode.NOT_FOUND);

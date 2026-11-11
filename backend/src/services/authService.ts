@@ -12,46 +12,17 @@ import { userService } from "./userService";
 
 class AuthService {
     async login(dto: IAuth): Promise<{ tokens: TokensPair; user: IUser }> {
-        if (
-            !dto ||
-            typeof dto.email !== "string" ||
-            typeof dto.password !== "string"
-        ) {
-            throw new apiError(
-                "Email and password must be strings",
-                StatusCode.BAD_REQUEST,
-            );
-        }
         const user = await userRepository.getByEmail(dto.email);
-        if (!user) {
-            throw new apiError(
-                "Invalid email or password",
-                StatusCode.UNAUTHORIZED,
-            );
-        }
-        if (!user.password) {
-            throw new apiError(
-                "Invalid email or password",
-                StatusCode.UNAUTHORIZED,
-            );
-        }
-        const isValidPassword = await passwordService.comparePassword(
-            dto.password,
-            user.password,
-        );
-        if (!isValidPassword) {
-            throw new apiError(
-                "Invalid email or password",
-                StatusCode.UNAUTHORIZED,
-            );
-        }
-        if (!user.is_Active) {
-            throw new apiError(
-                "Invalid email or password",
-                StatusCode.UNAUTHORIZED,
-            );
-        }
-        if (user.is_Banned) {
+        if (
+            !user ||
+            !user.password ||
+            !(await passwordService.comparePassword(
+                dto.password,
+                user.password,
+            )) ||
+            !user.is_Active ||
+            user.is_Banned
+        ) {
             throw new apiError(
                 "Invalid email or password",
                 StatusCode.UNAUTHORIZED,

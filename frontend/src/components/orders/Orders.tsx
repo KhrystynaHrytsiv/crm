@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useState } from "react";
 
-import { columns } from "../../../../shared/constance/orders";
+import { columns } from "../../../../shared/constants/orders";
 import { IOrder } from "../../../../shared/interfaces/IOrder";
 import { useAppSelector } from "../../redux/hooks/reduxHooks";
 import Comment from "../comment/Comment";

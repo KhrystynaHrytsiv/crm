@@ -18,12 +18,34 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
     const { manager, statistics } = managerWithStatistic;
     const dispatch = useAppDispatch();
     const isAdmin = manager.role === RoleEnum.admin && manager._id === me?._id;
+    // const handleAction = async (action: ActionTokenType) => {
+    //     //     try {
+    //     //         const url = await managerService.actionRequest(manager._id, action);
+    //     //         await navigator.clipboard.writeText(url);
+    //     //         alert("Link copied to clipboard");
+    //     //     } catch (e) {
+    //     //         alert(getErrorMessage(e));
+    //     //     }
+    //     // };
     const handleAction = async (action: ActionTokenType) => {
         try {
-            const url = await managerService.actionRequest(manager._id, action);
+            console.log("1. Action:", action);
+
+            const url = await managerService.actionRequest(
+                manager._id,
+                action,
+            );
+
+            console.log("2. Backend response:", url);
+            console.log("3. Response type:", typeof url);
+
             await navigator.clipboard.writeText(url);
+
+            console.log("4. Link copied successfully");
+
             alert("Link copied to clipboard");
         } catch (e) {
+            console.error("Recovery error:", e);
             alert(getErrorMessage(e));
         }
     };

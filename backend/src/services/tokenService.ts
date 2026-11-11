@@ -70,8 +70,8 @@ class TokenService {
         return !!iToken;
     }
     async checkToken(token: string, type: TokenEnum) {
-        const tokenPayload = tokenService.verifyTokens(token, type);
-        const isTokenExist = await tokenService.isTokenExist(token, type);
+        const tokenPayload = this.verifyTokens(token, type);
+        const isTokenExist = await this.isTokenExist(token, type);
         if (!isTokenExist) {
             throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);
         }
@@ -121,7 +121,7 @@ class TokenService {
         token: string,
         action: ActionTokenType,
     ): Promise<boolean> {
-        const { userId, iat } = tokenService.verifyTokens(token, action);
+        const { userId, iat } = this.verifyTokens(token, action);
         const user = await userService.getById(userId);
         if (action === ActionTokenType.activate && user.is_Active) {
             return false;

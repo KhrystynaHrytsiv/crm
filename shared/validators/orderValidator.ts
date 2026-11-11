@@ -47,8 +47,8 @@ export class OrderValidator {
         .valid(...Object.values(CourseStatusEnum))
         .allow(null);
 
-    private static sum = nullableNumber.min(1).max(10000000000);
-    private static alreadyPaid = nullableNumber.min(1).max(10000000000);
+    private static sum = nullableNumber.max(10000000000);
+    private static alreadyPaid = nullableNumber.max(10000000000);
     private static group = joi.string().trim().min(1).allow(null);
     private static manager = joi.string().valid("true").optional();
 
@@ -68,7 +68,6 @@ export class OrderValidator {
         newGroup: joi.any().strip(),
     });
 
-    // Filters search by substring, so they must not use the edit-form formats (email, phone pattern)
     private static searchString = joi.string().trim().max(100).empty("");
 
     public static query = joi.object({
