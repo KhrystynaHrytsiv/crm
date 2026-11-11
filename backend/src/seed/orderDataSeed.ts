@@ -1,5 +1,5 @@
-import { logger } from "../../../shared/logger";
 import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
+import { logger } from "../../../shared/logger";
 import { Group } from "../models/groupModel";
 import { Order } from "../models/orderModel";
 

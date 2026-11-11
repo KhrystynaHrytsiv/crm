@@ -55,17 +55,23 @@ process.on("uncaughtException", (err) => {
     logger.error(err, "uncaughtException");
     process.exit(1);
 });
-
+process.on("unhandledRejection", (reason) => {
+    logger.error(reason, "unhandledRejection");
+    process.exit(1);
+});
 const connection = async () => {
-    let dbCon = false;
-    while (!dbCon) {
+    const maxAttempts = 8;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
             await mongoose.connect(config.MONGO_URI);
-            dbCon = true;
             logger.info("Connection available");
+            return;
         } catch (e) {
+            logger.error({ error: e, attempt }, "MongoDB connection failed");
+            if (attempt === maxAttempts) {
+                throw e;
+            }
             await new Promise((resolve) => setTimeout(resolve, 3000));
-            logger.error(e);
         }
     }
 };

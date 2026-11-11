@@ -1,3 +1,4 @@
+import { fromZonedTime } from "date-fns-tz";
 import { PipelineStage, QueryFilter, Types, UpdateQuery } from "mongoose";
 
 import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
@@ -15,13 +16,10 @@ const exactFields = [
 ] as const;
 const escapeRegex = (value: string) =>
     value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-// null and "new" are the same status: the order is free
 const freeStatuses = [null, CourseStatusEnum.new];
 const isFreeStatus = {
     $in: [{ $ifNull: ["$status", null] }, freeStatuses],
 };
-// Commenting / editing a free order moves it to "in work", other statuses stay
 const takeInWorkStatus = {
     $cond: [isFreeStatus, CourseStatusEnum.inWork, "$status"],
 };
@@ -74,14 +72,12 @@ class OrderRepository {
         if (query.start_date || query.end_date) {
             filterObject.created_at = {};
             if (query.start_date) {
-                filterObject.created_at.$gte = new Date(
-                    `${toDateString(query.start_date)}T00:00:00.000Z`,
+                filterObject.created_at.$gte = getDateBoundary(
+                    query.start_date,
                 );
             }
             if (query.end_date) {
-                filterObject.created_at.$lte = new Date(
-                    `${toDateString(query.end_date)}T23:59:59.999Z`,
-                );
+                filterObject.created_at.$lte = getDateBoundary(query.end_date);
             }
         }
         return filterObject;
@@ -245,9 +241,10 @@ class OrderRepository {
     }
 }
 
-const toDateString = (value: string | Date) =>
-    value instanceof Date ? value.toISOString().slice(0, 10) : value;
-
+const getDateBoundary = (date: string, isEndOfDay = false): Date => {
+    const time = isEndOfDay ? "23:59:59.999" : "00:00:00.000";
+    return fromZonedTime(`${date}T${time}`, "Europe/Kyiv");
+};
 export const emptyStatistics = (): IStatistics =>
     Object.values(CourseStatusEnum).reduce(
         (acc, status) => ({ ...acc, [status]: 0 }),

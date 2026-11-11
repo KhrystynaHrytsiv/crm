@@ -1,8 +1,8 @@
 import { Router } from "express";
 
+import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { AuthValidator } from "../../../shared/validators/authValidator";
 import { authController } from "../controllers/authController";
-import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { validationMiddleware } from "../middleware/validationMiddleware";
 

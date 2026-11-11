@@ -6,7 +6,6 @@ import {
     TokenPayload,
     TokensPair,
 } from "../../../shared/interfaces/IToken";
-import { logger } from "../../../shared/logger";
 import { config } from "../configs/config";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
@@ -60,7 +59,9 @@ class TokenService {
             }
             return decoded;
         } catch (e) {
-            logger.error(e);
+            if (e instanceof apiError) {
+                throw e;
+            }
             throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);
         }
     }

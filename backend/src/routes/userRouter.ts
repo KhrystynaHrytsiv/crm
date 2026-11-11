@@ -1,9 +1,9 @@
 import { Router } from "express";
 
+import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { ManagerValidator } from "../../../shared/validators/managerValidator";
 import { PasswordValidator } from "../../../shared/validators/passwordValidator";
 import { userController } from "../controllers/userController";
-import { TokenEnum } from "../../../shared/enums/tokenEnum";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { validationMiddleware } from "../middleware/validationMiddleware";
 

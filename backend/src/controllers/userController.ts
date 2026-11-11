@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ActionTokenType } from "../../../shared/enums/tokenEnum";
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { TokenPayload } from "../../../shared/interfaces/IToken";
 import { ManagerDTO } from "../../../shared/interfaces/IUser";
 import { StatusCode } from "../enums/StatusCode";
-import { ActionTokenType } from "../../../shared/enums/tokenEnum";
 import { tokenService } from "../services/tokenService";
 import { userService } from "../services/userService";
 

@@ -21,5 +21,4 @@ export const seedOrderIds = async () => {
             },
         })),
     );
-    await Order.syncIndexes();
 };

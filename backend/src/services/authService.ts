@@ -4,7 +4,6 @@ import { TokensPair } from "../../../shared/interfaces/IToken";
 import { IUser } from "../../../shared/interfaces/IUser";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
-import { tokenRepository } from "../repositories/tokenRepository";
 import { userRepository } from "../repositories/userRepository";
 import { passwordService } from "./passwordService";
 import { tokenService } from "./tokenService";
@@ -44,22 +43,11 @@ class AuthService {
     async me(userId: string): Promise<IUser> {
         return await userService.getById(userId);
     }
-    public async refresh(refreshToken: string) {
-        const tokenFromDb = await tokenRepository.findByParams({
-            refreshToken,
-        });
-        if (!tokenFromDb) {
-            throw new apiError(
-                "Refresh token not found",
-                StatusCode.UNAUTHORIZED,
-            );
-        }
-
-        const tokenPayload = tokenService.verifyTokens(
+    async refresh(refreshToken: string) {
+        const tokenPayload = await tokenService.checkToken(
             refreshToken,
             TokenEnum.refresh,
         );
-
         await tokenService.delete({ refreshToken });
         const tokens = tokenService.generateTokens({
             userId: tokenPayload.userId,

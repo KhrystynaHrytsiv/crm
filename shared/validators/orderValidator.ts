@@ -3,7 +3,7 @@ import joi from "joi";
 import { CourseEnum, CourseFormat } from "../enums/CourseEnum";
 import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { CourseTypeEnum } from "../enums/courseTypeEnum";
-import { OrderSortEnum } from "../../backend/src/enums/OrderSortEnum";
+import { OrderSortEnum } from "../enums/OrderSortEnum";
 
 const nullableString = joi.string().empty("").allow(null);
 const nullableNumber = joi.number().empty("").allow(null);
