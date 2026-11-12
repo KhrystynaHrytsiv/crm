@@ -87,21 +87,15 @@ const Comment = ({ order }: { order: IOrder }) => {
                                     <div>{com.comment}</div>
                                     <div>
                                         {com.manager.surname}{" "}
-                                        {new Date(
-                                            com.created_at,
-                                        ).toLocaleDateString("en-US", {
-                                            month: "long",
-                                            day: "2-digit",
-                                            year: "numeric",
-                                        }) +
-                                            ", " +
-                                            new Date(
-                                                com.created_at,
-                                            ).toLocaleTimeString("en-US", {
+                                        {new Date(com.created_at).toLocaleString("en-US", {
+                                                month: "long",
+                                                day: "2-digit",
+                                                year: "numeric",
                                                 hour: "2-digit",
                                                 minute: "2-digit",
                                                 hour12: true,
-                                            })}
+                                            })
+                                           }
                                     </div>
                                 </div>
                             ))}

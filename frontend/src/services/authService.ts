@@ -25,8 +25,7 @@ export const authService = {
                 );
             }
         } finally {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+            await this.deleteTokenFromLS();
         }
     },
     async refresh() {

@@ -163,11 +163,15 @@ class UserService {
             );
         }
         const hashedPassword = await passwordService.hashPassword(password);
-        return await this.update(userId, {
+        const updated = await this.update(userId, {
             password: hashedPassword,
             passwordChangedAt: new Date(),
             ...(action === ActionTokenType.activate && { is_active: true }),
         });
+        if (action === ActionTokenType.recovery) {
+            await tokenRepository.deleteAllByUserId(userId);
+        }
+        return updated;
     }
 }
 export const userService = new UserService();

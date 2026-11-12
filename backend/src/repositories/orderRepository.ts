@@ -20,9 +20,6 @@ const freeStatuses = [null, CourseStatusEnum.new];
 const isFreeStatus = {
     $in: [{ $ifNull: ["$status", null] }, freeStatuses],
 };
-const takeInWorkStatus = {
-    $cond: [isFreeStatus, CourseStatusEnum.inWork, "$status"],
-};
 
 const parseSort = (order?: string): { field: string; direction: 1 | -1 } => {
     const value = order || "-id";
@@ -125,36 +122,35 @@ class OrderRepository {
         });
     }
 
-    getById(id: string): Promise<IOrder | null> {
-        return Order.findById(id);
-    }
-
     async update(
         id: string,
         userId: string,
         dto: Partial<OrderDTO>,
     ): Promise<IOrder | null> {
-        const isRelease = dto.status === CourseStatusEnum.new;
-        const fields = Object.fromEntries(
-            Object.entries(dto).map(([key, value]) => [
-                key,
-                { $literal: value },
-            ]),
-        );
+        const { status, ...fields } = dto;
+        const updateFields = {
+            ...Object.fromEntries(
+                Object.entries(fields).map(([key, value]) => [
+                    key,
+                    { $literal: value },
+                ]),
+            ),
+            ...(status !== undefined && {
+                status: { $literal: status },
+                manager:
+                    status === CourseStatusEnum.new
+                        ? null
+                        : new Types.ObjectId(userId),
+            }),
+        };
+
         return Order.findOneAndUpdate(
             this.editableBy(id, userId),
-            [
-                {
-                    $set: {
-                        ...fields,
-                        manager: isRelease ? null : new Types.ObjectId(userId),
-                        ...(dto.status === undefined && {
-                            status: takeInWorkStatus,
-                        }),
-                    },
-                },
-            ] as UpdateQuery<IOrder>,
-            { returnDocument: "after", updatePipeline: true },
+            [{ $set: updateFields }],
+            {
+                returnDocument: "after",
+                updatePipeline: true,
+            },
         ).populate("manager", "surname");
     }
 
@@ -165,7 +161,7 @@ class OrderRepository {
                 {
                     $set: {
                         manager: new Types.ObjectId(userId),
-                        status: takeInWorkStatus,
+                        status: CourseStatusEnum.inWork,
                     },
                 },
             ] as UpdateQuery<IOrder>,

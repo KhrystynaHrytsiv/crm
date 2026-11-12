@@ -33,7 +33,7 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
             dispatch(
                 managerAction.updateManagerStatus({
                     id: manager._id,
-                    is_Banned: action === "ban",
+                    is_banned: action === "ban",
                 }),
             );
         } catch (e) {
@@ -46,7 +46,7 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                 {Object.entries(manager).map(
                     ([key, value]) =>
                         key !== "role" &&
-                        key !== "is_Banned" && (
+                        key !== "is_banned" && (
                             <p key={key}>
                                 {key}:{" "}
                                 {key === "last_login"
@@ -67,11 +67,9 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
             <div className={css.statistic}>
                 {Object.entries(statistics).map(
                     ([key, value]) =>
-                        (value > 0 || key === "total") && (
-                            <p key={key}>
-                                {key}: {String(value)}
-                            </p>
-                        ),
+                        <p key={key}>
+                            {key}: {String(value)}
+                        </p>
                 )}
             </div>
             <div className="buttonBlock">

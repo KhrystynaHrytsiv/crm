@@ -26,13 +26,6 @@ class OrderService {
             data,
         };
     }
-    async getById(id: string): Promise<IOrder> {
-        const order = await orderRepository.getById(id);
-        if (!order) {
-            throw new apiError("Order not found", StatusCode.NOT_FOUND);
-        }
-        return order;
-    }
     async update(
         id: string,
         dto: Partial<OrderDTO>,
