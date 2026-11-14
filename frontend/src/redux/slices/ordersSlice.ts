@@ -1,6 +1,6 @@
 import {
     createAsyncThunk,
-    createSlice,
+    createSlice, isFulfilled,
     isPending,
     isRejected,
     PayloadAction,
@@ -16,7 +16,9 @@ interface IState {
     groups: IGroup[];
     group: IGroup | null;
     statistics: Record<string, number>;
-    loading: boolean;
+    loadingCount: number;
+    error: string | null;
+    currentOrdersRequestId: string | null;
     totalPages: number;
     prevPage: boolean;
     nextPage: boolean;
@@ -26,7 +28,9 @@ const initialState: IState = {
     groups: [],
     group: null,
     statistics: {},
-    loading: false,
+    loadingCount: 0,
+    error: null,
+    currentOrdersRequestId:  null,
     totalPages: 0,
     prevPage: false,
     nextPage: false,
@@ -92,36 +96,64 @@ export const orderSLice = createSlice({
         },
     },
     extraReducers: (builder) =>
-        builder
-            .addCase(getOrders.fulfilled, (state, action) => {
-                state.orders = action.payload.data;
-                state.totalPages = action.payload.totalPages;
-                state.prevPage = action.payload.prevPage;
-                state.nextPage = action.payload.nextPage;
-                state.loading = false;
-            })
-            .addCase(getGroups.fulfilled, (state, action) => {
-                state.groups = action.payload;
-                state.loading = false;
-            })
-            .addCase(getStatistics.fulfilled, (state, action) => {
-                state.statistics = action.payload;
-                state.loading = false;
-            })
-            .addCase(createGroup.fulfilled, (state, action) => {
-                state.group = action.payload;
-                state.groups.push(action.payload);
-                state.loading = false;
-            })
-            .addMatcher(isPending(getOrders, getGroups), (state) => {
-                state.loading = true;
-            })
-            .addMatcher(
-                isRejected(getOrders, getGroups, getStatistics, createGroup),
-                (state) => {
-                    state.loading = false;
-                },
-            ),
+    builder
+        .addCase(getOrders.pending, (state, action) => {
+            state.currentOrdersRequestId = action.meta.requestId;
+            state.error = null;
+        })
+        .addCase(getOrders.fulfilled, (state, action) => {
+            if (state.currentOrdersRequestId !== action.meta.requestId) {
+                return;
+            }
+
+            state.orders = action.payload.data;
+            state.totalPages = action.payload.totalPages;
+            state.prevPage = action.payload.prevPage;
+            state.nextPage = action.payload.nextPage;
+            state.currentOrdersRequestId = null;
+        })
+        .addCase(getOrders.rejected, (state, action) => {
+            if (state.currentOrdersRequestId !== action.meta.requestId) {
+                return;
+            }
+
+            state.error =
+                (action.payload as string) ||
+                action.error.message ||
+                "Something went wrong";
+
+            state.currentOrdersRequestId = null;
+        })
+
+        .addCase(getGroups.fulfilled, (state, action) => {
+            state.groups = action.payload;
+        })
+        .addCase(getStatistics.fulfilled, (state, action) => {
+            state.statistics = action.payload;
+        })
+        .addCase(createGroup.fulfilled, (state, action) => {
+            state.group = action.payload;
+            state.groups.push(action.payload);
+        })
+
+        .addMatcher(
+            isPending(getOrders, getGroups, getStatistics, createGroup),
+            (state) => {
+                state.loadingCount++;
+            },
+        )
+        .addMatcher(
+            isFulfilled(getOrders, getGroups, getStatistics, createGroup),
+            (state) => {
+                state.loadingCount--;
+            },
+        )
+        .addMatcher(
+            isRejected(getOrders, getGroups, getStatistics, createGroup),
+            (state) => {
+                state.loadingCount--;
+            },
+        )
 });
 export const orderActions = {
     ...orderSLice.actions,

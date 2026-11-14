@@ -16,7 +16,7 @@ import Loading from "../loading";
 const OrdersContent = () => {
     const searchParams = useSearchParams();
     const dispatch = useAppDispatch();
-    const { loading, totalPages } = useAppSelector((state) => state.orders);
+    const { loadingCount, totalPages, error } = useAppSelector((state) => state.orders);
 
     useEffect(() => {
         dispatch(managerAction.getMe());
@@ -32,7 +32,8 @@ const OrdersContent = () => {
             <Header />
             <Filters />
             <Orders />
-            {loading && <Loading />}
+            {loadingCount > 0 && <Loading />}
+            {error && <p role="alert">{error}</p>}
             <Pagination totalPages={totalPages} />
             <Footer />
         </div>

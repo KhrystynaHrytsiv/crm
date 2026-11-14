@@ -12,7 +12,7 @@ import { StatusCode } from "./enums/StatusCode";
 import { apiError } from "./error/apiError";
 import { apiRouter } from "./routes/apiRouter";
 import { seed } from "./seed/adminSeed";
-import { seedOrderIds } from "./seed/orderIdSeed";
+import { seedData } from "./seed/orderIdSeed";
 
 if (config.DNS_SERVERS.length) {
     dns.setServers(config.DNS_SERVERS);
@@ -79,7 +79,7 @@ const start = async () => {
     try {
         await connection();
         await seed();
-        await seedOrderIds();
+        await seedData();
         app.listen(config.PORT, async () => {
             logger.info(`server listen ${config.PORT} port`);
         });

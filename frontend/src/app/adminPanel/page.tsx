@@ -17,7 +17,7 @@ const AdminPanel = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const page = Number(searchParams.get("page")) || 1;
-    const { me, loading, managersTotalPages } = useAppSelector(
+    const { me, loading, managersTotalPages, error } = useAppSelector(
         (state) => state.manager,
     );
     const isAdmin = me?.role === RoleEnum.admin;
@@ -47,6 +47,7 @@ const AdminPanel = () => {
             <Header />
             <Admin />
             {loading && <Loading />}
+            {error && <p role="alert">{error}</p>}
             <Pagination totalPages={managersTotalPages} />
             <Footer />
         </div>

@@ -13,6 +13,7 @@ import {
 } from "../repositories/orderRepository";
 import { tokenRepository } from "../repositories/tokenRepository";
 import { userRepository } from "../repositories/userRepository";
+import { createManagerId } from "../seed/orderIdSeed";
 import { passwordService } from "./passwordService";
 import { tokenService } from "./tokenService";
 
@@ -32,7 +33,9 @@ class UserService {
                 StatusCode.CONFLICT,
             );
         }
-        return userRepository.create({ ...dto, role: RoleEnum.manager });
+        const user = userRepository.create({ ...dto, role: RoleEnum.manager });
+        await createManagerId();
+        return user;
     }
     async getManagers(
         page: number,
@@ -143,31 +146,24 @@ class UserService {
         action: ActionTokenType,
     ): Promise<IUser> {
         const { userId, iat } = tokenService.verifyTokens(token, action);
-        const user = await this.getById(userId);
-        if (action === ActionTokenType.activate && user.is_active) {
-            throw new apiError(
-                "Manager is already active",
-                StatusCode.BAD_REQUEST,
-            );
+
+        if (typeof iat !== "number") {
+            throw new apiError("Invalid token", StatusCode.BAD_REQUEST);
         }
-        if (action === ActionTokenType.recovery && !user.is_active) {
-            throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
-        }
-        if (
-            user.passwordChangedAt &&
-            iat! <= Math.floor(user.passwordChangedAt.getTime() / 1000)
-        ) {
-            throw new apiError(
-                "Token is no longer valid",
-                StatusCode.BAD_REQUEST,
-            );
-        }
+
         const hashedPassword = await passwordService.hashPassword(password);
-        const updated = await this.update(userId, {
-            password: hashedPassword,
-            passwordChangedAt: new Date(),
-            ...(action === ActionTokenType.activate && { is_active: true }),
-        });
+        const updated = await userRepository.completeAction(
+            userId,
+            action,
+            iat,
+            hashedPassword,
+        );
+        if (!updated) {
+            throw new apiError(
+                "Token is no longer valid or has already been used",
+                StatusCode.BAD_REQUEST,
+            );
+        }
         if (action === ActionTokenType.recovery) {
             await tokenRepository.deleteAllByUserId(userId);
         }

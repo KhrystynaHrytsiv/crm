@@ -15,12 +15,14 @@ interface AuthState {
     managers: IManagerWithStatistics[];
     managersTotalPages: number;
     loading: boolean;
+    error: string | null;
 }
 const initialState: AuthState = {
     me: null,
     managers: [],
     managersTotalPages: 0,
     loading: false,
+    error: null,
 };
 const getMe = createAsyncThunk<IUser>(
     "managerSlice/me",
@@ -72,8 +74,13 @@ export const managerSlice = createSlice({
             .addMatcher(isPending(getManagers, getMe), (state) => {
                 state.loading = true;
             })
-            .addMatcher(isRejected(getManagers, getMe), (state) => {
+            .addMatcher(isRejected(getManagers, getMe), (state, action) => {
                 state.loading = false;
+                state.error =
+                    (action.payload as string) ||
+                    action.error.message ||
+                    "Something went wrong";
+
             }),
 });
 export const managerAction = { ...managerSlice.actions, getMe, getManagers };

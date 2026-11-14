@@ -5,6 +5,7 @@ import { IUser } from "../../../shared/interfaces/IUser";
 
 const userSchema = new Schema(
     {
+        id: { type: Number, unique: true, sparse: true },
         name: { type: String },
         surname: { type: String },
         email: { type: String, unique: true },
@@ -19,7 +20,7 @@ const userSchema = new Schema(
         timestamps: false,
         versionKey: false,
         toJSON: {
-            transform: (_doc, ret) => {
+            transform: (_doc: unknown, ret: Record<string, unknown>) => {
                 delete ret.password;
                 delete ret.passwordChangedAt;
                 return ret;

@@ -12,7 +12,7 @@ import { CommentResponse } from "../../interfaces/CommentResponse";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
 import { orderActions } from "../../redux/slices/ordersSlice";
 import { orderService } from "../../services/orderService";
-import OrderForm from "../forms/OrderForm";
+import OrderForm from "../orderForm/OrderForm";
 import css from "./Comment.module.css";
 
 const Comment = ({ order }: { order: IOrder }) => {

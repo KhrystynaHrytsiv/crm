@@ -1,3 +1,4 @@
+import { ActionTokenType } from "../../../shared/enums/tokenEnum";
 import { IUser } from "../../../shared/interfaces/IUser";
 import { User } from "../models/userModel";
 
@@ -25,6 +26,40 @@ class UserRepository {
                 .limit(pageSize),
             User.countDocuments(),
         ]);
+    }
+    async completeAction(
+        userId: string,
+        action: ActionTokenType,
+        tokenIssuedAt: number,
+        password: string,
+    ): Promise<IUser | null> {
+        return User.findOneAndUpdate(
+            {
+                _id: userId,
+                is_active: action !== ActionTokenType.activate,
+                $or: [
+                    { passwordChangedAt: null },
+                    {
+                        passwordChangedAt: {
+                            $lt: new Date(tokenIssuedAt * 1000),
+                        },
+                    },
+                ],
+            },
+            {
+                $set: {
+                    password,
+                    passwordChangedAt: new Date(),
+                    ...(action === ActionTokenType.activate && {
+                        is_active: true,
+                    }),
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            },
+        );
     }
 }
 export const userRepository = new UserRepository();

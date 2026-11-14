@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useAppSelector } from "../../redux/hooks/reduxHooks";
-import CreateManagerForm from "../forms/CreateManagerForm";
+import CreateManagerForm from "../managerForm/CreateManagerForm";
 import Manager from "../manager/Manager";
 
 const Admin = () => {

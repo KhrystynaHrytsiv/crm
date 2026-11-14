@@ -26,11 +26,9 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
 
     const showMessage = (text: string, type: "success" | "error",) => {
         setMessage({ text, type });
-
         if (messageTimer.current) {
             clearTimeout(messageTimer.current);
         }
-
         messageTimer.current = setTimeout(() => {
             setMessage(null);
             messageTimer.current = null;
@@ -69,8 +67,11 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
     return (
         <div className={css.block}>
             <div className={css.info}>
+                <p>id: {manager.id}</p>
                 {Object.entries(manager).map(
                     ([key, value]) =>
+                        key !== "_id" &&
+                        key !== "id" &&
                         key !== "role" &&
                         key !== "is_banned" && (
                             <p key={key}>
@@ -78,12 +79,12 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                                 {key === "last_login"
                                     ? value
                                         ? new Date(
-                                              String(value),
-                                          ).toLocaleDateString("en-US", {
-                                              month: "long",
-                                              day: "numeric",
-                                              year: "numeric",
-                                          })
+                                            String(value),
+                                        ).toLocaleDateString("en-US", {
+                                            month: "long",
+                                            day: "numeric",
+                                            year: "numeric",
+                                        })
                                         : "null"
                                     : String(value)}
                             </p>
