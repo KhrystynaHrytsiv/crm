@@ -23,6 +23,8 @@
     align-items: center;
     justify-content: center;
     background-color: rgb(67, 160, 71);
+    color: white;
+    border: none;
 }
 .icon:hover {
     background-color: rgb(56, 142, 60);

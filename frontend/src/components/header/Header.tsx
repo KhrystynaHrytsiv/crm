@@ -35,9 +35,9 @@ const Header = () => {
                         <RiUserSettingsLine size={"35px"} />
                     </Link>
                 )}
-                <div className={css.icon} onClick={logout}>
+                <button className={css.icon} onClick={logout}>
                     <TbLogout size={"35px"} />
-                </div>
+                </button>
             </div>
         </header>
     );

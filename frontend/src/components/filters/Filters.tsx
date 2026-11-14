@@ -27,11 +27,22 @@ const Filters = () => {
             inputs.map(({ key }) => [key, searchParams.get(key) || ""]),
         );
 
-    const [textValues, setTextValues] =
-        useState<Record<string, string>>(getTextValues);
+    const [textState, setTextState] = useState(() => ({
+        query: searchParams.toString(),
+        values: getTextValues(),
+    }));
+
+    const textValues =
+        textState.query === searchParams.toString()
+            ? textState.values
+            : getTextValues();
     const timers = useRef<TimerMap>({});
     const paramsRef = useRef(new URLSearchParams(searchParams.toString()));
 
+    const clearTimers = () => {
+        Object.values(timers.current).forEach(clearTimeout);
+        timers.current = {};
+    };
     useEffect(() => {
         return () => {
             Object.values(timers.current).forEach(clearTimeout);
@@ -41,7 +52,28 @@ const Filters = () => {
     useEffect(() => {
         paramsRef.current = new URLSearchParams(searchParams.toString());
     }, [searchParams]);
-
+    useEffect(() => {
+        const handlePopState = () => {
+            clearTimers();
+            const params = new URLSearchParams(
+                window.location.search,
+            );
+            paramsRef.current = params;
+            setTextState({
+                query: params.toString(),
+                values: Object.fromEntries(
+                    inputs.map(({ key }) => [
+                        key,
+                        params.get(key) || "",
+                    ]),
+                ),
+            });
+        };
+        window.addEventListener("popstate", handlePopState);
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, []);
     const handleFilterChange = useCallback(
         (key: string, value: string) => {
             const params = new URLSearchParams(paramsRef.current);
@@ -58,23 +90,20 @@ const Filters = () => {
     );
 
     const handleInputChange = (key: string, value: string) => {
-        setTextValues((prev) => ({
-            ...prev,
-            [key]: value,
-        }));
+        setTextState({
+            query: searchParams.toString(),
+            values: {
+                ...textValues,
+                [key]: value,
+            },
+        });
         if (timers.current[key]) {
             clearTimeout(timers.current[key]);
         }
-
         timers.current[key] = setTimeout(() => {
             handleFilterChange(key, value.trim());
             delete timers.current[key];
         }, 500);
-    };
-
-    const clearTimers = () => {
-        Object.values(timers.current).forEach(clearTimeout);
-        timers.current = {};
     };
 
     const reloadOrders = () => {
@@ -83,10 +112,12 @@ const Filters = () => {
 
     const resetFilters = () => {
         clearTimers();
-        setTextValues(Object.fromEntries(inputs.map(({ key }) => [key, ""])));
+        setTextState({
+            query: "",
+            values: Object.fromEntries(inputs.map(({ key }) => [key, ""])),
+        });
         paramsRef.current = new URLSearchParams();
         if (searchParams.toString()) {
-            // the URL changes, so the orders page reloads the data itself
             router.push("/orders");
         } else {
             reloadOrders();
@@ -99,9 +130,7 @@ const Filters = () => {
             const params = new URLSearchParams(searchParams.toString());
             params.delete("page");
             params.delete("pageSize");
-
             const blob = await orderService.getExcelFile(params);
-
             if (!(blob instanceof Blob) || blob.size === 0) {
                 throw new Error(
                     "Excel-файл порожній або не вдалося його сформувати.",
@@ -189,32 +218,28 @@ const Filters = () => {
                     )}
                     My
                 </label>
-                <div
+                <button
                     className={css.icon}
                     onClick={resetFilters}
                     title="Reset filters"
                 >
                     <MdFilterAltOff size={"25px"} color={"white"} />
-                </div>
-                <div
+                </button>
+                <button
                     className={css.icon}
                     onClick={reloadOrders}
                     title="Refresh list"
                 >
                     <TbReload size={"25px"} color={"white"} />
-                </div>
-                <div className={css.icon}>
-                    <LiaFileExcel
-                        size={"25px"}
-                        color={"white"}
-                        onClick={createExcel}
-                    />
-                    {exportError && (
-                        <p className={css.error} role="alert">
-                            {exportError}
-                        </p>
-                    )}
-                </div>
+                </button>
+                <button className={css.icon}  onClick={createExcel} title="Create excel file">
+                    <LiaFileExcel size={"25px"} color={"white"} />
+                </button>
+                {exportError && (
+                    <p className={css.error} role="alert">
+                        {exportError}
+                    </p>
+                )}
             </div>
         </div>
     );

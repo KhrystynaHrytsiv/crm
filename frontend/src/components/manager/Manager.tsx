@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 import { RoleEnum } from "../../../../shared/enums/roleEnum";
 import { ActionTokenType } from "../../../../shared/enums/tokenEnum";
@@ -15,16 +15,42 @@ interface IProp {
 }
 const Manager: FC<IProp> = ({ managerWithStatistic }) => {
     const { me } = useAppSelector((state) => state.manager);
+    const [message, setMessage] = useState<{
+        text: string;
+        type: "success" | "error";
+    } | null>(null);
     const { manager, statistics } = managerWithStatistic;
     const dispatch = useAppDispatch();
     const isAdmin = manager.role === RoleEnum.admin && manager._id === me?._id;
+    const messageTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const showMessage = (text: string, type: "success" | "error",) => {
+        setMessage({ text, type });
+
+        if (messageTimer.current) {
+            clearTimeout(messageTimer.current);
+        }
+
+        messageTimer.current = setTimeout(() => {
+            setMessage(null);
+            messageTimer.current = null;
+        }, 3000);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (messageTimer.current) {
+                clearTimeout(messageTimer.current);
+            }
+        };
+    }, []);
     const handleAction = async (action: ActionTokenType) => {
             try {
                 const url = await managerService.actionRequest(manager._id, action);
                 await navigator.clipboard.writeText(url);
-                alert("Link copied to clipboard");
+                showMessage("Link copied  to clipboard", "success");
             } catch (e) {
-                alert(getErrorMessage(e));
+                showMessage(getErrorMessage(e), "error");
             }
         };
     const changeStatus = async (action: ActionType) => {
@@ -37,7 +63,7 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                 }),
             );
         } catch (e) {
-            alert(getErrorMessage(e));
+            showMessage(getErrorMessage(e), "error");
         }
     };
     return (
@@ -72,7 +98,8 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                         </p>
                 )}
             </div>
-            <div className="buttonBlock">
+            <div className={css.buttonBlock}>
+                <div>
                 <button
                     className="greenButton"
                     onClick={() =>
@@ -83,6 +110,12 @@ const Manager: FC<IProp> = ({ managerWithStatistic }) => {
                 >
                     {manager.is_active ? "Recovery password" : "Activate"}
                 </button>
+                    {message && (
+                        <p className={css.message}>
+                            {message.text}
+                        </p>
+                    )}
+                </div>
                 {!isAdmin && (
                     <>
                         <button
