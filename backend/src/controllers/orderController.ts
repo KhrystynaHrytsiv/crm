@@ -7,7 +7,7 @@ import { StatusCode } from "../enums/StatusCode";
 import { orderService } from "../services/orderService";
 
 class OrderController {
-    async getAll(req: Request, res: Response, next: NextFunction) {
+    async getAll(_req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = res.locals.tokenPayload as TokenPayload;
             const query = res.locals.query as IQuery;
@@ -28,7 +28,7 @@ class OrderController {
             next(e);
         }
     }
-    async getStatistics(req: Request, res: Response, next: NextFunction) {
+    async getStatistics(_req: Request, res: Response, next: NextFunction) {
         try {
             const statistics = await orderService.getStatistics();
             res.status(StatusCode.OK).json(statistics);
@@ -36,7 +36,7 @@ class OrderController {
             next(e);
         }
     }
-    async createExcel(req: Request, res: Response, next: NextFunction) {
+    async createExcel(_req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = res.locals.tokenPayload as TokenPayload;
             const buffer = await orderService.createExcelSheet(

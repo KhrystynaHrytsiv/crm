@@ -27,12 +27,12 @@ interface IConfig {
     PORT: string;
     JWT_ACCESS_SECRET: string;
     JWT_REFRESH_SECRET: string;
-    JWT_ACCESS_LIFETIME: any;
-    JWT_REFRESH_LIFETIME: any;
+    JWT_ACCESS_LIFETIME: string;
+    JWT_REFRESH_LIFETIME: string;
     JWT_ACTIVATE_SECRET: string;
     JWT_RECOVERY_SECRET: string;
-    JWT_ACTIVATE_LIFETIME: any;
-    JWT_RECOVERY_LIFETIME: any;
+    JWT_ACTIVATE_LIFETIME: string;
+    JWT_RECOVERY_LIFETIME: string;
     FRONTEND_URL: string;
     DNS_SERVERS: string[];
 }

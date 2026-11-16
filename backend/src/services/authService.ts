@@ -41,7 +41,7 @@ class AuthService {
         await tokenService.delete({ refreshToken });
     }
     async me(userId: string): Promise<IUser> {
-        return await userService.getById(userId);
+        return userService.getById(userId);
     }
     async refresh(refreshToken: string) {
         const tokenPayload = await tokenService.checkToken(

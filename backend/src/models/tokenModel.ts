@@ -1,9 +1,10 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 import { IToken } from "../../../shared/interfaces/IToken";
 import { User } from "./userModel";
 
 const tokenSchema = new Schema({
+    _id: { type: Types.ObjectId, required: true },
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
     userId: { type: Schema.Types.ObjectId, required: true, ref: User },

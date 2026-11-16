@@ -2,12 +2,12 @@ import { RoleEnum } from "../enums/roleEnum";
 
 export interface IUser {
     _id: string;
-    id: number;
+    id?: number;
     name: string;
     surname: string;
     email: string;
     password: string;
-    passwordChangedAt: Date;
+    passwordChangedAt: Date | null;
     role: RoleEnum;
     is_active: boolean;
     is_banned: boolean;

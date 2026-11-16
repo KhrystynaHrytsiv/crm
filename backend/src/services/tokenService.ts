@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import { ActionTokenType, TokenEnum } from "../../../shared/enums/tokenEnum";
 import {
@@ -65,26 +65,20 @@ class TokenService {
             throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);
         }
     }
-
-    async isTokenExist(token: string, type: TokenEnum): Promise<boolean> {
-        const iToken = await tokenRepository.findByParams({ [type]: token });
-        return !!iToken;
-    }
     async checkToken(token: string, type: TokenEnum) {
         const tokenPayload = this.verifyTokens(token, type);
-        const isTokenExist = await this.isTokenExist(token, type);
-        if (!isTokenExist) {
+        const tokenExist = await tokenRepository.findByParams({
+            [type]: token,
+        });
+        if (!tokenExist) {
             throw new apiError("Invalid token", StatusCode.UNAUTHORIZED);
         }
         return tokenPayload;
     }
-    async delete(params: Partial<IToken>) {
+    delete(params: Partial<IToken>) {
         return tokenRepository.delete(params);
     }
-    public generateActionToken(
-        payload: TokenPayload,
-        type: ActionTokenType,
-    ): string {
+    generateActionToken(payload: TokenPayload, type: ActionTokenType): string {
         let secret: string;
         let expiresIn: any;
         switch (type) {
@@ -104,15 +98,18 @@ class TokenService {
         }
         return jwt.sign(payload, secret, { expiresIn });
     }
-    public async createToken(tokenPair: TokensPair, userId: string) {
-        const decoded = jwt.decode(tokenPair.refreshToken) as JwtPayload;
+    async createToken(tokenPair: TokensPair, userId: string) {
+        const decoded = this.verifyTokens(
+            tokenPair.refreshToken,
+            TokenEnum.refresh,
+        );
         if (!decoded.exp) {
             throw new apiError(
                 "Invalid refresh token",
                 StatusCode.UNAUTHORIZED,
             );
         }
-        return await tokenRepository.create({
+        return tokenRepository.create({
             ...tokenPair,
             userId,
             expiresAt: new Date(decoded.exp * 1000),

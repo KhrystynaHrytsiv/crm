@@ -7,7 +7,7 @@ import { apiError } from "../error/apiError";
 
 class ValidationMiddleware {
     isIdValidate(key: string) {
-        return (req: Request, res: Response, next: NextFunction) => {
+        return (req: Request, _res: Response, next: NextFunction) => {
             try {
                 const id = req.params[key];
                 if (!isObjectIdOrHexString(id)) {
@@ -23,7 +23,7 @@ class ValidationMiddleware {
         };
     }
     validateBody(validator: ObjectSchema) {
-        return async (req: Request, res: Response, next: NextFunction) => {
+        return async (req: Request, _res: Response, next: NextFunction) => {
             try {
                 req.body = await validator.validateAsync(req.body);
                 next();

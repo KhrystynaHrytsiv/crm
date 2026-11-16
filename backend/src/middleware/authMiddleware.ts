@@ -48,7 +48,7 @@ class AuthMiddleware {
             }
         };
     }
-    hasPermission(req: Request, res: Response, next: NextFunction) {
+    hasPermission(_req: Request, res: Response, next: NextFunction) {
         try {
             const { role } = res.locals.tokenPayload as TokenPayload;
             if (role !== RoleEnum.admin) {

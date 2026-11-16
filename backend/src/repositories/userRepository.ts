@@ -27,6 +27,13 @@ class UserRepository {
             User.countDocuments(),
         ]);
     }
+    async generateNextId(): Promise<number> {
+        const lastDocument = await User.findOne({ id: { $exists: true } })
+            .sort({ id: -1 })
+            .select("id")
+            .lean();
+        return (lastDocument?.id ?? 0) + 1;
+    }
     async completeAction(
         userId: string,
         action: ActionTokenType,
@@ -56,7 +63,7 @@ class UserRepository {
                 },
             },
             {
-                new: true,
+                returnDocument: "after",
                 runValidators: true,
             },
         );

@@ -15,7 +15,7 @@ class AuthController {
             next(e);
         }
     }
-    async logout(req: Request, res: Response, next: NextFunction) {
+    async logout(_req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = res.locals as RefreshToken;
             await authService.logout(refreshToken);
@@ -24,7 +24,7 @@ class AuthController {
             next(e);
         }
     }
-    async me(req: Request, res: Response, next: NextFunction) {
+    async me(_req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = res.locals.tokenPayload as TokenPayload;
             const user = await authService.me(userId);
@@ -33,7 +33,7 @@ class AuthController {
             next(e);
         }
     }
-    async refresh(req: Request, res: Response, next: NextFunction) {
+    async refresh(_req: Request, res: Response, next: NextFunction) {
         try {
             const refreshToken = res.locals.refreshToken as string;
             const refresh = await authService.refresh(refreshToken);

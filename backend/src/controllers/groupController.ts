@@ -5,7 +5,7 @@ import { StatusCode } from "../enums/StatusCode";
 import { groupService } from "../services/groupService";
 
 class GroupController {
-    async getGroups(req: Request, res: Response, next: NextFunction) {
+    async getGroups(_req: Request, res: Response, next: NextFunction) {
         try {
             const groups = await groupService.getGroups();
             res.status(StatusCode.OK).json(groups);

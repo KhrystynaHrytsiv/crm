@@ -1,7 +1,7 @@
 import dns from "node:dns";
 
 import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import swaggerUi from "swagger-ui-express";
 
@@ -43,7 +43,7 @@ const toClientError = (err: any): { status: number; message: string } => {
     return { status: 500, message: "Internal server error" };
 };
 
-app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+app.use((err: unknown, req: Request, res: Response) => {
     const { status, message } = toClientError(err);
     if (status >= 500) {
         logger.error({ err, method: req.method, url: req.originalUrl });

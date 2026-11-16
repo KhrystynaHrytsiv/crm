@@ -13,7 +13,6 @@ import {
 } from "../repositories/orderRepository";
 import { tokenRepository } from "../repositories/tokenRepository";
 import { userRepository } from "../repositories/userRepository";
-import { createManagerId } from "../seed/orderIdSeed";
 import { passwordService } from "./passwordService";
 import { tokenService } from "./tokenService";
 
@@ -33,9 +32,8 @@ class UserService {
                 StatusCode.CONFLICT,
             );
         }
-        const user = userRepository.create({ ...dto, role: RoleEnum.manager });
-        await createManagerId();
-        return user;
+        const id = await userRepository.generateNextId();
+        return userRepository.create({ ...dto, id, role: RoleEnum.manager });
     }
     async getManagers(
         page: number,
