@@ -2,7 +2,7 @@ import { IToken } from "../../../shared/interfaces/IToken";
 import { Token } from "../models/tokenModel";
 
 class TokenRepository {
-    create(dto: any): Promise<IToken> {
+    create(dto: Omit<IToken, "_id">): Promise<IToken> {
         return Token.create(dto);
     }
     findByParams(params: Partial<IToken>): Promise<IToken | null> {

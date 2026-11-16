@@ -24,23 +24,51 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: config.FRONTEND_URL }));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/", apiRouter);
-const toClientError = (err: any): { status: number; message: string } => {
+const toClientError = (err: unknown): { status: number; message: string } => {
     if (err instanceof apiError) {
-        return { status: err.status, message: err.message };
+        return { message: err.message, status: err.status };
     }
-    if (err?.type === "entity.parse.failed") {
-        return { status: StatusCode.BAD_REQUEST, message: "Invalid JSON body" };
+
+    if (typeof err === "object" && err !== null) {
+        const error = err as {
+            type?: string;
+            name?: string;
+            code?: number;
+        };
+
+        if (error.type === "entity.parse.failed") {
+            return {
+                message: "Invalid JSON body",
+                status: StatusCode.BAD_REQUEST,
+            };
+        }
+
+        if (error.type === "entity.too.large") {
+            return {
+                message: "Request body is too large",
+                status: StatusCode.PAYLOAD_TOO_LARGE,
+            };
+        }
+
+        if (error.name === "CastError") {
+            return {
+                message: "Invalid value",
+                status: StatusCode.BAD_REQUEST,
+            };
+        }
+
+        if (error.code === 11000) {
+            return {
+                message: "Already exists",
+                status: StatusCode.CONFLICT,
+            };
+        }
     }
-    if (err?.type === "entity.too.large") {
-        return { status: 413, message: "Request body is too large" };
-    }
-    if (err?.name === "CastError") {
-        return { status: StatusCode.BAD_REQUEST, message: "Invalid value" };
-    }
-    if (err?.code === 11000) {
-        return { status: StatusCode.CONFLICT, message: "Already exists" };
-    }
-    return { status: 500, message: "Internal server error" };
+
+    return {
+        message: "Internal server error",
+        status: StatusCode.INTERNAL_SERVER_ERROR,
+    };
 };
 
 app.use((err: unknown, req: Request, res: Response) => {

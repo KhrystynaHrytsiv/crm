@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 
 import { ActionTokenType, TokenEnum } from "../../../shared/enums/tokenEnum";
 import {
@@ -80,7 +80,7 @@ class TokenService {
     }
     generateActionToken(payload: TokenPayload, type: ActionTokenType): string {
         let secret: string;
-        let expiresIn: any;
+        let expiresIn: SignOptions["expiresIn"];
         switch (type) {
             case ActionTokenType.activate:
                 secret = config.JWT_ACTIVATE_SECRET;
