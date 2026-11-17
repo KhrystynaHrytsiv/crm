@@ -3,10 +3,11 @@ import { ActionTokenType } from "../../../shared/enums/tokenEnum";
 import { ActionType } from "../../../shared/interfaces/ActionType";
 import { IManagerWithStatistics } from "../../../shared/interfaces/IManagerWithStatistics";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";
-import { IUser, ManagerDTO } from "../../../shared/interfaces/IUser";
+import { ManagerDTO } from "../../../shared/interfaces/IUser";
 import { config } from "../configs/config";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
+import { IUserDoc } from "../models/userModel";
 import {
     emptyStatistics,
     orderRepository,
@@ -17,14 +18,14 @@ import { passwordService } from "./passwordService";
 import { tokenService } from "./tokenService";
 
 class UserService {
-    async getById(id: string): Promise<IUser> {
+    async getById(id: string): Promise<IUserDoc> {
         const user = await userRepository.getById(id);
         if (!user) {
             throw new apiError("User not found", StatusCode.NOT_FOUND);
         }
         return user;
     }
-    async createManager(dto: ManagerDTO): Promise<IUser> {
+    async createManager(dto: ManagerDTO): Promise<IUserDoc> {
         const existingUser = await userRepository.getByEmail(dto.email);
         if (existingUser) {
             throw new apiError(
@@ -37,7 +38,7 @@ class UserService {
     }
     async getManagers(
         page: number,
-    ): Promise<IResPagination<IManagerWithStatistics>> {
+    ): Promise<IResPagination<IManagerWithStatistics<IUserDoc>>> {
         const pageSize = 10;
         const [managers, totalItems] = await userRepository.getManagersPage(
             page,
@@ -62,7 +63,7 @@ class UserService {
             data,
         };
     }
-    async update(id: string, dto: Partial<IUser>): Promise<IUser> {
+    async update(id: string, dto: Partial<IUserDoc>): Promise<IUserDoc> {
         const user = await userRepository.update(id, dto);
         if (!user) {
             throw new apiError("User not found", StatusCode.NOT_FOUND);
@@ -97,11 +98,11 @@ class UserService {
                 StatusCode.BAD_REQUEST,
             );
         }
-        const updatedManager = await this.update(manager._id, {
+        const updatedManager = await this.update(userId, {
             is_banned: action === "ban",
         });
         if (action === "ban") {
-            await tokenRepository.deleteAllByUserId(manager._id);
+            await tokenRepository.deleteAllByUserId(userId);
         }
         return updatedManager;
     }
@@ -142,7 +143,7 @@ class UserService {
         token: string,
         password: string,
         action: ActionTokenType,
-    ): Promise<IUser> {
+    ): Promise<IUserDoc> {
         const { userId, iat } = tokenService.verifyTokens(token, action);
 
         if (typeof iat !== "number") {

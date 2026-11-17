@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { ManagerValidator } from "../../../../shared/validators/managerValidator";
 import { fields } from "../../constants/createManagerFields";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
-import { IUserDto } from "../../interfaces/IUserDto";
+import { ManagerDTO } from "../../../../shared/interfaces/IUser";
 import { useAppDispatch } from "../../redux/hooks/reduxHooks";
 import { managerAction } from "../../redux/slices/managerSlice";
 import { managerService } from "../../services/managerService";
@@ -16,14 +16,14 @@ const CreateManagerForm = ({ onClose }: { onClose: () => void }) => {
         register,
         handleSubmit,
         formState: { errors, isValid },
-    } = useForm<IUserDto>({
+    } = useForm<ManagerDTO>({
         mode: "all",
         resolver: joiResolver(ManagerValidator.create),
     });
     const dispatch = useAppDispatch();
     const router = useRouter();
     const [serverError, setServerError] = useState<string | null>(null);
-    const submit = async (dto: IUserDto) => {
+    const submit = async (dto: ManagerDTO) => {
         try {
             setServerError(null);
             await managerService.createManager(dto);

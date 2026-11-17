@@ -30,7 +30,7 @@ router.get(
     validationMiddleware.validateQuery(OrderValidator.query),
     orderController.createExcel,
 );
-router.put(
+router.patch(
     "/:orderId",
     validationMiddleware.isIdValidate("orderId"),
     validationMiddleware.validateBody(OrderValidator.update),

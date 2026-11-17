@@ -1,24 +1,23 @@
 import { ActionTokenType } from "../../../shared/enums/tokenEnum";
-import { IUser } from "../../../shared/interfaces/IUser";
-import { User } from "../models/userModel";
+import { IUserDoc, User } from "../models/userModel";
 
 class UserRepository {
-    create(dto: Partial<IUser>): Promise<IUser> {
+    create(dto: Partial<IUserDoc>): Promise<IUserDoc> {
         return User.create(dto);
     }
-    getById(id: string): Promise<IUser | null> {
+    getById(id: string): Promise<IUserDoc | null> {
         return User.findById(id);
     }
-    getByEmail(email: string): Promise<IUser | null> {
+    getByEmail(email: string): Promise<IUserDoc | null> {
         return User.findOne({ email });
     }
-    update(id: string, dto: Partial<IUser>): Promise<IUser | null> {
+    update(id: string, dto: Partial<IUserDoc>): Promise<IUserDoc | null> {
         return User.findByIdAndUpdate(id, dto, { returnDocument: "after" });
     }
     getManagersPage(
         page: number,
         pageSize: number,
-    ): Promise<[IUser[], number]> {
+    ): Promise<[IUserDoc[], number]> {
         return Promise.all([
             User.find()
                 .sort({ _id: -1 })
@@ -39,7 +38,7 @@ class UserRepository {
         action: ActionTokenType,
         tokenIssuedAt: number,
         password: string,
-    ): Promise<IUser | null> {
+    ): Promise<IUserDoc | null> {
         return User.findOneAndUpdate(
             {
                 _id: userId,

@@ -127,7 +127,7 @@
                                 }
                             ]
                         },
-                        "method": "PUT",
+                        "method": "PATCH",
                         "header": [],
                         "body": {
                             "mode": "raw",

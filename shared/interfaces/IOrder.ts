@@ -1,7 +1,9 @@
 import { CourseEnum, CourseFormat } from "../enums/CourseEnum";
 import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { CourseTypeEnum } from "../enums/courseTypeEnum";
+import { ManagerRef } from "./IUser";
 
+// Order as it comes from the API (manager is populated with surname)
 export interface IOrder {
     _id: string;
     id: number;
@@ -16,17 +18,11 @@ export interface IOrder {
     status: CourseStatusEnum;
     sum: number;
     alreadyPaid: number;
-    created_at: Date;
+    created_at: string;
     utm: string;
     msg: string;
     group: string;
-    manager:
-        | string
-        | {
-              _id: string;
-              surname: string;
-          }
-        | null;
+    manager: ManagerRef | null;
 }
 export type OrderDTO = Pick<
     IOrder,
@@ -42,5 +38,4 @@ export type OrderDTO = Pick<
     | "course_format"
     | "course_type"
     | "group"
-    | "manager"
 >;

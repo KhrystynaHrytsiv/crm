@@ -5,25 +5,33 @@ import { CourseStatusEnum } from "../enums/courseStatusEnum";
 import { CourseTypeEnum } from "../enums/courseTypeEnum";
 import { OrderSortEnum } from "../enums/OrderSortEnum";
 
-const nullableString = joi.string().empty("").allow(null);
-const nullableNumber = joi.number().empty("").allow(null);
-
 export class OrderValidator {
-    private static nameField = nullableString.max(20);
-    private static surname = nullableString.max(35);
-    private static email = nullableString.email();
+    private static nameField = joi.string().max(20).trim().messages({
+        "string.empty": "Name is required",
+    });
+    private static surname = joi.string().max(35).trim().messages({
+        "string.empty": "Surname is required",
+    });
+    private static email = joi.string().email().trim().messages({
+        "string.empty": "Email is required",
+    });
 
     private static phone = joi
         .string()
         .pattern(/^(?:\+380|380|0)(\d{9})$/)
         .empty("")
-        .allow(null)
         .messages({
+            "string.base": "Phone is required",
             "string.pattern.base":
                 "Phone number must be in a valid Ukrainian format",
         });
 
-    private static age = nullableNumber.min(16).max(90);
+    private static age = joi
+        .number()
+        .integer()
+        .min(16)
+        .max(90)
+        .messages({ "number.base": "Age must be a number" });
     private static course = joi
         .string()
         .valid(...Object.values(CourseEnum))
@@ -47,8 +55,16 @@ export class OrderValidator {
         .valid(...Object.values(CourseStatusEnum))
         .allow(null);
 
-    private static sum = nullableNumber.max(10000000000);
-    private static alreadyPaid = nullableNumber.max(10000000000);
+    private static sum = joi
+        .number()
+        .min(0)
+        .max(10000000000)
+        .messages({ "number.base": "Sum must be a number" });
+    private static alreadyPaid = joi
+        .number()
+        .min(0)
+        .max(10000000000)
+        .messages({ "number.base": "Already paid must be a number" });
     private static group = joi.string().trim().min(1).allow(null);
     private static manager = joi.string().valid("true").optional();
 
@@ -76,7 +92,7 @@ export class OrderValidator {
         surname: this.searchString,
         email: this.searchString,
         phone: this.searchString,
-        age: joi.number().integer().min(0).max(150).empty(""),
+        age: this.age,
         manager: this.manager,
         course: this.course,
         course_format: this.course_format,

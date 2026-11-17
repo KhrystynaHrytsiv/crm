@@ -4,11 +4,10 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { CommentDto } from "../../../../shared/interfaces/IComment";
+import { CommentDto, IComment } from "../../../../shared/interfaces/IComment";
 import { IOrder } from "../../../../shared/interfaces/IOrder";
 import { CommentValidator } from "../../../../shared/validators/commentValidator";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
-import { CommentResponse } from "../../interfaces/CommentResponse";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/reduxHooks";
 import { orderActions } from "../../redux/slices/ordersSlice";
 import { orderService } from "../../services/orderService";
@@ -17,7 +16,7 @@ import css from "./Comment.module.css";
 
 const Comment = ({ order }: { order: IOrder }) => {
     const [openForm, setOpenForm] = useState(false);
-    const [comments, setComments] = useState<CommentResponse[]>([]);
+    const [comments, setComments] = useState<IComment[]>([]);
     const [serverError, setServerError] = useState<string | null>(null);
     const { me } = useAppSelector((state) => state.manager);
     const dispatch = useAppDispatch();
@@ -55,11 +54,7 @@ const Comment = ({ order }: { order: IOrder }) => {
     };
 
     const hasPermission =
-        !!me &&
-        (!order.manager ||
-            (typeof order.manager === "object"
-                ? order.manager._id === me._id
-                : order.manager === me._id));
+        !!me && (!order.manager || order.manager._id === me._id);
     const create = async (dto: CommentDto) => {
         try {
             setServerError(null);

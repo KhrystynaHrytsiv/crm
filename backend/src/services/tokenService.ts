@@ -1,14 +1,12 @@
 import jwt, { SignOptions } from "jsonwebtoken";
+import { Types } from "mongoose";
 
 import { ActionTokenType, TokenEnum } from "../../../shared/enums/tokenEnum";
-import {
-    IToken,
-    TokenPayload,
-    TokensPair,
-} from "../../../shared/interfaces/IToken";
+import { TokenPayload, TokensPair } from "../../../shared/interfaces/IToken";
 import { config } from "../configs/config";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
+import { ITokenDoc } from "../models/tokenModel";
 import { tokenRepository } from "../repositories/tokenRepository";
 import { userRepository } from "../repositories/userRepository";
 
@@ -75,7 +73,7 @@ class TokenService {
         }
         return tokenPayload;
     }
-    delete(params: Partial<IToken>) {
+    delete(params: Partial<ITokenDoc>) {
         return tokenRepository.delete(params);
     }
     generateActionToken(payload: TokenPayload, type: ActionTokenType): string {
@@ -111,7 +109,7 @@ class TokenService {
         }
         return tokenRepository.create({
             ...tokenPair,
-            userId,
+            userId: new Types.ObjectId(userId),
             expiresAt: new Date(decoded.exp * 1000),
         });
     }

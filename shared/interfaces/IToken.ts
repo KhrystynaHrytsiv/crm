@@ -1,19 +1,14 @@
 import { RoleEnum } from "../enums/roleEnum";
 
-interface IToken {
-    _id: string;
-    userId: string;
+interface TokensPair {
     accessToken: string;
     refreshToken: string;
-    expiresAt: Date;
 }
-type TokensPair = Pick<IToken, "accessToken" | "refreshToken">;
-
-type RefreshToken = Pick<IToken, "refreshToken">;
+type RefreshToken = Pick<TokensPair, "refreshToken">;
 interface TokenPayload {
     userId: string;
     role: RoleEnum;
     iat?: number;
     exp?: number;
 }
-export type { IToken, RefreshToken, TokenPayload, TokensPair };
+export type { RefreshToken, TokenPayload, TokensPair };

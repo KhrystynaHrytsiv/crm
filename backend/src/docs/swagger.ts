@@ -369,7 +369,7 @@ export const swaggerDocument = {
             },
         },
         "/orders/{orderId}": {
-            put: {
+            patch: {
                 tags: ["Orders"],
                 summary:
                     "Edit order (only free orders or orders of the current user)",

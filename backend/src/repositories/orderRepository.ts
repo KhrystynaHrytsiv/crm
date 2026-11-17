@@ -1,11 +1,12 @@
 import { fromZonedTime } from "date-fns-tz";
-import { PipelineStage, QueryFilter, Types, UpdateQuery } from "mongoose";
+import { PipelineStage, QueryFilter, Types } from "mongoose";
 
 import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
-import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
+import { OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
 import { IStatistics } from "../../../shared/interfaces/IStatistics";
-import { Order } from "../models/orderModel";
+import { IOrderDoc, IOrderPopulated, Order } from "../models/orderModel";
+import { ManagerRefDoc } from "../models/userModel";
 
 const searchFields = ["name", "surname", "email", "phone"] as const;
 const exactFields = [
@@ -29,7 +30,10 @@ const parseSort = (order?: string): { field: string; direction: 1 | -1 } => {
 };
 
 class OrderRepository {
-    async getAll(query: IQuery, userId: string): Promise<[IOrder[], number]> {
+    async getAll(
+        query: IQuery,
+        userId: string,
+    ): Promise<[IOrderPopulated[], number]> {
         const filterObject = this.filter(query, userId);
         const skip = query.pageSize * (query.page - 1);
         return Promise.all([
@@ -38,15 +42,15 @@ class OrderRepository {
         ]);
     }
 
-    filter(query: IQuery, userId: string): QueryFilter<IOrder> {
-        const filterObject: QueryFilter<IOrder> = {};
+    filter(query: IQuery, userId: string): QueryFilter<IOrderDoc> {
+        const filterObject: QueryFilter<IOrderDoc> = {};
         if (query.status === CourseStatusEnum.new) {
             filterObject.status = { $in: freeStatuses };
         } else if (query.status) {
             filterObject.status = query.status as CourseStatusEnum;
         }
         if (String(query.manager) === "true") {
-            filterObject.manager = new Types.ObjectId(userId) as never;
+            filterObject.manager = new Types.ObjectId(userId);
         }
         for (const key of searchFields) {
             const value = query[key];
@@ -81,11 +85,11 @@ class OrderRepository {
     }
 
     private async findSorted(
-        filterObject: QueryFilter<IOrder>,
+        filterObject: QueryFilter<IOrderDoc>,
         order?: string,
         skip = 0,
         limit?: number,
-    ): Promise<IOrder[]> {
+    ): Promise<IOrderPopulated[]> {
         const { field, direction } = parseSort(order);
         const sort: Record<string, 1 | -1> =
             field === "id"
@@ -94,10 +98,13 @@ class OrderRepository {
 
         if (field !== "manager") {
             const find = Order.find(filterObject)
-                .populate("manager", "surname")
+                .populate<{ manager: ManagerRefDoc | null }>(
+                    "manager",
+                    "surname",
+                )
                 .sort(sort)
                 .skip(skip);
-            return (limit ? find.limit(limit) : find).lean<IOrder[]>();
+            return (limit ? find.limit(limit) : find).lean<IOrderPopulated[]>();
         }
 
         const pipeline: PipelineStage[] = [
@@ -116,7 +123,7 @@ class OrderRepository {
             { $skip: skip },
             ...(limit ? [{ $limit: limit }] : []),
         ];
-        return Order.aggregate<IOrder>(pipeline).collation({
+        return Order.aggregate<IOrderPopulated>(pipeline).collation({
             locale: "en",
             strength: 2,
         });
@@ -126,17 +133,12 @@ class OrderRepository {
         id: string,
         userId: string,
         dto: Partial<OrderDTO>,
-    ): Promise<IOrder | null> {
+    ): Promise<IOrderPopulated | null> {
         const { status, ...fields } = dto;
         const updateFields = {
-            ...Object.fromEntries(
-                Object.entries(fields).map(([key, value]) => [
-                    key,
-                    { $literal: value },
-                ]),
-            ),
+            ...fields,
             ...(status !== undefined && {
-                status: { $literal: status },
+                status,
                 manager:
                     status === CourseStatusEnum.new
                         ? null
@@ -146,34 +148,45 @@ class OrderRepository {
 
         return Order.findOneAndUpdate(
             this.editableBy(id, userId),
-            [{ $set: updateFields }],
-            {
-                returnDocument: "after",
-                updatePipeline: true,
-            },
-        ).populate("manager", "surname");
+            { $set: updateFields },
+            { returnDocument: "after" },
+        ).populate<{ manager: ManagerRefDoc | null }>("manager", "surname");
     }
 
-    async chooseOrder(orderId: string, userId: string): Promise<IOrder | null> {
+    async chooseOrder(
+        orderId: string,
+        userId: string,
+    ): Promise<IOrderDoc | null> {
         return Order.findOneAndUpdate(
             this.editableBy(orderId, userId),
             [
                 {
                     $set: {
                         manager: new Types.ObjectId(userId),
-                        status: CourseStatusEnum.inWork,
+                        status: {
+                            $cond: [
+                                isFreeStatus,
+                                CourseStatusEnum.inWork,
+                                "$status",
+                            ],
+                        },
                     },
                 },
-            ] as UpdateQuery<IOrder>,
+            ],
             { returnDocument: "after", updatePipeline: true },
         );
     }
 
-    private editableBy(orderId: string, userId: string): QueryFilter<IOrder> {
+    private editableBy(
+        orderId: string,
+        userId: string,
+    ): QueryFilter<IOrderDoc> {
         return {
-            _id: orderId,
-            manager: { $in: [null, new Types.ObjectId(userId)] },
-        } as QueryFilter<IOrder>;
+            _id: new Types.ObjectId(orderId),
+            manager: {
+                $in: [null, new Types.ObjectId(userId)],
+            },
+        };
     }
 
     private getStatisticsGroup(groupByManager: boolean) {
@@ -212,18 +225,10 @@ class OrderRepository {
     }
 
     async getManagersStatistics(
-        managerIds: string[],
+        managerIds: Types.ObjectId[],
     ): Promise<Map<string, IStatistics>> {
         const statistics = await Order.aggregate([
-            {
-                $match: {
-                    manager: {
-                        $in: managerIds.map(
-                            (id) => new Types.ObjectId(String(id)),
-                        ),
-                    },
-                },
-            },
+            { $match: { manager: { $in: managerIds } } },
             { $group: this.getStatisticsGroup(true) },
             { $project: this.statisticsProjection(true) },
         ]);
@@ -232,7 +237,10 @@ class OrderRepository {
         );
     }
 
-    async getDataForExcel(query: IQuery, userId: string): Promise<IOrder[]> {
+    async getDataForExcel(
+        query: IQuery,
+        userId: string,
+    ): Promise<IOrderPopulated[]> {
         return this.findSorted(this.filter(query, userId), query.order);
     }
 }

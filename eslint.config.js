@@ -126,13 +126,22 @@ export default [
         },
     },
 
-    // Next.js configuration runs in Node.js
+    // Frontend reads process.env.NEXT_PUBLIC_*
     {
         files: ["frontend/**/*.{js,jsx,ts,tsx}"],
         languageOptions: {
             globals: {
-                ...globals.browser,
                 process: "readonly",
+            },
+        },
+    },
+
+    // Next.js and other config files run in Node.js
+    {
+        files: ["frontend/*.config.{js,mjs,cjs,ts}"],
+        languageOptions: {
+            globals: {
+                ...globals.node,
             },
         },
     },

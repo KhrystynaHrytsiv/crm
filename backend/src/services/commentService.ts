@@ -1,6 +1,9 @@
-import { CommentDto, IComment } from "../../../shared/interfaces/IComment";
+import { Types } from "mongoose";
+
+import { CommentDto } from "../../../shared/interfaces/IComment";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
+import { ICommentPopulated } from "../models/commentModel";
 import { commentRepository } from "../repositories/commentRepository";
 import { orderRepository } from "../repositories/orderRepository";
 
@@ -9,7 +12,7 @@ class CommentService {
         dto: CommentDto,
         orderId: string,
         userId: string,
-    ): Promise<IComment> {
+    ): Promise<ICommentPopulated> {
         const order = await orderRepository.chooseOrder(orderId, userId);
         if (!order) {
             throw new apiError(
@@ -19,12 +22,12 @@ class CommentService {
         }
         return commentRepository.create({
             ...dto,
-            orderId,
-            manager: userId,
+            orderId: new Types.ObjectId(orderId),
+            manager: new Types.ObjectId(userId),
             created_at: new Date(),
         });
     }
-    async getAll(orderId: string): Promise<IComment[]> {
+    async getAll(orderId: string): Promise<ICommentPopulated[]> {
         return commentRepository.getAll(orderId);
     }
 }

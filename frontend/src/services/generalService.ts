@@ -18,16 +18,12 @@ export const generalService = {
         const { data } = await api.post(endpoint, dto, config);
         return data;
     },
-    put: async <T, D>(
+
+    patch: async <T, D = undefined>(
         endpoint: string,
-        dto: D,
-        config?: AxiosRequestConfig,
+        dto?: D,
     ): Promise<T> => {
-        const { data } = await api.put<T>(endpoint, dto, config);
-        return data;
-    },
-    patch: async <T>(endpoint: string): Promise<T> => {
-        const { data } = await api.patch(endpoint);
+        const { data } = await api.patch(endpoint, dto);
         return data;
     },
 };

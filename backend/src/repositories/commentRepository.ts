@@ -1,12 +1,23 @@
-import { IComment } from "../../../shared/interfaces/IComment";
-import { Comment } from "../models/commentModel";
+import {
+    Comment,
+    ICommentDoc,
+    ICommentPopulated,
+} from "../models/commentModel";
+import { ManagerRefDoc } from "../models/userModel";
 
 class CommentRepository {
-    create(dto: IComment): Promise<IComment> {
-        return Comment.create(dto);
+    async create(dto: Omit<ICommentDoc, "_id">): Promise<ICommentPopulated> {
+        const comment = await Comment.create(dto);
+        return comment.populate<{ manager: ManagerRefDoc }>(
+            "manager",
+            "surname",
+        );
     }
-    getAll(orderId: string): Promise<IComment[]> {
-        return Comment.find({ orderId }).populate("manager", "surname");
+    getAll(orderId: string): Promise<ICommentPopulated[]> {
+        return Comment.find({ orderId }).populate<{ manager: ManagerRefDoc }>(
+            "manager",
+            "surname",
+        );
     }
 }
 export const commentRepository = new CommentRepository();

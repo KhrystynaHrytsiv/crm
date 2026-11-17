@@ -1,8 +1,22 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 import { IComment } from "../../../shared/interfaces/IComment";
 import { Order } from "./orderModel";
-import { User } from "./userModel";
+import { ManagerRefDoc, User } from "./userModel";
+
+export interface ICommentDoc extends Omit<
+    IComment,
+    "_id" | "orderId" | "manager" | "created_at"
+> {
+    _id: Types.ObjectId;
+    orderId: Types.ObjectId;
+    manager: Types.ObjectId;
+    created_at: Date;
+}
+
+export type ICommentPopulated = Omit<ICommentDoc, "manager"> & {
+    manager: ManagerRefDoc;
+};
 
 const commentSchema = new Schema(
     {
@@ -13,4 +27,4 @@ const commentSchema = new Schema(
     },
     { versionKey: false },
 );
-export const Comment = model<IComment>("comment", commentSchema);
+export const Comment = model<ICommentDoc>("comment", commentSchema);

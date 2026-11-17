@@ -2,11 +2,12 @@ import ExcelJS from "exceljs";
 
 import { columns } from "../../../shared/constants/orders";
 import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
-import { IOrder, OrderDTO } from "../../../shared/interfaces/IOrder";
+import { OrderDTO } from "../../../shared/interfaces/IOrder";
 import { IQuery } from "../../../shared/interfaces/IQuery";
 import { IResPagination } from "../../../shared/interfaces/IResPagination";
 import { StatusCode } from "../enums/StatusCode";
 import { apiError } from "../error/apiError";
+import { IOrderPopulated } from "../models/orderModel";
 import { groupRepository } from "../repositories/groupRepository";
 import { orderRepository } from "../repositories/orderRepository";
 
@@ -14,7 +15,7 @@ class OrderService {
     async getAll(
         query: IQuery,
         userId: string,
-    ): Promise<IResPagination<IOrder>> {
+    ): Promise<IResPagination<IOrderPopulated>> {
         query.pageSize = 25;
         const [data, totalItems] = await orderRepository.getAll(query, userId);
         const totalPages = Math.ceil(totalItems / query.pageSize);
@@ -30,7 +31,7 @@ class OrderService {
         id: string,
         dto: Partial<OrderDTO>,
         userId: string,
-    ): Promise<IOrder> {
+    ): Promise<IOrderPopulated> {
         const updateData =
             dto.status === null
                 ? { ...dto, status: CourseStatusEnum.new }
@@ -75,10 +76,7 @@ class OrderService {
                             ? new Date(order.created_at).toLocaleString("uk-UA")
                             : "";
                     case "manager":
-                        return typeof order.manager === "object" &&
-                            order.manager
-                            ? order.manager.surname
-                            : "";
+                        return order.manager?.surname ?? "";
                     default:
                         return order[key];
                 }

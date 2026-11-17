@@ -1,17 +1,18 @@
-import { IToken } from "../../../shared/interfaces/IToken";
-import { Token } from "../models/tokenModel";
+import { Types } from "mongoose";
+
+import { ITokenDoc, Token } from "../models/tokenModel";
 
 class TokenRepository {
-    create(dto: Omit<IToken, "_id">): Promise<IToken> {
+    create(dto: Omit<ITokenDoc, "_id">): Promise<ITokenDoc> {
         return Token.create(dto);
     }
-    findByParams(params: Partial<IToken>): Promise<IToken | null> {
+    findByParams(params: Partial<ITokenDoc>): Promise<ITokenDoc | null> {
         return Token.findOne(params);
     }
-    delete(params: Partial<IToken>) {
+    delete(params: Partial<ITokenDoc>) {
         return Token.deleteOne(params);
     }
-    deleteAllByUserId(userId: string) {
+    deleteAllByUserId(userId: string | Types.ObjectId) {
         return Token.deleteMany({ userId });
     }
 }

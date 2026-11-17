@@ -9,13 +9,14 @@ import {
 import { GroupDTO, IGroup } from "../../../../shared/interfaces/IGroup";
 import { IOrder } from "../../../../shared/interfaces/IOrder";
 import { IResPagination } from "../../../../shared/interfaces/IResPagination";
+import { IStatistics } from "../../../../shared/interfaces/IStatistics";
 import { generalService } from "../../services/generalService";
 
 interface IState {
     orders: IOrder[];
     groups: IGroup[];
     group: IGroup | null;
-    statistics: Record<string, number>;
+    statistics: Partial<IStatistics>;
     loadingCount: number;
     error: string | null;
     currentOrdersRequestId: string | null;
@@ -58,7 +59,7 @@ const getGroups = createAsyncThunk<IGroup[]>(
         }
     },
 );
-const getStatistics = createAsyncThunk<Record<string, number>>(
+const getStatistics = createAsyncThunk<IStatistics>(
     "orderSlice/getStatistics",
     async (_, { rejectWithValue }) => {
         try {

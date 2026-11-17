@@ -1,10 +1,14 @@
 import { IAuth } from "../../../shared/interfaces/IAuth";
-import { IToken } from "../../../shared/interfaces/IToken";
+import { TokensPair } from "../../../shared/interfaces/IToken";
+import { IUser } from "../../../shared/interfaces/IUser";
 import { generalService } from "./generalService";
 
 export const authService = {
     async login(data: IAuth) {
-        const response = await generalService.post<{ tokens: IToken }, IAuth>(
+        const response = await generalService.post<
+            { tokens: TokensPair; user: IUser },
+            IAuth
+        >(
             "/auth/login",
             data,
         );
@@ -34,7 +38,7 @@ export const authService = {
             throw new Error("Refresh token is missing");
         }
         const { accessToken, refreshToken: newRefresh } =
-            await generalService.post<IToken, Record<string, never>>(
+            await generalService.post<TokensPair, Record<string, never>>(
                 "/auth/refresh",
                 {},
                 { headers: { Authorization: `Bearer ${refreshToken}` } },

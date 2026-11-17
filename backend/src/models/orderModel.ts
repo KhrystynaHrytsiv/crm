@@ -1,11 +1,24 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 import { CourseEnum, CourseFormat } from "../../../shared/enums/CourseEnum";
 import { CourseStatusEnum } from "../../../shared/enums/courseStatusEnum";
 import { CourseTypeEnum } from "../../../shared/enums/courseTypeEnum";
 import { IOrder } from "../../../shared/interfaces/IOrder";
 import { Group } from "./groupModel";
-import { User } from "./userModel";
+import { ManagerRefDoc, User } from "./userModel";
+
+export interface IOrderDoc extends Omit<
+    IOrder,
+    "_id" | "manager" | "created_at"
+> {
+    _id: Types.ObjectId;
+    created_at: Date;
+    manager: Types.ObjectId | null;
+}
+
+export type IOrderPopulated = Omit<IOrderDoc, "manager"> & {
+    manager: ManagerRefDoc | null;
+};
 
 const orderSchema = new Schema(
     {
@@ -29,4 +42,4 @@ const orderSchema = new Schema(
     },
     { timestamps: false, versionKey: false },
 );
-export const Order = model<IOrder>("order", orderSchema);
+export const Order = model<IOrderDoc>("order", orderSchema);

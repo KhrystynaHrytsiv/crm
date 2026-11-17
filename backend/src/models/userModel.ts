@@ -1,7 +1,16 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 import { RoleEnum } from "../../../shared/enums/roleEnum";
 import { IUser } from "../../../shared/interfaces/IUser";
+
+export interface IUserDoc extends Omit<IUser, "_id" | "last_login"> {
+    _id: Types.ObjectId;
+    password: string;
+    passwordChangedAt: Date | null;
+    last_login: Date | null;
+}
+
+export type ManagerRefDoc = Pick<IUserDoc, "_id" | "surname">;
 
 const userSchema = new Schema(
     {
@@ -28,4 +37,4 @@ const userSchema = new Schema(
         },
     },
 );
-export const User = model<IUser>("user", userSchema);
+export const User = model<IUserDoc>("user", userSchema);

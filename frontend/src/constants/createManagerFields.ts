@@ -1,7 +1,7 @@
-import { IUserDto } from "../interfaces/IUserDto";
+import { ManagerDTO } from "../../../shared/interfaces/IUser";
 
 export const fields: {
-    name: keyof IUserDto;
+    name: keyof ManagerDTO;
     label: string;
     type: string;
     placeholder: string;

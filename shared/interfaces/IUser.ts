@@ -6,12 +6,12 @@ export interface IUser {
     name: string;
     surname: string;
     email: string;
-    password: string;
-    passwordChangedAt: Date | null;
     role: RoleEnum;
     is_active: boolean;
     is_banned: boolean;
-    last_login: Date | null;
+    last_login: string | null;
 }
 
 export type ManagerDTO = Pick<IUser, "name" | "surname" | "email">;
+
+export type ManagerRef = Pick<IUser, "_id" | "surname">;
