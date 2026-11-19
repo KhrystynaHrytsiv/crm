@@ -28,12 +28,18 @@ const OrdersContent = () => {
     }, [searchParams, dispatch]);
 
     return (
-        <div>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+        }}>
             <Header />
             <Filters />
-            <Orders />
+            <main style={{ flex: 1 }}>
+                <Orders />
             {loadingCount > 0 && <Loading />}
-            {error && <p role="alert">{error}</p>}
+            {error && <p role="alert" className="error" style={{textAlign: "center",fontSize: "20px"}}>{error}</p>}
+            </main>
             <Pagination totalPages={totalPages} />
             <Footer />
         </div>
