@@ -6,32 +6,26 @@ import { CourseTypeEnum } from "../enums/courseTypeEnum";
 import { OrderSortEnum } from "../enums/OrderSortEnum";
 
 export class OrderValidator {
-    private static nameField = joi.string().max(20).trim().messages({
-        "string.empty": "Name is required",
-    });
-    private static surname = joi.string().max(35).trim().messages({
-        "string.empty": "Surname is required",
-    });
-    private static email = joi.string().email().trim().messages({
-        "string.empty": "Email is required",
-    });
+    private static nameField = joi.string().max(20).trim().allow(null);
+    private static surname = joi.string().max(35).trim().allow(null);
+    private static email = joi.string().email().trim().allow(null);
 
     private static phone = joi
         .string()
         .pattern(/^(?:\+380|380|0)(\d{9})$/)
-        .empty("")
         .messages({
-            "string.base": "Phone is required",
             "string.pattern.base":
                 "Phone number must be in a valid Ukrainian format",
-        });
+        })
+        .allow(null);
 
     private static age = joi
         .number()
         .integer()
         .min(16)
         .max(90)
-        .messages({ "number.base": "Age must be a number" });
+        .messages({ "number.base": "Age must be a number" })
+        .allow(null);
     private static course = joi
         .string()
         .valid(...Object.values(CourseEnum))
@@ -59,12 +53,14 @@ export class OrderValidator {
         .number()
         .min(0)
         .max(10000000000)
-        .messages({ "number.base": "Sum must be a number" });
+        .messages({ "number.base": "Sum must be a number" })
+        .allow(null);
     private static alreadyPaid = joi
         .number()
         .min(0)
         .max(10000000000)
-        .messages({ "number.base": "Already paid must be a number" });
+        .messages({ "number.base": "Already paid must be a number" })
+        .allow(null);
     private static group = joi.string().trim().min(1).allow(null);
     private static manager = joi.string().valid("true").optional();
 

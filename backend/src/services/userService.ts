@@ -118,9 +118,9 @@ class UserService {
             );
         }
         const user = await this.getById(id);
-        if (user.role !== RoleEnum.manager) {
+        if (user.role !== RoleEnum.manager && user.role !== RoleEnum.admin) {
             throw new apiError(
-                "Action is available only for managers",
+                "Action is available only for admin and managers",
                 StatusCode.BAD_REQUEST,
             );
         }
@@ -134,7 +134,7 @@ class UserService {
             throw new apiError("Manager is not active", StatusCode.BAD_REQUEST);
         }
         const token = tokenService.generateActionToken(
-            { userId: id, role: RoleEnum.manager },
+            { userId: id, role: user.role },
             action,
         );
         return `${config.FRONTEND_URL}/${action}/${token}`;

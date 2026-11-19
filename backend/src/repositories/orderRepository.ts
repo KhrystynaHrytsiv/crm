@@ -78,7 +78,10 @@ class OrderRepository {
                 );
             }
             if (query.end_date) {
-                filterObject.created_at.$lte = getDateBoundary(query.end_date);
+                filterObject.created_at.$lte = getDateBoundary(
+                    query.end_date,
+                    true,
+                );
             }
         }
         return filterObject;

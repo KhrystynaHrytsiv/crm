@@ -1,13 +1,13 @@
-import { joiResolver } from "@hookform/resolvers/joi";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {useRouter} from "next/navigation";
+import React, {useState} from "react";
+import {useForm} from "react-hook-form";
 import css from "./PasswordForm.module.css"
-import { ActionTokenType } from "../../../../shared/enums/tokenEnum";
-import { PasswordValidator } from "../../../../shared/validators/passwordValidator";
-import { getErrorMessage } from "../../helpers/getErrorMessage";
-import { managerService } from "../../services/managerService";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {ActionTokenType} from "../../../../shared/enums/tokenEnum";
+import {PasswordValidator} from "../../../../shared/validators/passwordValidator";
+import {getErrorMessage} from "../../helpers/getErrorMessage";
+import {managerService} from "../../services/managerService";
+import {FaEye, FaEyeSlash} from "react-icons/fa";
 
 interface IFormData {
     password: string;
@@ -17,9 +17,11 @@ interface IFormData {
 const PasswordForm = ({
     token,
     action,
+    setIsInvalidLink,
 }: {
     token: string;
     action: ActionTokenType;
+    setIsInvalidLink: (value: boolean) => void;
 }) => {
     const {
         register,
@@ -39,14 +41,25 @@ const PasswordForm = ({
             await managerService.actionComplete(action, token, dto.password);
             router.push("/login");
         } catch (e) {
-            const error = e as { response?: { status?: number } };
-            if (error.response?.status === 400) {
-                router.push("/invalid-link");
+            try {
+                const { isValid } = await managerService.verifyActionToken(
+                    action,
+                    token,
+                );
+
+                if (!isValid) {
+                    setIsInvalidLink(true);
+                    return;
+                }
+            } catch {
+                setServerError(getErrorMessage(e));
                 return;
             }
+
             setServerError(getErrorMessage(e));
         }
     };
+
     return (
         <form onSubmit={handleSubmit(submit)} className="form">
             <div className="field">
@@ -83,7 +96,7 @@ const PasswordForm = ({
                 )}
             </div>
             {serverError && <div className="error">{serverError}</div>}
-            <button className="wi   de-button">
+            <button className="wide-button">
                 {action === ActionTokenType.activate
                     ? "Activate"
                     : "Recovery Password"}

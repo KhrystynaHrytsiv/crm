@@ -37,7 +37,7 @@ const ActionPage = () => {
     if (isInvalidLink) return <InvalidLink />;
     return (
         <div className="container">
-            <PasswordForm token={token} action={action} />
+            <PasswordForm token={token} action={action} setIsInvalidLink={setIsInvalidLink} />
         </div>
     );
 };

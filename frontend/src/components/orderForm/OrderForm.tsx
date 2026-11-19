@@ -65,9 +65,13 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
             ),
         );
 
+        console.log("NAME:", dto.name);
+        console.log("UPDATED FIELDS:", updatedFields);
         const { error, value } = schema.validate(updatedFields, {
             abortEarly: false,
         });
+        console.log("VALIDATION ERROR:", error?.details);
+        console.log("VALIDATED VALUE:", value);
         clearErrors();
         if (error) {
             error.details.forEach((detail) => {
@@ -82,6 +86,7 @@ const OrderForm: FC<IProp> = ({ onClose, order }) => {
         }
         try {
             setServerError(null);
+            console.log("REQUEST BODY:", JSON.stringify(value, null, 2));
             const updatedOrder = await orderService.update(order._id, value);
             dispatch(orderActions.updateOrder(updatedOrder));
             onClose();
