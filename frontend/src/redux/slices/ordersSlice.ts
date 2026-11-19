@@ -11,6 +11,7 @@ import { IOrder } from "../../../../shared/interfaces/IOrder";
 import { IResPagination } from "../../../../shared/interfaces/IResPagination";
 import { IStatistics } from "../../../../shared/interfaces/IStatistics";
 import { generalService } from "../../services/generalService";
+import {getErrorMessage} from "../../helpers/getErrorMessage";
 
 interface IState {
     orders: IOrder[];
@@ -45,7 +46,7 @@ const getOrders = createAsyncThunk<IResPagination<IOrder>, { query: string }>(
                 `/orders?${query}`,
             );
         } catch (e) {
-            return rejectWithValue(e);
+            return rejectWithValue(getErrorMessage(e));
         }
     },
 );
@@ -55,7 +56,7 @@ const getGroups = createAsyncThunk<IGroup[]>(
         try {
             return await generalService.get("/orders/groups");
         } catch (e) {
-            return rejectWithValue(e);
+            return rejectWithValue(getErrorMessage(e));
         }
     },
 );
@@ -65,7 +66,7 @@ const getStatistics = createAsyncThunk<IStatistics>(
         try {
             return await generalService.get("/orders/statistics");
         } catch (e) {
-            return rejectWithValue(e);
+            return rejectWithValue(getErrorMessage(e));
         }
     },
 );
@@ -78,7 +79,7 @@ const createGroup = createAsyncThunk<IGroup, GroupDTO>(
                 dto,
             );
         } catch (e) {
-            return rejectWithValue(e);
+            return rejectWithValue(getErrorMessage(e));
         }
     },
 );

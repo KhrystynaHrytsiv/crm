@@ -249,8 +249,9 @@ class OrderRepository {
 }
 
 const getDateBoundary = (date: string, isEndOfDay = false): Date => {
+    const dateOnly = date.slice(0, 10);
     const time = isEndOfDay ? "23:59:59.999" : "00:00:00.000";
-    return fromZonedTime(`${date}T${time}`, "Europe/Kyiv");
+    return fromZonedTime(`${dateOnly}T${time}`, "Europe/Kyiv");
 };
 export const emptyStatistics = (): IStatistics =>
     Object.values(CourseStatusEnum).reduce(

@@ -98,8 +98,8 @@ export class OrderValidator {
             .string()
             .valid(...Object.values(CourseStatusEnum))
             .empty(""),
-        start_date: joi.date().iso(),
-        end_date: joi.date().iso(),
+        start_date: joi.string().isoDate(),
+        end_date: joi.string().isoDate(),
         order: joi
             .string()
             .valid(

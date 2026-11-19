@@ -9,6 +9,7 @@ import { IManagerWithStatistics } from "../../../../shared/interfaces/IManagerWi
 import { IResPagination } from "../../../../shared/interfaces/IResPagination";
 import { IUser } from "../../../../shared/interfaces/IUser";
 import { generalService } from "../../services/generalService";
+import {getErrorMessage} from "../../helpers/getErrorMessage";
 
 interface AuthState {
     me: IUser | null;
@@ -30,7 +31,7 @@ const getMe = createAsyncThunk<IUser>(
         try {
             return await generalService.get<IUser>("/auth/me");
         } catch (e) {
-            return rejectWithValue(e);
+            return rejectWithValue(getErrorMessage(e));
         }
     },
 );
@@ -41,7 +42,7 @@ const getManagers = createAsyncThunk<
     try {
         return await generalService.get(`/manager?page=${page}`);
     } catch (e) {
-        return rejectWithValue(e);
+        return rejectWithValue(getErrorMessage(e));
     }
 });
 export const managerSlice = createSlice({
