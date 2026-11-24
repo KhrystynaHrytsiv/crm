@@ -52,8 +52,9 @@ crm/
    2. Вставте отриманий рядок підключення у змінну MONGO_URI, вказавши назву бази даних.
 
 Наприклад:
->env
+```env
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/crm
+```
 
 Замість username та password вкажіть свої облікові дані.
 
