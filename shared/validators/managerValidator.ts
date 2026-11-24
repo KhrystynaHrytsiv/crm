@@ -11,6 +11,8 @@ export class ManagerValidator {
     });
     private static email = joi
         .string()
+        .trim()
+        .lowercase()
         .email()
         .messages({ "string.email": "Enter a valid email address" });
 

@@ -9,9 +9,7 @@ class UserRepository {
         return User.findById(id);
     }
     getByEmail(email: string): Promise<IUserDoc | null> {
-        return User.findOne({
-            email: { $regex: `^${email.trim()}$`, $options: "i" },
-        });
+        return User.findOne({ email: email.trim().toLowerCase() });
     }
     update(id: string, dto: Partial<IUserDoc>): Promise<IUserDoc | null> {
         return User.findByIdAndUpdate(id, dto, { returnDocument: "after" });

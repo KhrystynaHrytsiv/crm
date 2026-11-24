@@ -33,23 +33,37 @@ crm/
 
 ## База даних
 
-Використовується одна БД — **MongoDB**. Дані заявок мають документну структуру, коментарі, групи та токени
-зберігаються в окремих колекціях, тому друга (реляційна) БД не потрібна.
+Використовується одна БД — **MongoDB**. Дані заявок мають документну структуру, коментарі, групи та токени зберігаються в окремих колекціях, тому друга (реляційна) БД не потрібна.
 
 Колекції: `orders`, `users`, `comments`, `groups`, `tokens`.
 
-### Заливка дампу
+## Налаштування бази даних та заливка дампу
 
-1. Встановіть [MongoDB Database Tools](https://www.mongodb.com/try/download/database-tools) (команда `mongorestore`).
-2. Завантажте дамп: https://github.com/OktenSchool/dumps/blob/main/final/orders.dump (кнопка **Download raw file**).
-3. Залийте його у свою базу (`<MONGO_URI>` — той самий рядок, що в `backend/.env`):
+Для роботи проєкту використовується MongoDB Atlas (хмарна база даних) або локально встановлена MongoDB версії 5.0+.
 
-    ```bash
-    mongorestore --uri="<MONGO_URI>" --archive=orders.dump
-    ```
+### Створення бази даних у MongoDB Atlas
+   1. Зареєструйтеся на MongoDB Atlas.
+   2. Створіть новий кластер.
+   3. Створіть користувача бази даних (Database User) та встановіть пароль.
+   4. У налаштуваннях Network Access дозвольте підключення зі своєї IP-адреси.
+   5. Перейдіть у Connect → Drivers та скопіюйте рядок підключення до бази даних. 
+### Налаштування підключення
+   1. Створіть файл backend/.env на основі backend/.env.example.
+   2. Вставте отриманий рядок підключення у змінну MONGO_URI, вказавши назву бази даних.
 
-4. Перевірте, що в базі з'явилась колекція `orders` (500 документів), наприклад у MongoDB Atlas → **Browse Collections**.
+Наприклад:
+>env
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/crm
 
+Замість username та password вкажіть свої облікові дані.
+
+### Імпорт початкових даних
+   1. Скопіюйте дані з файлу дампу https://github.com/OktenSchool/dumps/blob/main/final/orders.dump.
+   2. Відкрийте MongoDB Compass або інший інструмент для роботи з MongoDB.
+   3. Підключіться до бази даних, використовуючи рядок MONGO_URI.
+   4. Вставте дані з дампу у консоль та запустіть команду.
+
+Після імпорту переконайтеся, що в базі даних створилася колекція orders із 500 документами.
 Під час кожного старту бекенд автоматично (повторний запуск нічого не ламає):
 
 - створює суперадміна `admin@gmail.com` / `admin`, якщо його ще немає;
@@ -62,7 +76,7 @@ crm/
 ### Backend — `backend/.env`
 
 ```bash
-cp backend/.env.example backend/.env
+  cp backend/.env.example backend/.env
 ```
 
 | Змінна                                                                                  | Обов'язкова | Опис                                                                                  |
@@ -80,7 +94,7 @@ cp backend/.env.example backend/.env
 ### Frontend — `frontend/.env`
 
 ```bash
-cp frontend/.env.example frontend/.env
+  cp frontend/.env.example frontend/.env
 ```
 
 | Змінна                | Опис                                                                                                                                                                                |
