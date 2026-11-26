@@ -28,7 +28,6 @@ crm/
 | Node.js          | 24.x (перевірено на 24.15.0)                      |
 | npm              | 11.x                                              |
 | MongoDB          | кластер MongoDB Atlas або будь-який MongoDB 5.0+  |
-| MongoDB Tools    | `mongorestore` — тільки для заливки дампу         |
 | Docker (опційно) | Docker Desktop / Docker Engine з `docker compose` |
 
 ## База даних
